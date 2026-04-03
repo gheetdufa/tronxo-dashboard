@@ -1,0 +1,11 @@
+Channel ID,PO category decription,Total,First_Pass_Count,First_Pass_Rate
+COUPA,Service,530,442,83.4
+COUPA,Standard,977,348,35.62
+COUPA,Subcontracting,85,32,37.65
+MAIL_IES,Consignment,46,4,8.7
+MAIL_IES,Service,5197,2589,49.82
+MAIL_IES,Standard,5721,1057,18.48
+MAIL_IES,Subcontracting,128,29,22.66
+VIM_IES,Service,52,25,48.08
+VIM_IES,Standard,122,30,24.59
+VIM_IES,Subcontracting,1,0,0.0

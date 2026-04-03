@@ -1,0 +1,21 @@
+Exception ID,Exception description,Count,Pct
+1,Process PO Invoice (PO),4050,30.31
+151,Manual Check Needed / Missing Data for Indexing Lines (PO),2621,19.62
+29,Missing Mandatory Information(PO),2552,19.1
+75,LIV - Price Discrepancy,964,7.21
+2,Invalid PO Number (PO),789,5.9
+38,Freight on Invoice (PO),748,5.6
+82,Header Block,705,5.28
+37,Unit of Measure Mismatch (PO),224,1.68
+6,Suspected Duplicate (PO),213,1.59
+34,Vendor Mismatch (PO),201,1.5
+3,Invalid Vendor (PO),152,1.14
+85,Company Code Mismatch(PO),57,0.43
+902,Invalid Company Code (PO),23,0.17
+930,Process Down Payment Request (PO),23,0.17
+271,Validate Accounting Data (NPO),16,0.12
+415,Check Withholding Tax Data (PO),12,0.09
+47,Suspected Duplicate (NPO),5,0.04
+76,LIV - Quantity Discrepancy,3,0.02
+416,Down Payment Clearing (PO),3,0.02
+11,Invalid Vendor VAT Number (PO),1,0.01

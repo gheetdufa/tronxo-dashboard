@@ -1,0 +1,52 @@
+PO category decription,Exception ID,Exception description,Count
+Consignment,1,Process PO Invoice (PO),60
+Consignment,29,Missing Mandatory Information(PO),7
+Consignment,75,LIV - Price Discrepancy,4
+Consignment,38,Freight on Invoice (PO),3
+Consignment,82,Header Block,2
+Consignment,151,Manual Check Needed / Missing Data for Indexing Lines (PO),1
+Service,29,Missing Mandatory Information(PO),1395
+Service,151,Manual Check Needed / Missing Data for Indexing Lines (PO),1147
+Service,1,Process PO Invoice (PO),1110
+Service,2,Invalid PO Number (PO),501
+Service,37,Unit of Measure Mismatch (PO),217
+Service,34,Vendor Mismatch (PO),149
+Service,3,Invalid Vendor (PO),134
+Service,6,Suspected Duplicate (PO),113
+Service,75,LIV - Price Discrepancy,43
+Service,85,Company Code Mismatch(PO),42
+Service,902,Invalid Company Code (PO),16
+Service,82,Header Block,15
+Service,271,Validate Accounting Data (NPO),15
+Service,38,Freight on Invoice (PO),10
+Service,930,Process Down Payment Request (PO),10
+Service,47,Suspected Duplicate (NPO),5
+Service,415,Check Withholding Tax Data (PO),2
+Service,11,Invalid Vendor VAT Number (PO),1
+Standard,1,Process PO Invoice (PO),2777
+Standard,151,Manual Check Needed / Missing Data for Indexing Lines (PO),1438
+Standard,29,Missing Mandatory Information(PO),1145
+Standard,75,LIV - Price Discrepancy,850
+Standard,38,Freight on Invoice (PO),680
+Standard,82,Header Block,658
+Standard,2,Invalid PO Number (PO),277
+Standard,6,Suspected Duplicate (PO),91
+Standard,34,Vendor Mismatch (PO),52
+Standard,3,Invalid Vendor (PO),16
+Standard,85,Company Code Mismatch(PO),15
+Standard,930,Process Down Payment Request (PO),13
+Standard,415,Check Withholding Tax Data (PO),10
+Standard,37,Unit of Measure Mismatch (PO),7
+Standard,902,Invalid Company Code (PO),7
+Standard,76,LIV - Quantity Discrepancy,3
+Standard,416,Down Payment Clearing (PO),3
+Subcontracting,1,Process PO Invoice (PO),103
+Subcontracting,75,LIV - Price Discrepancy,67
+Subcontracting,38,Freight on Invoice (PO),55
+Subcontracting,151,Manual Check Needed / Missing Data for Indexing Lines (PO),35
+Subcontracting,82,Header Block,30
+Subcontracting,2,Invalid PO Number (PO),11
+Subcontracting,6,Suspected Duplicate (PO),9
+Subcontracting,29,Missing Mandatory Information(PO),5
+Subcontracting,3,Invalid Vendor (PO),2
+Subcontracting,271,Validate Accounting Data (NPO),1
