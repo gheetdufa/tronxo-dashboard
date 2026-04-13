@@ -1,0 +1,1594 @@
+{
+  "e91_cat": [
+    {
+      "PO category decription": "Standard",
+      "Events": 6062,
+      "Unique_Inv": 2724,
+      "Pct": 92.5
+    },
+    {
+      "PO category decription": "Service",
+      "Events": 295,
+      "Unique_Inv": 95,
+      "Pct": 4.5
+    },
+    {
+      "PO category decription": "Subcontracting",
+      "Events": 185,
+      "Unique_Inv": 114,
+      "Pct": 2.8
+    },
+    {
+      "PO category decription": "Consignment",
+      "Events": 15,
+      "Unique_Inv": 7,
+      "Pct": 0.2
+    }
+  ],
+  "e91_ch_cat": [
+    {
+      "Channel ID": "COUPA",
+      "PO category decription": "Service",
+      "Events": 37,
+      "Unique_Inv": 4
+    },
+    {
+      "Channel ID": "COUPA",
+      "PO category decription": "Standard",
+      "Events": 1559,
+      "Unique_Inv": 772
+    },
+    {
+      "Channel ID": "COUPA",
+      "PO category decription": "Subcontracting",
+      "Events": 88,
+      "Unique_Inv": 50
+    },
+    {
+      "Channel ID": "MAIL_IES",
+      "PO category decription": "Consignment",
+      "Events": 15,
+      "Unique_Inv": 7
+    },
+    {
+      "Channel ID": "MAIL_IES",
+      "PO category decription": "Service",
+      "Events": 256,
+      "Unique_Inv": 90
+    },
+    {
+      "Channel ID": "MAIL_IES",
+      "PO category decription": "Standard",
+      "Events": 4415,
+      "Unique_Inv": 1915
+    },
+    {
+      "Channel ID": "MAIL_IES",
+      "PO category decription": "Subcontracting",
+      "Events": 95,
+      "Unique_Inv": 63
+    },
+    {
+      "Channel ID": "VIM_IES",
+      "PO category decription": "Service",
+      "Events": 2,
+      "Unique_Inv": 1
+    },
+    {
+      "Channel ID": "VIM_IES",
+      "PO category decription": "Standard",
+      "Events": 88,
+      "Unique_Inv": 37
+    },
+    {
+      "Channel ID": "VIM_IES",
+      "PO category decription": "Subcontracting",
+      "Events": 2,
+      "Unique_Inv": 1
+    }
+  ],
+  "e91_monthly": [
+    {
+      "Month": "2025-05",
+      "PO category decription": "Consignment",
+      "Events": 9
+    },
+    {
+      "Month": "2025-05",
+      "PO category decription": "Service",
+      "Events": 25
+    },
+    {
+      "Month": "2025-05",
+      "PO category decription": "Standard",
+      "Events": 271
+    },
+    {
+      "Month": "2025-05",
+      "PO category decription": "Subcontracting",
+      "Events": 22
+    },
+    {
+      "Month": "2025-06",
+      "PO category decription": "Consignment",
+      "Events": 3
+    },
+    {
+      "Month": "2025-06",
+      "PO category decription": "Service",
+      "Events": 55
+    },
+    {
+      "Month": "2025-06",
+      "PO category decription": "Standard",
+      "Events": 549
+    },
+    {
+      "Month": "2025-06",
+      "PO category decription": "Subcontracting",
+      "Events": 11
+    },
+    {
+      "Month": "2025-07",
+      "PO category decription": "Service",
+      "Events": 25
+    },
+    {
+      "Month": "2025-07",
+      "PO category decription": "Standard",
+      "Events": 874
+    },
+    {
+      "Month": "2025-07",
+      "PO category decription": "Subcontracting",
+      "Events": 12
+    },
+    {
+      "Month": "2025-08",
+      "PO category decription": "Service",
+      "Events": 44
+    },
+    {
+      "Month": "2025-08",
+      "PO category decription": "Standard",
+      "Events": 838
+    },
+    {
+      "Month": "2025-08",
+      "PO category decription": "Subcontracting",
+      "Events": 32
+    },
+    {
+      "Month": "2025-09",
+      "PO category decription": "Service",
+      "Events": 88
+    },
+    {
+      "Month": "2025-09",
+      "PO category decription": "Standard",
+      "Events": 915
+    },
+    {
+      "Month": "2025-09",
+      "PO category decription": "Subcontracting",
+      "Events": 15
+    },
+    {
+      "Month": "2025-10",
+      "PO category decription": "Service",
+      "Events": 25
+    },
+    {
+      "Month": "2025-10",
+      "PO category decription": "Standard",
+      "Events": 993
+    },
+    {
+      "Month": "2025-10",
+      "PO category decription": "Subcontracting",
+      "Events": 35
+    },
+    {
+      "Month": "2025-11",
+      "PO category decription": "Service",
+      "Events": 28
+    },
+    {
+      "Month": "2025-11",
+      "PO category decription": "Standard",
+      "Events": 775
+    },
+    {
+      "Month": "2025-11",
+      "PO category decription": "Subcontracting",
+      "Events": 31
+    },
+    {
+      "Month": "2025-12",
+      "PO category decription": "Consignment",
+      "Events": 3
+    },
+    {
+      "Month": "2025-12",
+      "PO category decription": "Service",
+      "Events": 5
+    },
+    {
+      "Month": "2025-12",
+      "PO category decription": "Standard",
+      "Events": 829
+    },
+    {
+      "Month": "2025-12",
+      "PO category decription": "Subcontracting",
+      "Events": 27
+    }
+  ],
+  "e91_vendors": [
+    {
+      "Supplier": "51004553",
+      "Name 1": "MOTION INDUSTRIES INC",
+      "Events": 565,
+      "Unique_Inv": 353
+    },
+    {
+      "Supplier": "51003869",
+      "Name 1": "SOUTHERN IONICS INCORPORATED",
+      "Events": 405,
+      "Unique_Inv": 189
+    },
+    {
+      "Supplier": "51003926",
+      "Name 1": "MSC INDUSTRIAL SUPPLY CO INC",
+      "Events": 373,
+      "Unique_Inv": 135
+    },
+    {
+      "Supplier": "51004029",
+      "Name 1": "PPG INDUSTRIES INC",
+      "Events": 297,
+      "Unique_Inv": 122
+    },
+    {
+      "Supplier": "51004788",
+      "Name 1": "IQUISA INC.",
+      "Events": 293,
+      "Unique_Inv": 127
+    },
+    {
+      "Supplier": "51004603",
+      "Name 1": "MORIN PROCESS EQUIPMENT",
+      "Events": 246,
+      "Unique_Inv": 100
+    },
+    {
+      "Supplier": "51004533",
+      "Name 1": "CENTRO INC",
+      "Events": 172,
+      "Unique_Inv": 75
+    },
+    {
+      "Supplier": "51004317",
+      "Name 1": "MOODY PRICE LLC",
+      "Events": 155,
+      "Unique_Inv": 73
+    },
+    {
+      "Supplier": "51004490",
+      "Name 1": "COLUMBUS RUBBER & GASKET CO INC",
+      "Events": 145,
+      "Unique_Inv": 82
+    },
+    {
+      "Supplier": "51004484",
+      "Name 1": "OLIN CORP - CHLOR ALKALI",
+      "Events": 116,
+      "Unique_Inv": 51
+    },
+    {
+      "Supplier": "51004610",
+      "Name 1": "CARMEUSE LIME AND STONE INC",
+      "Events": 114,
+      "Unique_Inv": 62
+    },
+    {
+      "Supplier": "51004809",
+      "Name 1": "FISHER SCIENTIFIC COMPANY LLC",
+      "Events": 111,
+      "Unique_Inv": 37
+    },
+    {
+      "Supplier": "51004071",
+      "Name 1": "NORFALCO LLC",
+      "Events": 99,
+      "Unique_Inv": 43
+    },
+    {
+      "Supplier": "51004929",
+      "Name 1": "MI LLC",
+      "Events": 95,
+      "Unique_Inv": 40
+    },
+    {
+      "Supplier": "51004569",
+      "Name 1": "MARATHON PETROLEUM COMPANY LP",
+      "Events": 91,
+      "Unique_Inv": 44
+    },
+    {
+      "Supplier": "51004611",
+      "Name 1": "ZOOK ENTERPRISES LLC",
+      "Events": 88,
+      "Unique_Inv": 30
+    },
+    {
+      "Supplier": "51004517",
+      "Name 1": "PQ LLC",
+      "Events": 87,
+      "Unique_Inv": 38
+    },
+    {
+      "Supplier": "51003907",
+      "Name 1": "LHOIST NORTH AMERICA OF ALABAMA",
+      "Events": 80,
+      "Unique_Inv": 34
+    },
+    {
+      "Supplier": "51004519",
+      "Name 1": "PRECISION MEASUREMENTS INC",
+      "Events": 76,
+      "Unique_Inv": 41
+    },
+    {
+      "Supplier": "51004875",
+      "Name 1": "NESCO LLC",
+      "Events": 71,
+      "Unique_Inv": 25
+    }
+  ],
+  "e91_cooccur": [
+    {
+      "Exception ID": 0,
+      "Exception description": "PO Low-value service invoice",
+      "Count": 745
+    },
+    {
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 584
+    },
+    {
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 516
+    },
+    {
+      "Exception ID": 38,
+      "Exception description": "Freight on Invoice (PO)",
+      "Count": 356
+    },
+    {
+      "Exception ID": 75,
+      "Exception description": "LIV - Price Discrepancy",
+      "Count": 279
+    },
+    {
+      "Exception ID": 82,
+      "Exception description": "Header Block",
+      "Count": 208
+    },
+    {
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 72
+    },
+    {
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 54
+    },
+    {
+      "Exception ID": 6,
+      "Exception description": "Suspected Duplicate (PO)",
+      "Count": 45
+    },
+    {
+      "Exception ID": 415,
+      "Exception description": "Check Withholding Tax Data (PO)",
+      "Count": 8
+    }
+  ],
+  "e151_cat": [
+    {
+      "PO category decription": "Standard",
+      "Events": 1438,
+      "Unique_Inv": 1374,
+      "Pct": 54.9
+    },
+    {
+      "PO category decription": "Service",
+      "Events": 1147,
+      "Unique_Inv": 664,
+      "Pct": 43.8
+    },
+    {
+      "PO category decription": "Subcontracting",
+      "Events": 35,
+      "Unique_Inv": 31,
+      "Pct": 1.3
+    },
+    {
+      "PO category decription": "Consignment",
+      "Events": 1,
+      "Unique_Inv": 1,
+      "Pct": 0.0
+    }
+  ],
+  "e151_ch_cat": [
+    {
+      "Channel ID": "COUPA",
+      "PO category decription": "Service",
+      "Events": 109,
+      "Unique_Inv": 50,
+      "Pct_of_exc": 4.2
+    },
+    {
+      "Channel ID": "COUPA",
+      "PO category decription": "Standard",
+      "Events": 208,
+      "Unique_Inv": 192,
+      "Pct_of_exc": 7.9
+    },
+    {
+      "Channel ID": "COUPA",
+      "PO category decription": "Subcontracting",
+      "Events": 10,
+      "Unique_Inv": 10,
+      "Pct_of_exc": 0.4
+    },
+    {
+      "Channel ID": "MAIL_IES",
+      "PO category decription": "Consignment",
+      "Events": 1,
+      "Unique_Inv": 1,
+      "Pct_of_exc": 0.0
+    },
+    {
+      "Channel ID": "MAIL_IES",
+      "PO category decription": "Service",
+      "Events": 1037,
+      "Unique_Inv": 613,
+      "Pct_of_exc": 39.6
+    },
+    {
+      "Channel ID": "MAIL_IES",
+      "PO category decription": "Standard",
+      "Events": 1212,
+      "Unique_Inv": 1167,
+      "Pct_of_exc": 46.2
+    },
+    {
+      "Channel ID": "MAIL_IES",
+      "PO category decription": "Subcontracting",
+      "Events": 24,
+      "Unique_Inv": 20,
+      "Pct_of_exc": 0.9
+    },
+    {
+      "Channel ID": "VIM_IES",
+      "PO category decription": "Service",
+      "Events": 1,
+      "Unique_Inv": 1,
+      "Pct_of_exc": 0.0
+    },
+    {
+      "Channel ID": "VIM_IES",
+      "PO category decription": "Standard",
+      "Events": 18,
+      "Unique_Inv": 15,
+      "Pct_of_exc": 0.7
+    },
+    {
+      "Channel ID": "VIM_IES",
+      "PO category decription": "Subcontracting",
+      "Events": 1,
+      "Unique_Inv": 1,
+      "Pct_of_exc": 0.0
+    }
+  ],
+  "e151_vendors": [
+    {
+      "Supplier": "51004610",
+      "Name 1": "CARMEUSE LIME AND STONE INC",
+      "Events": 268,
+      "Unique_Inv": 268,
+      "Avg_Exc_Per_Inv": 1.0
+    },
+    {
+      "Supplier": "51004029",
+      "Name 1": "PPG INDUSTRIES INC",
+      "Events": 142,
+      "Unique_Inv": 142,
+      "Avg_Exc_Per_Inv": 1.0
+    },
+    {
+      "Supplier": "51003869",
+      "Name 1": "SOUTHERN IONICS INCORPORATED",
+      "Events": 140,
+      "Unique_Inv": 138,
+      "Avg_Exc_Per_Inv": 1.01
+    },
+    {
+      "Supplier": "51003907",
+      "Name 1": "LHOIST NORTH AMERICA OF ALABAMA",
+      "Events": 71,
+      "Unique_Inv": 71,
+      "Avg_Exc_Per_Inv": 1.0
+    },
+    {
+      "Supplier": "51004581",
+      "Name 1": "THOMPSONS WELDING SERVICES INC",
+      "Events": 70,
+      "Unique_Inv": 57,
+      "Avg_Exc_Per_Inv": 1.23
+    },
+    {
+      "Supplier": "51003926",
+      "Name 1": "MSC INDUSTRIAL SUPPLY CO INC",
+      "Events": 58,
+      "Unique_Inv": 49,
+      "Avg_Exc_Per_Inv": 1.18
+    },
+    {
+      "Supplier": "51004477",
+      "Name 1": "MICROSOFT CORP",
+      "Events": 54,
+      "Unique_Inv": 17,
+      "Avg_Exc_Per_Inv": 3.18
+    },
+    {
+      "Supplier": "51004519",
+      "Name 1": "PRECISION MEASUREMENTS INC",
+      "Events": 42,
+      "Unique_Inv": 40,
+      "Avg_Exc_Per_Inv": 1.05
+    },
+    {
+      "Supplier": "51004484",
+      "Name 1": "OLIN CORP - CHLOR ALKALI",
+      "Events": 41,
+      "Unique_Inv": 36,
+      "Avg_Exc_Per_Inv": 1.14
+    },
+    {
+      "Supplier": "51004553",
+      "Name 1": "MOTION INDUSTRIES INC",
+      "Events": 33,
+      "Unique_Inv": 29,
+      "Avg_Exc_Per_Inv": 1.14
+    },
+    {
+      "Supplier": "51003880",
+      "Name 1": "HYDRO-VAC INDUSTRIAL SERVICES INC",
+      "Events": 33,
+      "Unique_Inv": 31,
+      "Avg_Exc_Per_Inv": 1.06
+    },
+    {
+      "Supplier": "51003955",
+      "Name 1": "TERRA FIRST",
+      "Events": 31,
+      "Unique_Inv": 31,
+      "Avg_Exc_Per_Inv": 1.0
+    },
+    {
+      "Supplier": "51005092",
+      "Name 1": "COLLABORIT ENTERPRISE ASSET MANAGEM",
+      "Events": 31,
+      "Unique_Inv": 10,
+      "Avg_Exc_Per_Inv": 3.1
+    },
+    {
+      "Supplier": "51004518",
+      "Name 1": "ROCKWELL AUTOMATION INC",
+      "Events": 28,
+      "Unique_Inv": 8,
+      "Avg_Exc_Per_Inv": 3.5
+    },
+    {
+      "Supplier": "51004872",
+      "Name 1": "BESTWADE PETROLEUM INC",
+      "Events": 28,
+      "Unique_Inv": 22,
+      "Avg_Exc_Per_Inv": 1.27
+    },
+    {
+      "Supplier": "51004642",
+      "Name 1": "MCCRARY-WEST CONSTRUCTION CO INC",
+      "Events": 28,
+      "Unique_Inv": 11,
+      "Avg_Exc_Per_Inv": 2.55
+    },
+    {
+      "Supplier": "51004533",
+      "Name 1": "CENTRO INC",
+      "Events": 27,
+      "Unique_Inv": 26,
+      "Avg_Exc_Per_Inv": 1.04
+    },
+    {
+      "Supplier": "51004490",
+      "Name 1": "COLUMBUS RUBBER & GASKET CO INC",
+      "Events": 26,
+      "Unique_Inv": 23,
+      "Avg_Exc_Per_Inv": 1.13
+    },
+    {
+      "Supplier": "51004569",
+      "Name 1": "MARATHON PETROLEUM COMPANY LP",
+      "Events": 26,
+      "Unique_Inv": 26,
+      "Avg_Exc_Per_Inv": 1.0
+    },
+    {
+      "Supplier": "51004603",
+      "Name 1": "MORIN PROCESS EQUIPMENT",
+      "Events": 26,
+      "Unique_Inv": 26,
+      "Avg_Exc_Per_Inv": 1.0
+    }
+  ],
+  "e151_monthly": [
+    {
+      "Month": "2025-05",
+      "PO category decription": "Service",
+      "Events": 317
+    },
+    {
+      "Month": "2025-05",
+      "PO category decription": "Standard",
+      "Events": 230
+    },
+    {
+      "Month": "2025-05",
+      "PO category decription": "Subcontracting",
+      "Events": 20
+    },
+    {
+      "Month": "2025-06",
+      "PO category decription": "Service",
+      "Events": 230
+    },
+    {
+      "Month": "2025-06",
+      "PO category decription": "Standard",
+      "Events": 180
+    },
+    {
+      "Month": "2025-07",
+      "PO category decription": "Service",
+      "Events": 141
+    },
+    {
+      "Month": "2025-07",
+      "PO category decription": "Standard",
+      "Events": 190
+    },
+    {
+      "Month": "2025-07",
+      "PO category decription": "Subcontracting",
+      "Events": 1
+    },
+    {
+      "Month": "2025-08",
+      "PO category decription": "Consignment",
+      "Events": 1
+    },
+    {
+      "Month": "2025-08",
+      "PO category decription": "Service",
+      "Events": 102
+    },
+    {
+      "Month": "2025-08",
+      "PO category decription": "Standard",
+      "Events": 90
+    },
+    {
+      "Month": "2025-09",
+      "PO category decription": "Service",
+      "Events": 126
+    },
+    {
+      "Month": "2025-09",
+      "PO category decription": "Standard",
+      "Events": 142
+    },
+    {
+      "Month": "2025-09",
+      "PO category decription": "Subcontracting",
+      "Events": 1
+    },
+    {
+      "Month": "2025-10",
+      "PO category decription": "Service",
+      "Events": 74
+    },
+    {
+      "Month": "2025-10",
+      "PO category decription": "Standard",
+      "Events": 248
+    },
+    {
+      "Month": "2025-10",
+      "PO category decription": "Subcontracting",
+      "Events": 9
+    },
+    {
+      "Month": "2025-11",
+      "PO category decription": "Service",
+      "Events": 79
+    },
+    {
+      "Month": "2025-11",
+      "PO category decription": "Standard",
+      "Events": 163
+    },
+    {
+      "Month": "2025-11",
+      "PO category decription": "Subcontracting",
+      "Events": 3
+    },
+    {
+      "Month": "2025-12",
+      "PO category decription": "Service",
+      "Events": 78
+    },
+    {
+      "Month": "2025-12",
+      "PO category decription": "Standard",
+      "Events": 195
+    },
+    {
+      "Month": "2025-12",
+      "PO category decription": "Subcontracting",
+      "Events": 1
+    }
+  ],
+  "e151_cooccur": [
+    {
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 388
+    },
+    {
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 202
+    },
+    {
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 165
+    },
+    {
+      "Exception ID": 75,
+      "Exception description": "LIV - Price Discrepancy",
+      "Count": 134
+    },
+    {
+      "Exception ID": 82,
+      "Exception description": "Header Block",
+      "Count": 104
+    },
+    {
+      "Exception ID": 6,
+      "Exception description": "Suspected Duplicate (PO)",
+      "Count": 28
+    },
+    {
+      "Exception ID": 34,
+      "Exception description": "Vendor Mismatch (PO)",
+      "Count": 14
+    },
+    {
+      "Exception ID": 85,
+      "Exception description": "Company Code Mismatch(PO)",
+      "Count": 9
+    },
+    {
+      "Exception ID": 3,
+      "Exception description": "Invalid Vendor (PO)",
+      "Count": 8
+    },
+    {
+      "Exception ID": 38,
+      "Exception description": "Freight on Invoice (PO)",
+      "Count": 7
+    }
+  ],
+  "e151_touch_dist": [
+    {
+      "Touches": 0,
+      "Invoice_Count": 30
+    },
+    {
+      "Touches": 1,
+      "Invoice_Count": 1546
+    },
+    {
+      "Touches": 2,
+      "Invoice_Count": 264
+    },
+    {
+      "Touches": 3,
+      "Invoice_Count": 73
+    },
+    {
+      "Touches": 4,
+      "Invoice_Count": 64
+    },
+    {
+      "Touches": 5,
+      "Invoice_Count": 36
+    },
+    {
+      "Touches": 6,
+      "Invoice_Count": 21
+    },
+    {
+      "Touches": 7,
+      "Invoice_Count": 15
+    },
+    {
+      "Touches": 8,
+      "Invoice_Count": 7
+    },
+    {
+      "Touches": 9,
+      "Invoice_Count": 4
+    },
+    {
+      "Touches": 10,
+      "Invoice_Count": 10
+    }
+  ],
+  "e29_cat": [
+    {
+      "PO category decription": "Service",
+      "Events": 1395,
+      "Unique_Inv": 1045,
+      "Pct": 54.7
+    },
+    {
+      "PO category decription": "Standard",
+      "Events": 1145,
+      "Unique_Inv": 1008,
+      "Pct": 44.9
+    },
+    {
+      "PO category decription": "Consignment",
+      "Events": 7,
+      "Unique_Inv": 4,
+      "Pct": 0.3
+    },
+    {
+      "PO category decription": "Subcontracting",
+      "Events": 5,
+      "Unique_Inv": 4,
+      "Pct": 0.2
+    }
+  ],
+  "e29_ch_cat": [
+    {
+      "Channel ID": "COUPA",
+      "PO category decription": "Service",
+      "Events": 3,
+      "Unique_Inv": 3,
+      "Pct_of_exc": 0.1
+    },
+    {
+      "Channel ID": "COUPA",
+      "PO category decription": "Standard",
+      "Events": 3,
+      "Unique_Inv": 3,
+      "Pct_of_exc": 0.1
+    },
+    {
+      "Channel ID": "MAIL_IES",
+      "PO category decription": "Consignment",
+      "Events": 7,
+      "Unique_Inv": 4,
+      "Pct_of_exc": 0.3
+    },
+    {
+      "Channel ID": "MAIL_IES",
+      "PO category decription": "Service",
+      "Events": 1381,
+      "Unique_Inv": 1038,
+      "Pct_of_exc": 54.1
+    },
+    {
+      "Channel ID": "MAIL_IES",
+      "PO category decription": "Standard",
+      "Events": 1127,
+      "Unique_Inv": 990,
+      "Pct_of_exc": 44.2
+    },
+    {
+      "Channel ID": "MAIL_IES",
+      "PO category decription": "Subcontracting",
+      "Events": 5,
+      "Unique_Inv": 4,
+      "Pct_of_exc": 0.2
+    },
+    {
+      "Channel ID": "VIM_IES",
+      "PO category decription": "Service",
+      "Events": 11,
+      "Unique_Inv": 4,
+      "Pct_of_exc": 0.4
+    },
+    {
+      "Channel ID": "VIM_IES",
+      "PO category decription": "Standard",
+      "Events": 15,
+      "Unique_Inv": 15,
+      "Pct_of_exc": 0.6
+    }
+  ],
+  "e29_vendors": [
+    {
+      "Supplier": "51003869",
+      "Name 1": "SOUTHERN IONICS INCORPORATED",
+      "Events": 367,
+      "Unique_Inv": 366,
+      "Avg_Exc_Per_Inv": 1.0
+    },
+    {
+      "Supplier": "51003955",
+      "Name 1": "TERRA FIRST",
+      "Events": 305,
+      "Unique_Inv": 295,
+      "Avg_Exc_Per_Inv": 1.03
+    },
+    {
+      "Supplier": "51004495",
+      "Name 1": "HARCROS CHEMICALS INC",
+      "Events": 83,
+      "Unique_Inv": 83,
+      "Avg_Exc_Per_Inv": 1.0
+    },
+    {
+      "Supplier": "51004305",
+      "Name 1": "YAZOO RIVER TOWING INC",
+      "Events": 81,
+      "Unique_Inv": 52,
+      "Avg_Exc_Per_Inv": 1.56
+    },
+    {
+      "Supplier": "51004665",
+      "Name 1": "WWWEX FRANCHISE HOLDINGS LLC",
+      "Events": 53,
+      "Unique_Inv": 31,
+      "Avg_Exc_Per_Inv": 1.71
+    },
+    {
+      "Supplier": "51003926",
+      "Name 1": "MSC INDUSTRIAL SUPPLY CO INC",
+      "Events": 37,
+      "Unique_Inv": 31,
+      "Avg_Exc_Per_Inv": 1.19
+    },
+    {
+      "Supplier": "51004578",
+      "Name 1": "SAP AMERICA, INC.",
+      "Events": 34,
+      "Unique_Inv": 19,
+      "Avg_Exc_Per_Inv": 1.79
+    },
+    {
+      "Supplier": "51004045",
+      "Name 1": "SUNBELT RENTALS INC",
+      "Events": 32,
+      "Unique_Inv": 15,
+      "Avg_Exc_Per_Inv": 2.13
+    },
+    {
+      "Supplier": "51004906",
+      "Name 1": "GLENN MACHINE WORKS INC",
+      "Events": 32,
+      "Unique_Inv": 14,
+      "Avg_Exc_Per_Inv": 2.29
+    },
+    {
+      "Supplier": "51004087",
+      "Name 1": "UNIFIRST HOLDINGS LP",
+      "Events": 31,
+      "Unique_Inv": 30,
+      "Avg_Exc_Per_Inv": 1.03
+    },
+    {
+      "Supplier": "51004329",
+      "Name 1": "UNITED RENTALS (NORTH AMERICA) INC",
+      "Events": 30,
+      "Unique_Inv": 13,
+      "Avg_Exc_Per_Inv": 2.31
+    },
+    {
+      "Supplier": "51004882",
+      "Name 1": "WISE STAFFING SERVICES INC",
+      "Events": 30,
+      "Unique_Inv": 24,
+      "Avg_Exc_Per_Inv": 1.25
+    },
+    {
+      "Supplier": "51004749",
+      "Name 1": "APACHE INDUSTRIAL SERVICES INC",
+      "Events": 28,
+      "Unique_Inv": 26,
+      "Avg_Exc_Per_Inv": 1.08
+    },
+    {
+      "Supplier": "51004510",
+      "Name 1": "AUTOMOTIVE RENTALS INC",
+      "Events": 27,
+      "Unique_Inv": 25,
+      "Avg_Exc_Per_Inv": 1.08
+    },
+    {
+      "Supplier": "51003970",
+      "Name 1": "FEDEX FREIGHT EAST",
+      "Events": 26,
+      "Unique_Inv": 22,
+      "Avg_Exc_Per_Inv": 1.18
+    },
+    {
+      "Supplier": "51004581",
+      "Name 1": "THOMPSONS WELDING SERVICES INC",
+      "Events": 26,
+      "Unique_Inv": 13,
+      "Avg_Exc_Per_Inv": 2.0
+    },
+    {
+      "Supplier": "51004601",
+      "Name 1": "MEWCO, INC",
+      "Events": 22,
+      "Unique_Inv": 14,
+      "Avg_Exc_Per_Inv": 1.57
+    },
+    {
+      "Supplier": "51004734",
+      "Name 1": "PREMIER EYE CARE, PLLC",
+      "Events": 22,
+      "Unique_Inv": 22,
+      "Avg_Exc_Per_Inv": 1.0
+    },
+    {
+      "Supplier": "51004416",
+      "Name 1": "UPS GROUND FREIGHT INC",
+      "Events": 21,
+      "Unique_Inv": 21,
+      "Avg_Exc_Per_Inv": 1.0
+    },
+    {
+      "Supplier": "51004016",
+      "Name 1": "MOLLMANS WATER CONDITIONING INC",
+      "Events": 20,
+      "Unique_Inv": 20,
+      "Avg_Exc_Per_Inv": 1.0
+    }
+  ],
+  "e29_monthly": [
+    {
+      "Month": "2025-05",
+      "PO category decription": "Consignment",
+      "Events": 1
+    },
+    {
+      "Month": "2025-05",
+      "PO category decription": "Service",
+      "Events": 309
+    },
+    {
+      "Month": "2025-05",
+      "PO category decription": "Standard",
+      "Events": 169
+    },
+    {
+      "Month": "2025-05",
+      "PO category decription": "Subcontracting",
+      "Events": 3
+    },
+    {
+      "Month": "2025-06",
+      "PO category decription": "Consignment",
+      "Events": 2
+    },
+    {
+      "Month": "2025-06",
+      "PO category decription": "Service",
+      "Events": 160
+    },
+    {
+      "Month": "2025-06",
+      "PO category decription": "Standard",
+      "Events": 108
+    },
+    {
+      "Month": "2025-07",
+      "PO category decription": "Service",
+      "Events": 171
+    },
+    {
+      "Month": "2025-07",
+      "PO category decription": "Standard",
+      "Events": 130
+    },
+    {
+      "Month": "2025-08",
+      "PO category decription": "Service",
+      "Events": 167
+    },
+    {
+      "Month": "2025-08",
+      "PO category decription": "Standard",
+      "Events": 118
+    },
+    {
+      "Month": "2025-09",
+      "PO category decription": "Service",
+      "Events": 137
+    },
+    {
+      "Month": "2025-09",
+      "PO category decription": "Standard",
+      "Events": 157
+    },
+    {
+      "Month": "2025-10",
+      "PO category decription": "Service",
+      "Events": 216
+    },
+    {
+      "Month": "2025-10",
+      "PO category decription": "Standard",
+      "Events": 162
+    },
+    {
+      "Month": "2025-10",
+      "PO category decription": "Subcontracting",
+      "Events": 1
+    },
+    {
+      "Month": "2025-11",
+      "PO category decription": "Consignment",
+      "Events": 4
+    },
+    {
+      "Month": "2025-11",
+      "PO category decription": "Service",
+      "Events": 134
+    },
+    {
+      "Month": "2025-11",
+      "PO category decription": "Standard",
+      "Events": 97
+    },
+    {
+      "Month": "2025-12",
+      "PO category decription": "Service",
+      "Events": 101
+    },
+    {
+      "Month": "2025-12",
+      "PO category decription": "Standard",
+      "Events": 204
+    },
+    {
+      "Month": "2025-12",
+      "PO category decription": "Subcontracting",
+      "Events": 1
+    }
+  ],
+  "e29_cooccur": [
+    {
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 192
+    },
+    {
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 187
+    },
+    {
+      "Exception ID": 75,
+      "Exception description": "LIV - Price Discrepancy",
+      "Count": 125
+    },
+    {
+      "Exception ID": 82,
+      "Exception description": "Header Block",
+      "Count": 92
+    },
+    {
+      "Exception ID": 34,
+      "Exception description": "Vendor Mismatch (PO)",
+      "Count": 13
+    },
+    {
+      "Exception ID": 6,
+      "Exception description": "Suspected Duplicate (PO)",
+      "Count": 10
+    },
+    {
+      "Exception ID": 38,
+      "Exception description": "Freight on Invoice (PO)",
+      "Count": 10
+    },
+    {
+      "Exception ID": 271,
+      "Exception description": "Validate Accounting Data (NPO)",
+      "Count": 10
+    },
+    {
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 9
+    },
+    {
+      "Exception ID": 3,
+      "Exception description": "Invalid Vendor (PO)",
+      "Count": 3
+    }
+  ],
+  "cc_fp": [
+    {
+      "Channel ID": "COUPA",
+      "PO category decription": "Service",
+      "Total": 530,
+      "FP_Count": 442,
+      "FP_Rate": 83.4
+    },
+    {
+      "Channel ID": "COUPA",
+      "PO category decription": "Standard",
+      "Total": 977,
+      "FP_Count": 348,
+      "FP_Rate": 35.6
+    },
+    {
+      "Channel ID": "COUPA",
+      "PO category decription": "Subcontracting",
+      "Total": 85,
+      "FP_Count": 32,
+      "FP_Rate": 37.6
+    },
+    {
+      "Channel ID": "MAIL_IES",
+      "PO category decription": "Consignment",
+      "Total": 46,
+      "FP_Count": 4,
+      "FP_Rate": 8.7
+    },
+    {
+      "Channel ID": "MAIL_IES",
+      "PO category decription": "Service",
+      "Total": 5197,
+      "FP_Count": 2589,
+      "FP_Rate": 49.8
+    },
+    {
+      "Channel ID": "MAIL_IES",
+      "PO category decription": "Standard",
+      "Total": 5721,
+      "FP_Count": 1057,
+      "FP_Rate": 18.5
+    },
+    {
+      "Channel ID": "MAIL_IES",
+      "PO category decription": "Subcontracting",
+      "Total": 128,
+      "FP_Count": 29,
+      "FP_Rate": 22.7
+    },
+    {
+      "Channel ID": "VIM_IES",
+      "PO category decription": "Service",
+      "Total": 52,
+      "FP_Count": 25,
+      "FP_Rate": 48.1
+    },
+    {
+      "Channel ID": "VIM_IES",
+      "PO category decription": "Standard",
+      "Total": 122,
+      "FP_Count": 30,
+      "FP_Rate": 24.6
+    },
+    {
+      "Channel ID": "VIM_IES",
+      "PO category decription": "Subcontracting",
+      "Total": 1,
+      "FP_Count": 0,
+      "FP_Rate": 0.0
+    }
+  ],
+  "coupa_svc_fail_exc": [
+    {
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 109
+    },
+    {
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 98
+    },
+    {
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 6
+    },
+    {
+      "Exception ID": 6,
+      "Exception description": "Suspected Duplicate (PO)",
+      "Count": 3
+    },
+    {
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 3
+    },
+    {
+      "Exception ID": 38,
+      "Exception description": "Freight on Invoice (PO)",
+      "Count": 3
+    },
+    {
+      "Exception ID": 37,
+      "Exception description": "Unit of Measure Mismatch (PO)",
+      "Count": 1
+    }
+  ],
+  "coupa_svc_pass_exc": [
+    {
+      "Exception ID": 0,
+      "Exception description": "PO Low-value service invoice",
+      "Count": 675
+    },
+    {
+      "Exception ID": 91,
+      "Exception description": "GR Not Done-Simple Check",
+      "Count": 24
+    }
+  ],
+  "coupa_std_fail_exc": [
+    {
+      "Exception ID": 38,
+      "Exception description": "Freight on Invoice (PO)",
+      "Count": 411
+    },
+    {
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 208
+    },
+    {
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 148
+    },
+    {
+      "Exception ID": 75,
+      "Exception description": "LIV - Price Discrepancy",
+      "Count": 66
+    },
+    {
+      "Exception ID": 82,
+      "Exception description": "Header Block",
+      "Count": 46
+    },
+    {
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 9
+    },
+    {
+      "Exception ID": 6,
+      "Exception description": "Suspected Duplicate (PO)",
+      "Count": 8
+    },
+    {
+      "Exception ID": 415,
+      "Exception description": "Check Withholding Tax Data (PO)",
+      "Count": 4
+    },
+    {
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 3
+    }
+  ],
+  "coupa_monthly": [
+    {
+      "Month": "2025-05",
+      "PO category decription": "Service",
+      "Total": 53,
+      "FP_Count": 34,
+      "FP_Rate": 64.2
+    },
+    {
+      "Month": "2025-05",
+      "PO category decription": "Standard",
+      "Total": 49,
+      "FP_Count": 15,
+      "FP_Rate": 30.6
+    },
+    {
+      "Month": "2025-05",
+      "PO category decription": "Subcontracting",
+      "Total": 4,
+      "FP_Count": 1,
+      "FP_Rate": 25.0
+    },
+    {
+      "Month": "2025-06",
+      "PO category decription": "Service",
+      "Total": 73,
+      "FP_Count": 51,
+      "FP_Rate": 69.9
+    },
+    {
+      "Month": "2025-06",
+      "PO category decription": "Standard",
+      "Total": 62,
+      "FP_Count": 25,
+      "FP_Rate": 40.3
+    },
+    {
+      "Month": "2025-06",
+      "PO category decription": "Subcontracting",
+      "Total": 6,
+      "FP_Count": 2,
+      "FP_Rate": 33.3
+    },
+    {
+      "Month": "2025-07",
+      "PO category decription": "Service",
+      "Total": 70,
+      "FP_Count": 61,
+      "FP_Rate": 87.1
+    },
+    {
+      "Month": "2025-07",
+      "PO category decription": "Standard",
+      "Total": 141,
+      "FP_Count": 58,
+      "FP_Rate": 41.1
+    },
+    {
+      "Month": "2025-07",
+      "PO category decription": "Subcontracting",
+      "Total": 6,
+      "FP_Count": 2,
+      "FP_Rate": 33.3
+    },
+    {
+      "Month": "2025-08",
+      "PO category decription": "Service",
+      "Total": 80,
+      "FP_Count": 76,
+      "FP_Rate": 95.0
+    },
+    {
+      "Month": "2025-08",
+      "PO category decription": "Standard",
+      "Total": 143,
+      "FP_Count": 62,
+      "FP_Rate": 43.4
+    },
+    {
+      "Month": "2025-08",
+      "PO category decription": "Subcontracting",
+      "Total": 21,
+      "FP_Count": 14,
+      "FP_Rate": 66.7
+    },
+    {
+      "Month": "2025-09",
+      "PO category decription": "Service",
+      "Total": 59,
+      "FP_Count": 51,
+      "FP_Rate": 86.4
+    },
+    {
+      "Month": "2025-09",
+      "PO category decription": "Standard",
+      "Total": 150,
+      "FP_Count": 59,
+      "FP_Rate": 39.3
+    },
+    {
+      "Month": "2025-09",
+      "PO category decription": "Subcontracting",
+      "Total": 5,
+      "FP_Count": 1,
+      "FP_Rate": 20.0
+    },
+    {
+      "Month": "2025-10",
+      "PO category decription": "Service",
+      "Total": 70,
+      "FP_Count": 63,
+      "FP_Rate": 90.0
+    },
+    {
+      "Month": "2025-10",
+      "PO category decription": "Standard",
+      "Total": 177,
+      "FP_Count": 57,
+      "FP_Rate": 32.2
+    },
+    {
+      "Month": "2025-10",
+      "PO category decription": "Subcontracting",
+      "Total": 23,
+      "FP_Count": 5,
+      "FP_Rate": 21.7
+    },
+    {
+      "Month": "2025-11",
+      "PO category decription": "Service",
+      "Total": 57,
+      "FP_Count": 46,
+      "FP_Rate": 80.7
+    },
+    {
+      "Month": "2025-11",
+      "PO category decription": "Standard",
+      "Total": 124,
+      "FP_Count": 31,
+      "FP_Rate": 25.0
+    },
+    {
+      "Month": "2025-11",
+      "PO category decription": "Subcontracting",
+      "Total": 13,
+      "FP_Count": 5,
+      "FP_Rate": 38.5
+    },
+    {
+      "Month": "2025-12",
+      "PO category decription": "Service",
+      "Total": 68,
+      "FP_Count": 60,
+      "FP_Rate": 88.2
+    },
+    {
+      "Month": "2025-12",
+      "PO category decription": "Standard",
+      "Total": 131,
+      "FP_Count": 41,
+      "FP_Rate": 31.3
+    },
+    {
+      "Month": "2025-12",
+      "PO category decription": "Subcontracting",
+      "Total": 7,
+      "FP_Count": 2,
+      "FP_Rate": 28.6
+    }
+  ],
+  "coupa_svc_total": 530,
+  "coupa_svc_fp": 442,
+  "coupa_svc_fp_rate": 83.4,
+  "coupa_std_fp_rate": 35.6,
+  "e91_total": 6557,
+  "e91_unique_inv": 2940,
+  "e151_total": 2621,
+  "e151_unique_inv": 2070,
+  "e29_total": 2552,
+  "e29_unique_inv": 2061
+}

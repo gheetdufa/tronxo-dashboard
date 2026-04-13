@@ -1,0 +1,11 @@
+Channel ID,PO category decription,Events,Unique_Inv
+COUPA,Service,37,4
+COUPA,Standard,1559,772
+COUPA,Subcontracting,88,50
+MAIL_IES,Consignment,15,7
+MAIL_IES,Service,256,90
+MAIL_IES,Standard,4415,1915
+MAIL_IES,Subcontracting,95,63
+VIM_IES,Service,2,1
+VIM_IES,Standard,88,37
+VIM_IES,Subcontracting,2,1
