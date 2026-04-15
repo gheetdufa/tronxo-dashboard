@@ -1,3 +1,5 @@
+# Only updates the public site if Settings → Pages → Source = "GitHub Actions".
+# If Source = "Deploy from a branch" (e.g. gh-pages), use sync-gh-pages.yml instead.
 name: Deploy GitHub Pages
 
 on:
