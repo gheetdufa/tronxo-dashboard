@@ -1,0 +1,21 @@
+# GitHub Pages "Deploy from a branch" serves ONE branch (e.g. gh-pages).
+# If you commit to main only, the live site stays stale until gh-pages matches.
+name: Sync gh-pages to main
+
+on:
+  push:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Point gh-pages at same commit as main
+        run: git push origin HEAD:gh-pages

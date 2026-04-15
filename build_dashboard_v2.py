@@ -5,10 +5,28 @@ Build v2 of the self-contained HTML dashboard — adds 4 new sections:
   - Exception 29 deep dive (Missing Mandatory Information)
   - COUPA + Service explained (why it beats 80%)
 """
-import json, os
+import json, os, subprocess
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 OUT_DIR = os.path.join(SCRIPT_DIR, "output")
+
+
+def _build_id():
+    gh = os.environ.get("GITHUB_SHA", "")
+    if gh and len(gh) >= 7:
+        return gh[:7]
+    try:
+        return subprocess.check_output(
+            ["git", "rev-parse", "--short", "HEAD"],
+            cwd=SCRIPT_DIR,
+            stderr=subprocess.DEVNULL,
+            timeout=5,
+        ).decode().strip()
+    except Exception:
+        return "local"
+
+
+BUILD_ID = _build_id()
 
 with open(f"{OUT_DIR}/dashboard_data.json") as f:
     D = json.load(f)
@@ -23,6 +41,7 @@ HTML = r"""<!DOCTYPE html>
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta name="dashboard-build" content="__BUILD_ID__"/>
 <title>Tronox 1100 – AP Invoice Exception Dashboard (Audit 2026-01)</title>
 <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
 <style>
@@ -166,7 +185,7 @@ tbody tr:hover{background:#e8f0fe}
     <a href="#" data-sec="workload">&#9632; AP Workload Concentration</a>
     <a href="#" data-sec="dq">&#9632; Data Quality Notes</a>
   </nav>
-  <div class="footer-note">S4 AP Audit · 1100 · FY2025–2026<br/>Transport vendors excl · NB &amp; ZCP only</div>
+  <div class="footer-note">S4 AP Audit · 1100 · FY2025–2026<br/>Transport vendors excl · NB &amp; ZCP only<br/>Build <span id="dash-build-id">__BUILD_ID__</span></div>
 </nav>
 
 <main id="main">
@@ -1093,6 +1112,8 @@ renderSection('overview');
 </body>
 </html>
 """
+
+HTML = HTML.replace("__BUILD_ID__", BUILD_ID)
 
 for _name in ("index.html", "dashboard.html"):
     with open(f"{OUT_DIR}/{_name}", "w", encoding="utf-8") as f:
