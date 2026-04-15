@@ -2,12 +2,14 @@
 Extended analysis for the Tronox 1100 dashboard.
 Adds: Exception 91 deep dive, Exceptions 151 & 29 detail, COUPA+Service explanation.
 """
+import os
 import pandas as pd
 import json
 
-SORTED_FILE = "c:/Users/dheer/Downloads/Repo/tronxo/dashboard/1100 VIM Exceptions Data(DATA - 1100 Sorted) (1).csv"
-INC_FILE    = "c:/Users/dheer/Downloads/Repo/tronxo/dashboard/1100 Data inc.csv"
-OUT_DIR     = "c:/Users/dheer/Downloads/Repo/tronxo/dashboard/output"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+SORTED_FILE = os.path.join(SCRIPT_DIR, "1100 VIM Exceptions Data(DATA - 1100 Sorted) (1).csv")
+INC_FILE = os.path.join(SCRIPT_DIR, "1100 Data inc.csv")
+OUT_DIR = os.path.join(SCRIPT_DIR, "output")
 
 def load(path):
     df = pd.read_csv(path, encoding="utf-8-sig", low_memory=False)

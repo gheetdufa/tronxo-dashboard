@@ -24,6 +24,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build dashboard HTML (writes output/index.html + dashboard.html)
+        run: python build_dashboard_v2.py
+
       - name: Configure Pages
         uses: actions/configure-pages@v4
 

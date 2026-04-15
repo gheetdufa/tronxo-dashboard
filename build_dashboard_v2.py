@@ -7,7 +7,8 @@ Build v2 of the self-contained HTML dashboard — adds 4 new sections:
 """
 import json, os
 
-OUT_DIR = "c:/Users/dheer/Downloads/Repo/tronxo/dashboard/output"
+SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
+OUT_DIR = os.path.join(SCRIPT_DIR, "output")
 
 with open(f"{OUT_DIR}/dashboard_data.json") as f:
     D = json.load(f)
