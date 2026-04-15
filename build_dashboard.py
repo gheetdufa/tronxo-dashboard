@@ -788,11 +788,6 @@ for path in (out_html, index_out):
     with open(path, "w", encoding="utf-8") as f:
         f.write(HTML)
 
-# Repo-root index (optional local mirror for branch / root deploys)
-index_html = os.path.join(SCRIPT_DIR, "index.html")
-with open(index_html, "w", encoding="utf-8") as f:
-    f.write(HTML)
-
 print(f"Dashboard saved to {out_html} and {index_out}")
-print(f"GitHub Pages entry: {index_out}")
+print(f"GitHub Pages entry: {index_out} (use build_dashboard_v2.py for repo-root index.html)")
 print(f"File size: {os.path.getsize(out_html) / 1024:.0f} KB")
