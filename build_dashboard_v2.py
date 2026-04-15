@@ -1093,8 +1093,9 @@ renderSection('overview');
 </html>
 """
 
-with open(f"{OUT_DIR}/dashboard.html","w",encoding="utf-8") as f:
-    f.write(HTML)
+for _name in ("index.html", "dashboard.html"):
+    with open(f"{OUT_DIR}/{_name}", "w", encoding="utf-8") as f:
+        f.write(HTML)
 
-sz = os.path.getsize(f"{OUT_DIR}/dashboard.html")
-print(f"Dashboard v2 saved — {sz/1024:.0f} KB")
+sz = os.path.getsize(f"{OUT_DIR}/index.html")
+print(f"Dashboard v2 saved — {sz/1024:.0f} KB (index.html + dashboard.html)")

@@ -783,14 +783,16 @@ renderSection('overview');
 """
 
 out_html = os.path.join(OUT_DIR, "dashboard.html")
-with open(out_html, "w", encoding="utf-8") as f:
-    f.write(HTML)
+index_out = os.path.join(OUT_DIR, "index.html")
+for path in (out_html, index_out):
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(HTML)
 
-# Root index.html for GitHub Pages (branch deploy: / root)
+# Repo-root index (optional local mirror for branch / root deploys)
 index_html = os.path.join(SCRIPT_DIR, "index.html")
 with open(index_html, "w", encoding="utf-8") as f:
     f.write(HTML)
 
-print(f"Dashboard saved to {out_html}")
-print(f"GitHub Pages entry: {index_html}")
+print(f"Dashboard saved to {out_html} and {index_out}")
+print(f"GitHub Pages entry: {index_out}")
 print(f"File size: {os.path.getsize(out_html) / 1024:.0f} KB")
