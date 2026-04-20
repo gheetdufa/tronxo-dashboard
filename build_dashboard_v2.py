@@ -510,6 +510,17 @@ tbody tr:hover{background:#e8f0fe}
       </div>
     </div>
     <div class="card">
+      <div class="card-title">Exception Type Breakdown by Supplier (Top 20 by Volume)</div>
+      <div class="card-sub">Each bar is a supplier; segments show which exception types make up their workload — hover for counts</div>
+      <div id="chart-vendor-breakdown" style="height:580px"></div>
+      <div class="interp">
+        Suppliers with large <strong>Exc 1 (Process PO Invoice)</strong> segments are primarily affected by the system artefact — their real workload
+        may be lower than the bar suggests. Focus remediation effort on suppliers with significant
+        <strong>Exc 151 (Missing Indexing)</strong>, <strong>Exc 29 (Missing Info)</strong>, <strong>Exc 75 (Price Discrepancy)</strong>,
+        or <strong>Exc 38 (Freight)</strong> segments, as those represent genuine data quality or configuration gaps.
+      </div>
+    </div>
+    <div class="card">
       <div class="card-title">Top 20 Vendors by Exception Intensity (Avg Exceptions/Invoice, min 10 invoices)</div>
       <div id="chart-vendor-int" style="height:400px"></div>
     </div>
@@ -996,6 +1007,28 @@ function renderSection(sec){
        hovertemplate:'<b>%{y}</b><br>Avg exc/inv: %{x}<br>Invoices: %{customdata[0]}<br>Total events: %{customdata[1]}<extra></extra>'}
     ],{...ly,margin:{l:260,r:60,t:20,b:50},xaxis:{title:'Avg Exceptions per Invoice'},yaxis:{autorange:'reversed'}},{responsive:true});
     buildTable('tbody-vendors',vt,['Supplier','Name 1','Unique_Invoices','Exception_Events','Avg_Exc_Per_Inv']);
+
+    // ── Stacked exception breakdown per supplier ──
+    const ved=E.vendor_exc_detail;
+    const top20=vt.slice(0,20);
+    const top20Sups=top20.map(r=>r.Supplier);
+    const vbNames=top20.map(r=>r['Name 1'].length>35?r['Name 1'].substring(0,35)+'…':r['Name 1']);
+    // Rank exception IDs by total count across these vendors
+    const excTot={};
+    ved.forEach(r=>{excTot[r['Exception ID']]=(excTot[r['Exception ID']]||0)+r.Count;});
+    const topEids=Object.entries(excTot).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([id])=>+id);
+    const excDesc={};
+    ved.forEach(r=>{excDesc[r['Exception ID']]=r['Exception description'].substring(0,35);});
+    const vbTraces=topEids.map((eid,i)=>({
+      name:`${eid} – ${excDesc[eid]||''}`,
+      x:top20Sups.map(sup=>{const row=ved.find(r=>r.Supplier===sup&&r['Exception ID']===eid);return row?row.Count:0;}),
+      y:vbNames,type:'bar',orientation:'h',marker:{color:PAL[i%PAL.length]},
+      hovertemplate:`<b>%{y}</b><br>Exc ${eid}: %{x}<extra></extra>`
+    }));
+    Plotly.newPlot('chart-vendor-breakdown',vbTraces,{...ly,barmode:'stack',
+      margin:{l:260,r:60,t:20,b:120},
+      xaxis:{title:'Exception Events'},yaxis:{autorange:'reversed'},
+      legend:{orientation:'h',x:0,y:-0.22,font:{size:10}}},{responsive:true});
   }
 
   // ── CATEGORY ──

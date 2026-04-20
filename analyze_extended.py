@@ -196,7 +196,30 @@ print("\n=== Exception 29 ===")
 print(e29_cat.to_string(index=False))
 
 # ═══════════════════════════════════════════════════════
-# 4. COUPA + SERVICE deep dive
+# 4. VENDOR × EXCEPTION BREAKDOWN (stacked bar chart data)
+# ═══════════════════════════════════════════════════════
+top20_suppliers = (
+    sorted_posted.groupby(["Supplier", "Name 1"])
+    .size()
+    .sort_values(ascending=False)
+    .head(20)
+    .reset_index()["Supplier"]
+    .tolist()
+)
+
+vendor_exc_detail = (
+    sorted_posted[sorted_posted["Supplier"].isin(top20_suppliers)]
+    .groupby(["Supplier", "Name 1", "Exception ID", "Exception description"])
+    .size()
+    .reset_index(name="Count")
+    .sort_values(["Supplier", "Count"], ascending=[True, False])
+)
+
+print("\n=== Vendor × Exception Breakdown (top 20 vendors) ===")
+print(f"Rows: {len(vendor_exc_detail)}")
+
+# ═══════════════════════════════════════════════════════
+# 5. COUPA + SERVICE deep dive
 # ═══════════════════════════════════════════════════════
 coupa_svc = all_inv[(all_inv["Channel ID"]=="COUPA") & (all_inv["PO category decription"]=="Service")]
 coupa_std = all_inv[(all_inv["Channel ID"]=="COUPA") & (all_inv["PO category decription"]=="Standard")]
@@ -286,6 +309,8 @@ extended = {
     "coupa_svc_pass_exc": exc_on_cs_pass.to_dict(orient="records"),
     "coupa_std_fail_exc": exc_on_cstd_fail.to_dict(orient="records"),
     "coupa_monthly": coupa_monthly.to_dict(orient="records"),
+    # Vendor × exception breakdown
+    "vendor_exc_detail": vendor_exc_detail.to_dict(orient="records"),
     "coupa_svc_total": int(len(coupa_svc)),
     "coupa_svc_fp": int(coupa_svc["First_Pass"].sum()),
     "coupa_svc_fp_rate": round(float(coupa_svc["First_Pass"].mean()*100), 1),

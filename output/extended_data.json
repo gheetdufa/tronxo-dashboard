@@ -1581,6 +1581,1058 @@
       "FP_Rate": 28.6
     }
   ],
+  "vendor_exc_detail": [
+    {
+      "Supplier": "51002585",
+      "Name 1": "AMERICAN CONTROLS TECHNOLOGY INC",
+      "Exception ID": 38,
+      "Exception description": "Freight on Invoice (PO)",
+      "Count": 66
+    },
+    {
+      "Supplier": "51002585",
+      "Name 1": "AMERICAN CONTROLS TECHNOLOGY INC",
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 44
+    },
+    {
+      "Supplier": "51002585",
+      "Name 1": "AMERICAN CONTROLS TECHNOLOGY INC",
+      "Exception ID": 75,
+      "Exception description": "LIV - Price Discrepancy",
+      "Count": 19
+    },
+    {
+      "Supplier": "51002585",
+      "Name 1": "AMERICAN CONTROLS TECHNOLOGY INC",
+      "Exception ID": 82,
+      "Exception description": "Header Block",
+      "Count": 11
+    },
+    {
+      "Supplier": "51002585",
+      "Name 1": "AMERICAN CONTROLS TECHNOLOGY INC",
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 7
+    },
+    {
+      "Supplier": "51002585",
+      "Name 1": "AMERICAN CONTROLS TECHNOLOGY INC",
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 2
+    },
+    {
+      "Supplier": "51003869",
+      "Name 1": "SOUTHERN IONICS INCORPORATED",
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 520
+    },
+    {
+      "Supplier": "51003869",
+      "Name 1": "SOUTHERN IONICS INCORPORATED",
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 367
+    },
+    {
+      "Supplier": "51003869",
+      "Name 1": "SOUTHERN IONICS INCORPORATED",
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 140
+    },
+    {
+      "Supplier": "51003869",
+      "Name 1": "SOUTHERN IONICS INCORPORATED",
+      "Exception ID": 82,
+      "Exception description": "Header Block",
+      "Count": 11
+    },
+    {
+      "Supplier": "51003869",
+      "Name 1": "SOUTHERN IONICS INCORPORATED",
+      "Exception ID": 75,
+      "Exception description": "LIV - Price Discrepancy",
+      "Count": 10
+    },
+    {
+      "Supplier": "51003869",
+      "Name 1": "SOUTHERN IONICS INCORPORATED",
+      "Exception ID": 6,
+      "Exception description": "Suspected Duplicate (PO)",
+      "Count": 4
+    },
+    {
+      "Supplier": "51003869",
+      "Name 1": "SOUTHERN IONICS INCORPORATED",
+      "Exception ID": 34,
+      "Exception description": "Vendor Mismatch (PO)",
+      "Count": 3
+    },
+    {
+      "Supplier": "51003869",
+      "Name 1": "SOUTHERN IONICS INCORPORATED",
+      "Exception ID": 76,
+      "Exception description": "LIV - Quantity Discrepancy",
+      "Count": 3
+    },
+    {
+      "Supplier": "51003869",
+      "Name 1": "SOUTHERN IONICS INCORPORATED",
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 2
+    },
+    {
+      "Supplier": "51003869",
+      "Name 1": "SOUTHERN IONICS INCORPORATED",
+      "Exception ID": 271,
+      "Exception description": "Validate Accounting Data (NPO)",
+      "Count": 1
+    },
+    {
+      "Supplier": "51003907",
+      "Name 1": "LHOIST NORTH AMERICA OF ALABAMA",
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 71
+    },
+    {
+      "Supplier": "51003907",
+      "Name 1": "LHOIST NORTH AMERICA OF ALABAMA",
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 65
+    },
+    {
+      "Supplier": "51003907",
+      "Name 1": "LHOIST NORTH AMERICA OF ALABAMA",
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 17
+    },
+    {
+      "Supplier": "51003907",
+      "Name 1": "LHOIST NORTH AMERICA OF ALABAMA",
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 4
+    },
+    {
+      "Supplier": "51003907",
+      "Name 1": "LHOIST NORTH AMERICA OF ALABAMA",
+      "Exception ID": 75,
+      "Exception description": "LIV - Price Discrepancy",
+      "Count": 1
+    },
+    {
+      "Supplier": "51003907",
+      "Name 1": "LHOIST NORTH AMERICA OF ALABAMA",
+      "Exception ID": 82,
+      "Exception description": "Header Block",
+      "Count": 1
+    },
+    {
+      "Supplier": "51003926",
+      "Name 1": "MSC INDUSTRIAL SUPPLY CO INC",
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 58
+    },
+    {
+      "Supplier": "51003926",
+      "Name 1": "MSC INDUSTRIAL SUPPLY CO INC",
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 55
+    },
+    {
+      "Supplier": "51003926",
+      "Name 1": "MSC INDUSTRIAL SUPPLY CO INC",
+      "Exception ID": 38,
+      "Exception description": "Freight on Invoice (PO)",
+      "Count": 50
+    },
+    {
+      "Supplier": "51003926",
+      "Name 1": "MSC INDUSTRIAL SUPPLY CO INC",
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 37
+    },
+    {
+      "Supplier": "51003926",
+      "Name 1": "MSC INDUSTRIAL SUPPLY CO INC",
+      "Exception ID": 34,
+      "Exception description": "Vendor Mismatch (PO)",
+      "Count": 15
+    },
+    {
+      "Supplier": "51003926",
+      "Name 1": "MSC INDUSTRIAL SUPPLY CO INC",
+      "Exception ID": 75,
+      "Exception description": "LIV - Price Discrepancy",
+      "Count": 14
+    },
+    {
+      "Supplier": "51003926",
+      "Name 1": "MSC INDUSTRIAL SUPPLY CO INC",
+      "Exception ID": 82,
+      "Exception description": "Header Block",
+      "Count": 14
+    },
+    {
+      "Supplier": "51003926",
+      "Name 1": "MSC INDUSTRIAL SUPPLY CO INC",
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 13
+    },
+    {
+      "Supplier": "51003926",
+      "Name 1": "MSC INDUSTRIAL SUPPLY CO INC",
+      "Exception ID": 3,
+      "Exception description": "Invalid Vendor (PO)",
+      "Count": 1
+    },
+    {
+      "Supplier": "51003926",
+      "Name 1": "MSC INDUSTRIAL SUPPLY CO INC",
+      "Exception ID": 6,
+      "Exception description": "Suspected Duplicate (PO)",
+      "Count": 1
+    },
+    {
+      "Supplier": "51003926",
+      "Name 1": "MSC INDUSTRIAL SUPPLY CO INC",
+      "Exception ID": 85,
+      "Exception description": "Company Code Mismatch(PO)",
+      "Count": 1
+    },
+    {
+      "Supplier": "51003931",
+      "Name 1": "GULF COAST MARINE SUPPLY CO INC",
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 85
+    },
+    {
+      "Supplier": "51003931",
+      "Name 1": "GULF COAST MARINE SUPPLY CO INC",
+      "Exception ID": 75,
+      "Exception description": "LIV - Price Discrepancy",
+      "Count": 44
+    },
+    {
+      "Supplier": "51003931",
+      "Name 1": "GULF COAST MARINE SUPPLY CO INC",
+      "Exception ID": 82,
+      "Exception description": "Header Block",
+      "Count": 39
+    },
+    {
+      "Supplier": "51003931",
+      "Name 1": "GULF COAST MARINE SUPPLY CO INC",
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 8
+    },
+    {
+      "Supplier": "51003931",
+      "Name 1": "GULF COAST MARINE SUPPLY CO INC",
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 8
+    },
+    {
+      "Supplier": "51003931",
+      "Name 1": "GULF COAST MARINE SUPPLY CO INC",
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 5
+    },
+    {
+      "Supplier": "51003931",
+      "Name 1": "GULF COAST MARINE SUPPLY CO INC",
+      "Exception ID": 85,
+      "Exception description": "Company Code Mismatch(PO)",
+      "Count": 2
+    },
+    {
+      "Supplier": "51003955",
+      "Name 1": "TERRA FIRST",
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 305
+    },
+    {
+      "Supplier": "51003955",
+      "Name 1": "TERRA FIRST",
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 49
+    },
+    {
+      "Supplier": "51003955",
+      "Name 1": "TERRA FIRST",
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 31
+    },
+    {
+      "Supplier": "51003955",
+      "Name 1": "TERRA FIRST",
+      "Exception ID": 75,
+      "Exception description": "LIV - Price Discrepancy",
+      "Count": 26
+    },
+    {
+      "Supplier": "51003955",
+      "Name 1": "TERRA FIRST",
+      "Exception ID": 82,
+      "Exception description": "Header Block",
+      "Count": 14
+    },
+    {
+      "Supplier": "51004029",
+      "Name 1": "PPG INDUSTRIES INC",
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 142
+    },
+    {
+      "Supplier": "51004029",
+      "Name 1": "PPG INDUSTRIES INC",
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 141
+    },
+    {
+      "Supplier": "51004029",
+      "Name 1": "PPG INDUSTRIES INC",
+      "Exception ID": 75,
+      "Exception description": "LIV - Price Discrepancy",
+      "Count": 47
+    },
+    {
+      "Supplier": "51004029",
+      "Name 1": "PPG INDUSTRIES INC",
+      "Exception ID": 82,
+      "Exception description": "Header Block",
+      "Count": 41
+    },
+    {
+      "Supplier": "51004029",
+      "Name 1": "PPG INDUSTRIES INC",
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 9
+    },
+    {
+      "Supplier": "51004029",
+      "Name 1": "PPG INDUSTRIES INC",
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 7
+    },
+    {
+      "Supplier": "51004305",
+      "Name 1": "YAZOO RIVER TOWING INC",
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 81
+    },
+    {
+      "Supplier": "51004305",
+      "Name 1": "YAZOO RIVER TOWING INC",
+      "Exception ID": 75,
+      "Exception description": "LIV - Price Discrepancy",
+      "Count": 45
+    },
+    {
+      "Supplier": "51004305",
+      "Name 1": "YAZOO RIVER TOWING INC",
+      "Exception ID": 82,
+      "Exception description": "Header Block",
+      "Count": 43
+    },
+    {
+      "Supplier": "51004305",
+      "Name 1": "YAZOO RIVER TOWING INC",
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 26
+    },
+    {
+      "Supplier": "51004305",
+      "Name 1": "YAZOO RIVER TOWING INC",
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 12
+    },
+    {
+      "Supplier": "51004305",
+      "Name 1": "YAZOO RIVER TOWING INC",
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 2
+    },
+    {
+      "Supplier": "51004305",
+      "Name 1": "YAZOO RIVER TOWING INC",
+      "Exception ID": 902,
+      "Exception description": "Invalid Company Code (PO)",
+      "Count": 2
+    },
+    {
+      "Supplier": "51004490",
+      "Name 1": "COLUMBUS RUBBER & GASKET CO INC",
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 176
+    },
+    {
+      "Supplier": "51004490",
+      "Name 1": "COLUMBUS RUBBER & GASKET CO INC",
+      "Exception ID": 75,
+      "Exception description": "LIV - Price Discrepancy",
+      "Count": 55
+    },
+    {
+      "Supplier": "51004490",
+      "Name 1": "COLUMBUS RUBBER & GASKET CO INC",
+      "Exception ID": 38,
+      "Exception description": "Freight on Invoice (PO)",
+      "Count": 48
+    },
+    {
+      "Supplier": "51004490",
+      "Name 1": "COLUMBUS RUBBER & GASKET CO INC",
+      "Exception ID": 82,
+      "Exception description": "Header Block",
+      "Count": 47
+    },
+    {
+      "Supplier": "51004490",
+      "Name 1": "COLUMBUS RUBBER & GASKET CO INC",
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 26
+    },
+    {
+      "Supplier": "51004490",
+      "Name 1": "COLUMBUS RUBBER & GASKET CO INC",
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 15
+    },
+    {
+      "Supplier": "51004490",
+      "Name 1": "COLUMBUS RUBBER & GASKET CO INC",
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 11
+    },
+    {
+      "Supplier": "51004490",
+      "Name 1": "COLUMBUS RUBBER & GASKET CO INC",
+      "Exception ID": 6,
+      "Exception description": "Suspected Duplicate (PO)",
+      "Count": 7
+    },
+    {
+      "Supplier": "51004490",
+      "Name 1": "COLUMBUS RUBBER & GASKET CO INC",
+      "Exception ID": 85,
+      "Exception description": "Company Code Mismatch(PO)",
+      "Count": 1
+    },
+    {
+      "Supplier": "51004495",
+      "Name 1": "HARCROS CHEMICALS INC",
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 83
+    },
+    {
+      "Supplier": "51004495",
+      "Name 1": "HARCROS CHEMICALS INC",
+      "Exception ID": 75,
+      "Exception description": "LIV - Price Discrepancy",
+      "Count": 45
+    },
+    {
+      "Supplier": "51004495",
+      "Name 1": "HARCROS CHEMICALS INC",
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 23
+    },
+    {
+      "Supplier": "51004495",
+      "Name 1": "HARCROS CHEMICALS INC",
+      "Exception ID": 82,
+      "Exception description": "Header Block",
+      "Count": 21
+    },
+    {
+      "Supplier": "51004495",
+      "Name 1": "HARCROS CHEMICALS INC",
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 16
+    },
+    {
+      "Supplier": "51004495",
+      "Name 1": "HARCROS CHEMICALS INC",
+      "Exception ID": 6,
+      "Exception description": "Suspected Duplicate (PO)",
+      "Count": 3
+    },
+    {
+      "Supplier": "51004495",
+      "Name 1": "HARCROS CHEMICALS INC",
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 2
+    },
+    {
+      "Supplier": "51004495",
+      "Name 1": "HARCROS CHEMICALS INC",
+      "Exception ID": 34,
+      "Exception description": "Vendor Mismatch (PO)",
+      "Count": 1
+    },
+    {
+      "Supplier": "51004553",
+      "Name 1": "MOTION INDUSTRIES INC",
+      "Exception ID": 38,
+      "Exception description": "Freight on Invoice (PO)",
+      "Count": 183
+    },
+    {
+      "Supplier": "51004553",
+      "Name 1": "MOTION INDUSTRIES INC",
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 133
+    },
+    {
+      "Supplier": "51004553",
+      "Name 1": "MOTION INDUSTRIES INC",
+      "Exception ID": 75,
+      "Exception description": "LIV - Price Discrepancy",
+      "Count": 40
+    },
+    {
+      "Supplier": "51004553",
+      "Name 1": "MOTION INDUSTRIES INC",
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 33
+    },
+    {
+      "Supplier": "51004553",
+      "Name 1": "MOTION INDUSTRIES INC",
+      "Exception ID": 82,
+      "Exception description": "Header Block",
+      "Count": 26
+    },
+    {
+      "Supplier": "51004553",
+      "Name 1": "MOTION INDUSTRIES INC",
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 19
+    },
+    {
+      "Supplier": "51004553",
+      "Name 1": "MOTION INDUSTRIES INC",
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 4
+    },
+    {
+      "Supplier": "51004553",
+      "Name 1": "MOTION INDUSTRIES INC",
+      "Exception ID": 37,
+      "Exception description": "Unit of Measure Mismatch (PO)",
+      "Count": 3
+    },
+    {
+      "Supplier": "51004569",
+      "Name 1": "MARATHON PETROLEUM COMPANY LP",
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 55
+    },
+    {
+      "Supplier": "51004569",
+      "Name 1": "MARATHON PETROLEUM COMPANY LP",
+      "Exception ID": 82,
+      "Exception description": "Header Block",
+      "Count": 26
+    },
+    {
+      "Supplier": "51004569",
+      "Name 1": "MARATHON PETROLEUM COMPANY LP",
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 26
+    },
+    {
+      "Supplier": "51004569",
+      "Name 1": "MARATHON PETROLEUM COMPANY LP",
+      "Exception ID": 75,
+      "Exception description": "LIV - Price Discrepancy",
+      "Count": 24
+    },
+    {
+      "Supplier": "51004569",
+      "Name 1": "MARATHON PETROLEUM COMPANY LP",
+      "Exception ID": 930,
+      "Exception description": "Process Down Payment Request (PO)",
+      "Count": 11
+    },
+    {
+      "Supplier": "51004569",
+      "Name 1": "MARATHON PETROLEUM COMPANY LP",
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 10
+    },
+    {
+      "Supplier": "51004569",
+      "Name 1": "MARATHON PETROLEUM COMPANY LP",
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 6
+    },
+    {
+      "Supplier": "51004569",
+      "Name 1": "MARATHON PETROLEUM COMPANY LP",
+      "Exception ID": 416,
+      "Exception description": "Down Payment Clearing (PO)",
+      "Count": 3
+    },
+    {
+      "Supplier": "51004569",
+      "Name 1": "MARATHON PETROLEUM COMPANY LP",
+      "Exception ID": 38,
+      "Exception description": "Freight on Invoice (PO)",
+      "Count": 2
+    },
+    {
+      "Supplier": "51004569",
+      "Name 1": "MARATHON PETROLEUM COMPANY LP",
+      "Exception ID": 6,
+      "Exception description": "Suspected Duplicate (PO)",
+      "Count": 1
+    },
+    {
+      "Supplier": "51004569",
+      "Name 1": "MARATHON PETROLEUM COMPANY LP",
+      "Exception ID": 34,
+      "Exception description": "Vendor Mismatch (PO)",
+      "Count": 1
+    },
+    {
+      "Supplier": "51004569",
+      "Name 1": "MARATHON PETROLEUM COMPANY LP",
+      "Exception ID": 85,
+      "Exception description": "Company Code Mismatch(PO)",
+      "Count": 1
+    },
+    {
+      "Supplier": "51004581",
+      "Name 1": "THOMPSONS WELDING SERVICES INC",
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 94
+    },
+    {
+      "Supplier": "51004581",
+      "Name 1": "THOMPSONS WELDING SERVICES INC",
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 70
+    },
+    {
+      "Supplier": "51004581",
+      "Name 1": "THOMPSONS WELDING SERVICES INC",
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 54
+    },
+    {
+      "Supplier": "51004581",
+      "Name 1": "THOMPSONS WELDING SERVICES INC",
+      "Exception ID": 37,
+      "Exception description": "Unit of Measure Mismatch (PO)",
+      "Count": 37
+    },
+    {
+      "Supplier": "51004581",
+      "Name 1": "THOMPSONS WELDING SERVICES INC",
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 26
+    },
+    {
+      "Supplier": "51004581",
+      "Name 1": "THOMPSONS WELDING SERVICES INC",
+      "Exception ID": 34,
+      "Exception description": "Vendor Mismatch (PO)",
+      "Count": 9
+    },
+    {
+      "Supplier": "51004581",
+      "Name 1": "THOMPSONS WELDING SERVICES INC",
+      "Exception ID": 85,
+      "Exception description": "Company Code Mismatch(PO)",
+      "Count": 6
+    },
+    {
+      "Supplier": "51004581",
+      "Name 1": "THOMPSONS WELDING SERVICES INC",
+      "Exception ID": 6,
+      "Exception description": "Suspected Duplicate (PO)",
+      "Count": 1
+    },
+    {
+      "Supplier": "51004598",
+      "Name 1": "AIRGAS CARBONICS INC",
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 105
+    },
+    {
+      "Supplier": "51004598",
+      "Name 1": "AIRGAS CARBONICS INC",
+      "Exception ID": 75,
+      "Exception description": "LIV - Price Discrepancy",
+      "Count": 26
+    },
+    {
+      "Supplier": "51004598",
+      "Name 1": "AIRGAS CARBONICS INC",
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 15
+    },
+    {
+      "Supplier": "51004598",
+      "Name 1": "AIRGAS CARBONICS INC",
+      "Exception ID": 82,
+      "Exception description": "Header Block",
+      "Count": 15
+    },
+    {
+      "Supplier": "51004598",
+      "Name 1": "AIRGAS CARBONICS INC",
+      "Exception ID": 34,
+      "Exception description": "Vendor Mismatch (PO)",
+      "Count": 7
+    },
+    {
+      "Supplier": "51004598",
+      "Name 1": "AIRGAS CARBONICS INC",
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 6
+    },
+    {
+      "Supplier": "51004598",
+      "Name 1": "AIRGAS CARBONICS INC",
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 4
+    },
+    {
+      "Supplier": "51004601",
+      "Name 1": "MEWCO, INC",
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 172
+    },
+    {
+      "Supplier": "51004601",
+      "Name 1": "MEWCO, INC",
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 25
+    },
+    {
+      "Supplier": "51004601",
+      "Name 1": "MEWCO, INC",
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 22
+    },
+    {
+      "Supplier": "51004601",
+      "Name 1": "MEWCO, INC",
+      "Exception ID": 37,
+      "Exception description": "Unit of Measure Mismatch (PO)",
+      "Count": 10
+    },
+    {
+      "Supplier": "51004601",
+      "Name 1": "MEWCO, INC",
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 2
+    },
+    {
+      "Supplier": "51004601",
+      "Name 1": "MEWCO, INC",
+      "Exception ID": 902,
+      "Exception description": "Invalid Company Code (PO)",
+      "Count": 1
+    },
+    {
+      "Supplier": "51004610",
+      "Name 1": "CARMEUSE LIME AND STONE INC",
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 268
+    },
+    {
+      "Supplier": "51004610",
+      "Name 1": "CARMEUSE LIME AND STONE INC",
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 42
+    },
+    {
+      "Supplier": "51004610",
+      "Name 1": "CARMEUSE LIME AND STONE INC",
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 11
+    },
+    {
+      "Supplier": "51004610",
+      "Name 1": "CARMEUSE LIME AND STONE INC",
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 9
+    },
+    {
+      "Supplier": "51004610",
+      "Name 1": "CARMEUSE LIME AND STONE INC",
+      "Exception ID": 6,
+      "Exception description": "Suspected Duplicate (PO)",
+      "Count": 1
+    },
+    {
+      "Supplier": "51004671",
+      "Name 1": "SOUTHERN INDUSTRIAL SUPPLY LLC",
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 75
+    },
+    {
+      "Supplier": "51004671",
+      "Name 1": "SOUTHERN INDUSTRIAL SUPPLY LLC",
+      "Exception ID": 75,
+      "Exception description": "LIV - Price Discrepancy",
+      "Count": 23
+    },
+    {
+      "Supplier": "51004671",
+      "Name 1": "SOUTHERN INDUSTRIAL SUPPLY LLC",
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 13
+    },
+    {
+      "Supplier": "51004671",
+      "Name 1": "SOUTHERN INDUSTRIAL SUPPLY LLC",
+      "Exception ID": 82,
+      "Exception description": "Header Block",
+      "Count": 12
+    },
+    {
+      "Supplier": "51004671",
+      "Name 1": "SOUTHERN INDUSTRIAL SUPPLY LLC",
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 7
+    },
+    {
+      "Supplier": "51004671",
+      "Name 1": "SOUTHERN INDUSTRIAL SUPPLY LLC",
+      "Exception ID": 38,
+      "Exception description": "Freight on Invoice (PO)",
+      "Count": 5
+    },
+    {
+      "Supplier": "51004671",
+      "Name 1": "SOUTHERN INDUSTRIAL SUPPLY LLC",
+      "Exception ID": 85,
+      "Exception description": "Company Code Mismatch(PO)",
+      "Count": 1
+    },
+    {
+      "Supplier": "51004749",
+      "Name 1": "APACHE INDUSTRIAL SERVICES INC",
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 128
+    },
+    {
+      "Supplier": "51004749",
+      "Name 1": "APACHE INDUSTRIAL SERVICES INC",
+      "Exception ID": 37,
+      "Exception description": "Unit of Measure Mismatch (PO)",
+      "Count": 63
+    },
+    {
+      "Supplier": "51004749",
+      "Name 1": "APACHE INDUSTRIAL SERVICES INC",
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 28
+    },
+    {
+      "Supplier": "51004749",
+      "Name 1": "APACHE INDUSTRIAL SERVICES INC",
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 17
+    },
+    {
+      "Supplier": "51004749",
+      "Name 1": "APACHE INDUSTRIAL SERVICES INC",
+      "Exception ID": 85,
+      "Exception description": "Company Code Mismatch(PO)",
+      "Count": 15
+    },
+    {
+      "Supplier": "51004749",
+      "Name 1": "APACHE INDUSTRIAL SERVICES INC",
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 9
+    },
+    {
+      "Supplier": "51004749",
+      "Name 1": "APACHE INDUSTRIAL SERVICES INC",
+      "Exception ID": 34,
+      "Exception description": "Vendor Mismatch (PO)",
+      "Count": 2
+    },
+    {
+      "Supplier": "51004749",
+      "Name 1": "APACHE INDUSTRIAL SERVICES INC",
+      "Exception ID": 6,
+      "Exception description": "Suspected Duplicate (PO)",
+      "Count": 1
+    },
+    {
+      "Supplier": "51004809",
+      "Name 1": "FISHER SCIENTIFIC COMPANY LLC",
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 55
+    },
+    {
+      "Supplier": "51004809",
+      "Name 1": "FISHER SCIENTIFIC COMPANY LLC",
+      "Exception ID": 75,
+      "Exception description": "LIV - Price Discrepancy",
+      "Count": 35
+    },
+    {
+      "Supplier": "51004809",
+      "Name 1": "FISHER SCIENTIFIC COMPANY LLC",
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 30
+    },
+    {
+      "Supplier": "51004809",
+      "Name 1": "FISHER SCIENTIFIC COMPANY LLC",
+      "Exception ID": 82,
+      "Exception description": "Header Block",
+      "Count": 29
+    },
+    {
+      "Supplier": "51004809",
+      "Name 1": "FISHER SCIENTIFIC COMPANY LLC",
+      "Exception ID": 38,
+      "Exception description": "Freight on Invoice (PO)",
+      "Count": 17
+    },
+    {
+      "Supplier": "51004809",
+      "Name 1": "FISHER SCIENTIFIC COMPANY LLC",
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 16
+    },
+    {
+      "Supplier": "51004809",
+      "Name 1": "FISHER SCIENTIFIC COMPANY LLC",
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 12
+    },
+    {
+      "Supplier": "51004809",
+      "Name 1": "FISHER SCIENTIFIC COMPANY LLC",
+      "Exception ID": 6,
+      "Exception description": "Suspected Duplicate (PO)",
+      "Count": 1
+    },
+    {
+      "Supplier": "51004873",
+      "Name 1": "EVANS PLUMBING AND AC INC",
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 123
+    },
+    {
+      "Supplier": "51004873",
+      "Name 1": "EVANS PLUMBING AND AC INC",
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 25
+    },
+    {
+      "Supplier": "51004873",
+      "Name 1": "EVANS PLUMBING AND AC INC",
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 7
+    },
+    {
+      "Supplier": "51004873",
+      "Name 1": "EVANS PLUMBING AND AC INC",
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 6
+    },
+    {
+      "Supplier": "51004873",
+      "Name 1": "EVANS PLUMBING AND AC INC",
+      "Exception ID": 6,
+      "Exception description": "Suspected Duplicate (PO)",
+      "Count": 1
+    },
+    {
+      "Supplier": "51004873",
+      "Name 1": "EVANS PLUMBING AND AC INC",
+      "Exception ID": 85,
+      "Exception description": "Company Code Mismatch(PO)",
+      "Count": 1
+    }
+  ],
   "coupa_svc_total": 530,
   "coupa_svc_fp": 442,
   "coupa_svc_fp_rate": 83.4,
