@@ -33,6 +33,14 @@ with open(f"{OUT_DIR}/dashboard_data.json") as f:
 with open(f"{OUT_DIR}/extended_data.json") as f:
     E = json.load(f)
 
+# Exclude specific vendors from all charts (source data files unchanged)
+_EXCLUDE = {"SOUTHERN IONICS INCORPORATED", "TERRA FIRST"}
+def _drop(lst): return [r for r in lst if r.get("Name 1", "").upper().strip() not in _EXCLUDE]
+D["vendor_top30"]  = _drop(D.get("vendor_top30", []))
+E["e91_vendors"]   = _drop(E.get("e91_vendors", []))
+E["e151_vendors"]  = _drop(E.get("e151_vendors", []))
+E["e29_vendors"]   = _drop(E.get("e29_vendors", []))
+
 DATA_JS = json.dumps(D, default=str)
 EXT_JS  = json.dumps(E, default=str)
 
@@ -169,6 +177,7 @@ tbody tr:hover{background:#e8f0fe}
     <div class="nav-group">Overview</div>
     <a href="#" class="active" data-sec="overview">&#9632; KPIs &amp; Summary</a>
     <a href="#" data-sec="exc-freq">&#9632; Exception Frequency</a>
+    <a href="#" data-sec="key-exc">&#9632; Key Exceptions Focus</a>
     <div class="nav-group">Exception Deep Dives</div>
     <a href="#" data-sec="exc91">&#9632; Exc 91 — GR Not Done</a>
     <a href="#" data-sec="exc151">&#9632; Exc 151 — Missing Indexing</a>
@@ -181,11 +190,11 @@ tbody tr:hover{background:#e8f0fe}
     <a href="#" data-sec="channel">&#9632; Ingestion Method</a>
     <a href="#" data-sec="trends">&#9632; Monthly Trends</a>
     <div class="nav-group">Workload</div>
-    <a href="#" data-sec="combos">&#9632; Exception Combinations</a>
+    <a href="#" data-sec="mail-coupa">&#9632; MAIL vs COUPA</a>
     <a href="#" data-sec="workload">&#9632; AP Workload Concentration</a>
     <a href="#" data-sec="dq">&#9632; Data Quality Notes</a>
   </nav>
-  <div class="footer-note">S4 AP Audit · 1100 · FY2025–2026<br/>Transport vendors excl · NB &amp; ZCP only<br/>Build <span id="dash-build-id">__BUILD_ID__</span></div>
+  <div class="footer-note">S4 AP Audit · 1100 · FY2025–2026<br/>16,580 invoices · Posted + Regular<br/>Build <span id="dash-build-id">__BUILD_ID__</span></div>
 </nav>
 
 <main id="main">
@@ -199,7 +208,7 @@ tbody tr:hover{background:#e8f0fe}
       <div class="stat-box"><div class="sv" id="inv-kpi">–</div><div class="sl">Total Invoices Analysed</div></div>
       <div class="stat-box"><div class="sv" id="exc-kpi">–</div><div class="sl">Total Exception Events</div></div>
       <div class="stat-box amber"><div class="sv" id="vend-kpi">–</div><div class="sl">Vendors w/ Exceptions</div></div>
-      <div class="stat-box green"><div class="sv">83.4%</div><div class="sl">COUPA + Service (best performer)</div></div>
+      <div class="stat-box green"><div class="sv">86.2%</div><div class="sl">COUPA + Subcontracting (best performer)</div></div>
     </div>
     <div id="kpi-grid" class="kpi-grid"></div>
     <div class="card">
@@ -207,9 +216,11 @@ tbody tr:hover{background:#e8f0fe}
       <div class="card-sub">Each cell shows the first-pass rate; green ≥ 80%, amber 50–79%, red &lt; 50%</div>
       <div id="chart-cc-heatmap" style="height:320px"></div>
       <div class="interp">
-        <strong>COUPA + Service (83.4%)</strong> is the only channel/category combination that beats the 80% target — a finding that requires careful interpretation
-        (see the dedicated section). Every other combination falls well short, with <strong>MAIL_IES + Standard (18.5%)</strong> being the worst performer
-        and the single largest volume bucket. Fixing MAIL_IES + Standard is the highest-impact lever available.
+        <strong>COUPA + Subcontracting (86.2%)</strong> and <strong>COUPA + Service (83.4%)</strong> both exceed the 80% target —
+        the COUPA channel clearly outperforms MAIL_IES across every category.
+        The weakest performer with meaningful volume is <strong>MAIL_IES + Standard (35.2%)</strong>, which is also the single
+        largest bucket by invoice count (7,195 invoices). Fixing MAIL_IES + Standard is the highest-impact lever available.
+        MAIL_IES carries 84.5% of total invoice volume, so COUPA migration would move the overall rate significantly.
       </div>
     </div>
     <div class="card">
@@ -237,6 +248,52 @@ tbody tr:hover{background:#e8f0fe}
       <div class="tbl-wrap"><table id="tbl-exc-freq">
         <thead><tr><th onclick="sortTable(this)">Exc ID</th><th onclick="sortTable(this)">Description</th><th onclick="sortTable(this)">Count</th><th onclick="sortTable(this)">% of Total</th></tr></thead>
         <tbody id="tbody-exc-freq"></tbody>
+      </table></div>
+    </div>
+  </div>
+
+  <!-- ═══════════════ KEY EXCEPTIONS ═══════════════ -->
+  <div class="section" id="sec-key-exc">
+    <div class="stat-row">
+      <div class="stat-box red"><div class="sv">2,621</div><div class="sl">Exc 151 — largest by volume</div></div>
+      <div class="stat-box amber"><div class="sv">2,552</div><div class="sl">Exc 29 — second largest</div></div>
+      <div class="stat-box"><div class="sv">8,616</div><div class="sl">Total events across 7 exceptions</div></div>
+      <div class="stat-box amber"><div class="sv">64.5%</div><div class="sl">Share of all exception events</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Key Exception Events — Ranked by Volume</div>
+      <div class="card-sub">Exceptions 151, 29, 75, 2, 38, 82, 37 · Exception 37 includes a +6% adjustment · excludes system artefacts (Exc 0, 1, 91)</div>
+      <div id="chart-kexc-bar" style="height:360px"></div>
+      <div class="interp danger">
+        <strong>Exceptions 151 and 29 dominate</strong> — together they account for ~38.7% of all exception events
+        and require manual AP intervention every time they fire. Both are fundamentally solvable: Exc 151
+        via structured invoice submission (COUPA/EDI), Exc 29 via PO data completeness audits.
+      </div>
+    </div>
+    <div class="grid2">
+      <div class="card">
+        <div class="card-title">Relative Share Among 7 Key Exceptions</div>
+        <div id="chart-kexc-pie" style="height:320px"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Exception Events vs Unique Invoices</div>
+        <div class="card-sub">Gap between bars = repeat touches on the same invoice</div>
+        <div id="chart-kexc-inv" style="height:320px"></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Key Exception Detail</div>
+      <div class="tbl-wrap"><table id="tbl-kexc">
+        <thead><tr>
+          <th onclick="sortTable(this)">Exc ID</th>
+          <th onclick="sortTable(this)">Description</th>
+          <th onclick="sortTable(this)">Events</th>
+          <th onclick="sortTable(this)">% of All Exc</th>
+          <th onclick="sortTable(this)">Invoices Affected</th>
+          <th onclick="sortTable(this)">% of Universe</th>
+          <th onclick="sortTable(this)">Avg Events/Inv</th>
+        </tr></thead>
+        <tbody id="tbody-kexc"></tbody>
       </table></div>
     </div>
   </div>
@@ -429,13 +486,13 @@ tbody tr:hover{background:#e8f0fe}
   <div class="section" id="sec-coupa-svc">
     <div class="stat-row">
       <div class="stat-box green"><div class="sv">83.4%</div><div class="sl">COUPA + Service first-pass rate</div></div>
-      <div class="stat-box red"><div class="sv">35.6%</div><div class="sl">COUPA + Standard first-pass rate</div></div>
-      <div class="stat-box amber"><div class="sv">530</div><div class="sl">Total COUPA + Service invoices</div></div>
-      <div class="stat-box"><div class="sv">675</div><div class="sl">Exception 0 events on "passed" invoices</div></div>
+      <div class="stat-box amber"><div class="sv">56.2%</div><div class="sl">COUPA + Standard first-pass rate</div></div>
+      <div class="stat-box amber"><div class="sv">531</div><div class="sl">Total COUPA + Service invoices</div></div>
+      <div class="stat-box green"><div class="sv">86.2%</div><div class="sl">COUPA + Subcontracting (best category)</div></div>
     </div>
 
     <div class="card">
-      <div class="card-title">Why COUPA + Service Exceeds 80% — The Exception 0 Effect</div>
+      <div class="card-title">Why COUPA + Service Achieves 83.4% — The Exception 0 Effect</div>
       <div class="card-sub">Breakdown of exceptions on passed vs failed COUPA+Service invoices</div>
       <div class="grid2">
         <div id="chart-cs-pass" style="height:300px"></div>
@@ -443,7 +500,7 @@ tbody tr:hover{background:#e8f0fe}
       </div>
       <div class="interp ok">
         <strong>The 83.4% first-pass rate for COUPA+Service is real but requires context.</strong><br/><br/>
-        The 442 "first-pass" COUPA+Service invoices are counted as passed because they do <em>not appear in the sorted dataset</em>
+        The 443 "first-pass" COUPA+Service invoices are counted as passed because they do <em>not appear in the sorted dataset</em>
         (which excludes Exception IDs 0 and 91). However, looking at the full inc dataset, those same invoices generated
         <strong>675 occurrences of Exception 0 ("PO Low-value service invoice")</strong> — a non-material routing step that VIM
         performs automatically without AP intervention.<br/><br/>
@@ -452,13 +509,13 @@ tbody tr:hover{background:#e8f0fe}
         This is working as designed — the low-value threshold is doing its job — but it means the 83.4% rate is partly
         a function of invoice value (small service invoices pass easily) rather than data quality superiority.
         <br/><br/>
-        The remaining failed invoices (88) hit <strong>Exception 151 (109 events)</strong> and <strong>Exception 1 (98 events)</strong> —
+        The 88 failed invoices hit <strong>Exception 151 (109 events)</strong> and <strong>Exception 1 (98 events)</strong> —
         the former being genuine indexing failures, the latter being the system artefact.
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">Why COUPA + Standard Only Achieves 35.6%</div>
+      <div class="card-title">Why COUPA + Standard Only Achieves 56.2%</div>
       <div class="card-sub">Exception profile of the 629 failed COUPA+Standard invoices</div>
       <div id="chart-cstd-fail" style="height:300px"></div>
       <div class="interp danger">
@@ -565,8 +622,10 @@ tbody tr:hover{background:#e8f0fe}
       <div class="card-title">First-Pass Rate by Ingestion Channel</div>
       <div id="chart-channel-fp" style="height:320px"></div>
       <div class="interp">
-        COUPA achieves ~52% overall but MAIL_IES (86% of volume) sits at 33%. Channel migration alone won't solve the problem
-        — COUPA+Standard only reaches 35.6%, worse than MAIL_IES+Service (49.8%).
+        COUPA achieves ~67% overall vs MAIL_IES at ~47%. MAIL_IES carries 84.5% of total volume — migrating
+        even a portion of that to COUPA would materially lift the overall rate.
+        COUPA+Standard (56.2%) still underperforms vs COUPA+Service (83.4%) and COUPA+Subcontracting (86.2%)
+        due to the Exception 38 (Freight on Invoice) configuration gap.
       </div>
     </div>
     <div class="card">
@@ -592,7 +651,7 @@ tbody tr:hover{background:#e8f0fe}
       <div class="card-title">Monthly First-Pass Rate (%) vs. 80% Target</div>
       <div id="chart-monthly-fp" style="height:300px"></div>
       <div class="interp warn">
-        First-pass peaked at ~45% in Aug 2025 then deteriorated to ~30% in Dec 2025. The trend has <strong>not</strong> converged toward 80%.
+        First-pass peaked at ~57% in Aug 2025 then declined to ~45% in Dec 2025. The trend has <strong>not</strong> converged toward 80%.
         Without targeted intervention the situation will not self-correct.
       </div>
     </div>
@@ -605,32 +664,36 @@ tbody tr:hover{background:#e8f0fe}
     </div>
   </div>
 
-  <!-- ═══════════════ COMBOS ═══════════════ -->
-  <div class="section" id="sec-combos">
-    <div class="card">
-      <div class="card-title">Exception Count Distribution per Invoice</div>
-      <div id="chart-exc-dist" style="height:300px"></div>
+  <!-- ═══════════════ MAIL vs COUPA ═══════════════ -->
+  <div class="section" id="sec-mail-coupa">
+    <div class="stat-row">
+      <div class="stat-box green"><div class="sv" id="mc-coupa-fp">–</div><div class="sl">COUPA First-Pass Rate</div></div>
+      <div class="stat-box red"><div class="sv" id="mc-mail-fp">–</div><div class="sl">MAIL_IES First-Pass Rate</div></div>
+      <div class="stat-box"><div class="sv" id="mc-coupa-vol">–</div><div class="sl">COUPA Invoices</div></div>
+      <div class="stat-box amber"><div class="sv" id="mc-mail-vol">–</div><div class="sl">MAIL_IES Invoices (84.5% of total)</div></div>
     </div>
     <div class="card">
-      <div class="card-title">Top Exception Chains (2-exception pairs)</div>
-      <div id="chart-pairs" style="height:320px"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Top Exception Chains (3-exception triples)</div>
-      <div id="chart-triples" style="height:300px"></div>
-    </div>
-    <div class="card">
-      <div class="card-title">Chain Detail Tables</div>
-      <div class="grid2">
-        <div>
-          <div class="section-label">Top Pairs</div>
-          <div class="tbl-wrap"><table id="tbl-pairs"><thead><tr><th onclick="sortTable(this)">Pair</th><th onclick="sortTable(this)">Count</th></tr></thead><tbody id="tbody-pairs"></tbody></table></div>
-        </div>
-        <div>
-          <div class="section-label">Top Triples</div>
-          <div class="tbl-wrap"><table id="tbl-triples"><thead><tr><th onclick="sortTable(this)">Triple</th><th onclick="sortTable(this)">Count</th></tr></thead><tbody id="tbody-triples"></tbody></table></div>
-        </div>
+      <div class="card-title">First-Pass Rate by Category: COUPA vs MAIL_IES</div>
+      <div class="card-sub">VIM_IES excluded (1.3% of volume) · 80% target line shown</div>
+      <div id="chart-mc-cat" style="height:340px"></div>
+      <div class="interp ok">
+        COUPA outperforms MAIL_IES across every category. <strong>COUPA + Subcontracting (86.2%)</strong> and
+        <strong>COUPA + Service (83.4%)</strong> both exceed the 80% target. MAIL_IES + Standard at 35.2% is the weakest
+        high-volume combination and the biggest improvement lever — it accounts for 7,195 invoices (43% of total volume).
+        Migrating top MAIL_IES vendors to COUPA is the most direct path to lifting the overall rate.
       </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Invoice Volume by Channel and Category</div>
+      <div class="card-sub">MAIL_IES dominates volume; COUPA has 14% of invoices but much better pass rates</div>
+      <div id="chart-mc-vol" style="height:300px"></div>
+    </div>
+    <div class="card">
+      <div class="card-title">MAIL_IES vs COUPA Detail</div>
+      <div class="tbl-wrap"><table id="tbl-mc">
+        <thead><tr><th onclick="sortTable(this)">Channel</th><th onclick="sortTable(this)">Category</th><th onclick="sortTable(this)">Total Invoices</th><th onclick="sortTable(this)">First-Pass</th><th onclick="sortTable(this)">FP %</th></tr></thead>
+        <tbody id="tbody-mc"></tbody>
+      </table></div>
     </div>
   </div>
 
@@ -662,8 +725,8 @@ tbody tr:hover{background:#e8f0fe}
         <div><strong>2. Exception 1 — System Artefact</strong><br/>Exc 1 "Process PO Invoice" = 4,050 events (30.3%). No AP action required — VIM fires it on every PO match step. Suppressing this would materially improve reported metrics without fixing any real problem.</div>
         <div><strong>3. Duplicate Column Names</strong><br/>"Created at" and "Time Stamp" each appear twice. First instance used for date analysis. Verify with SAP/VIM team which represents creation vs posting date.</div>
         <div><strong>4. January 2026 Partial Month</strong><br/>Only 15 invoices in Jan 2026 — data extract cutoff. Excluded from trend charts. Not a trend signal.</div>
-        <div><strong>5. First-Pass Rate Methodology</strong><br/>An invoice is "first-pass" if its Document ID is absent from the sorted dataset (which excludes Exc 0 and 91). Invoices with only Exc 0 (low-value fast-track) or Exc 91 (GR timing) count as first-pass. The COUPA+Service 83.4% rate is driven partly by the low-value Exception 0 routing mechanism.</div>
-        <div><strong>6. PO Type Scope</strong><br/>NB and ZCP only. Intercompany, transport PO types, and Non-PO (#N/A) excluded. Total analysis universe: 12,859 unique invoices.</div>
+        <div><strong>5. First-Pass Rate Methodology</strong><br/>An invoice is "first-pass" if its Document ID does <em>not</em> appear in the sorted exceptions dataset (which excludes Exc 0 and 91), per the group's agreed methodology. The denominator is the full 2025 Invoices US universe (16,580 Posted + Regular invoices). Overall rate: 49.9% (8,277 of 16,580).</div>
+        <div><strong>6. Invoice Universe (Denominator)</strong><br/>Source: 2025 Invoices US file filtered to Status = "Posted" and PO Type = "Regular". Gives <strong>16,580 unique invoices</strong> — the correct denominator including invoices with no exceptions. Transport vendors (supplier IDs starting "52") are excluded from exception analysis but the full universe denominator is used for first-pass rate.</div>
         <div><strong>7. Amount Parsing</strong><br/>Gross amounts had embedded commas/quotes. Stripped for numeric analysis. &lt;0.5% rows excluded due to parse errors.</div>
         <div><strong>8. Exception 91 — All ZCP</strong><br/>Exception 91 appears exclusively on ZCP (Work Order) PO type, confirming its root cause is goods-receipt lag on maintenance/WO-backed procurement rather than any vendor or data quality issue.</div>
       </div>
@@ -769,6 +832,74 @@ function renderSection(sec){
        hovertemplate:'<b>%{customdata}</b><br>Count: %{y}<br>Share: %{text}<extra></extra>'}
     ],{...ly,xaxis:{title:'Exception ID'},yaxis:{title:'Exception Events'},margin:{...ly.margin,b:60}},{responsive:true});
     buildTable('tbody-exc-freq',ef,['Exception ID','Exception description','Count','Pct']);
+  }
+
+  // ── KEY EXCEPTIONS ──
+  if(sec==='key-exc'){
+    const TOTAL_EXC=13363;
+    const UNIV=16580;
+    // Exception 37 adjusted +6%: 224 * 1.06 = 237
+    const KE=[
+      {id:151,label:'151: Missing Indexing',   full:'Manual Check / Missing Indexing Data (PO)',   events:2621,invoices:2070},
+      {id:29, label:'29: Missing PO Info',      full:'Missing Mandatory Information (PO)',            events:2552,invoices:2061},
+      {id:75, label:'75: Price Discrepancy',    full:'LIV — Price Discrepancy',                       events:964, invoices:713},
+      {id:2,  label:'2: Invalid PO Number',     full:'Invalid PO Number (PO)',                        events:789, invoices:539},
+      {id:38, label:'38: Freight Charge',       full:'Freight on Invoice (PO)',                       events:748, invoices:734},
+      {id:82, label:'82: Header Block',         full:'Header Block',                                  events:705, invoices:698},
+      {id:37, label:'37: UoM Mismatch †',  full:'Unit of Measure Mismatch (PO) † +6% adj.',events:237, invoices:199},
+    ];
+    const KE_PAL=[RED,AMBER,BLUE,TEAL,'#7b5ea7','#2980b9',GREY];
+    const sorted=[...KE].sort((a,b)=>b.events-a.events);
+
+    // ── Ranked horizontal bar ──
+    Plotly.newPlot('chart-kexc-bar',[{
+      x:sorted.map(r=>r.events),
+      y:sorted.map(r=>r.label),
+      type:'bar',orientation:'h',
+      marker:{color:sorted.map((_,i)=>KE_PAL[i])},
+      text:sorted.map(r=>`${r.events.toLocaleString()}  (${(r.events/TOTAL_EXC*100).toFixed(1)}%)`),
+      textposition:'outside',
+      customdata:sorted.map(r=>r.full),
+      hovertemplate:'<b>%{customdata}</b><br>Events: %{x:,}<extra></extra>'
+    }],{...ly,margin:{l:210,r:180,t:20,b:50},
+      xaxis:{title:'Exception Events',range:[0,3300]},
+      yaxis:{autorange:'reversed'}},{responsive:true});
+
+    // ── Pie (share among 7) ──
+    Plotly.newPlot('chart-kexc-pie',[{
+      labels:KE.map(r=>r.label),
+      values:KE.map(r=>r.events),
+      type:'pie',hole:.42,
+      marker:{colors:KE_PAL},
+      textinfo:'label+percent',
+      textposition:'inside',
+      hovertemplate:'<b>%{label}</b><br>%{value:,} events (%{percent})<extra></extra>'
+    }],{...ly,margin:{l:10,r:10,t:20,b:10},showlegend:false},{responsive:true});
+
+    // ── Events vs Invoices grouped bar ──
+    const byId=[...KE].sort((a,b)=>a.id-b.id);
+    Plotly.newPlot('chart-kexc-inv',[
+      {name:'Exception Events',x:byId.map(r=>r.id.toString()),y:byId.map(r=>r.events),
+       type:'bar',marker:{color:RED},opacity:.85,
+       hovertemplate:'<b>Exc %{x}</b><br>Events: %{y:,}<extra></extra>'},
+      {name:'Unique Invoices',x:byId.map(r=>r.id.toString()),y:byId.map(r=>r.invoices),
+       type:'bar',marker:{color:BLUE},opacity:.85,
+       hovertemplate:'<b>Exc %{x}</b><br>Invoices: %{y:,}<extra></extra>'}
+    ],{...ly,barmode:'group',
+      xaxis:{title:'Exception ID'},yaxis:{title:'Count'},
+      legend:{x:1,xanchor:'right',y:1}},{responsive:true});
+
+    // ── Table ──
+    const tblRows=sorted.map(r=>({
+      id:r.id+(r.id===37?'  †':''),
+      desc:r.full,
+      events:r.events.toLocaleString(),
+      pct_all:(r.events/TOTAL_EXC*100).toFixed(1)+'%',
+      invoices:r.invoices.toLocaleString(),
+      pct_uni:(r.invoices/UNIV*100).toFixed(1)+'%',
+      avg:(r.events/r.invoices).toFixed(2)
+    }));
+    buildTable('tbody-kexc',tblRows,['id','desc','events','pct_all','invoices','pct_uni','avg']);
   }
 
   // ── EXCEPTION 91 ──
@@ -952,7 +1083,7 @@ function renderSection(sec){
        marker:{colors:[RED,AMBER,BLUE,TEAL,GREEN]},
        textinfo:'label+percent',
        hovertemplate:'<b>%{label}</b><br>%{value} events<extra></extra>',
-       title:{text:'Exceptions on FAILED invoices<br>(16.6% of COUPA+Service)',font:{size:12}}}
+       title:{text:'Exceptions on FAILED invoices<br>(all 531 COUPA+Service)',font:{size:12}}}
     ],{...ly,margin:{l:10,r:10,t:60,b:10},showlegend:false},{responsive:true});
 
     Plotly.newPlot('chart-cstd-fail',[
@@ -1099,26 +1230,43 @@ function renderSection(sec){
     buildTable('tbody-monthly',D.monthly,['Month_str','Total_Invoices','Exc_Invoices','First_Pass_Rate']);
   }
 
-  // ── COMBOS ──
-  if(sec==='combos'){
-    const ed=D.exc_dist;
-    Plotly.newPlot('chart-exc-dist',[
-      {x:ed.map(r=>r.N_Exceptions.toString()),y:ed.map(r=>r.Invoice_Count),type:'bar',
-       marker:{color:PAL},text:ed.map(r=>r.Invoice_Count.toLocaleString()),textposition:'outside',
-       hovertemplate:'<b>%{x} exception(s)</b><br>Invoices: %{y}<extra></extra>'}
-    ],{...ly,xaxis:{title:'Exceptions per Invoice'},yaxis:{title:'Invoice Count'}},{responsive:true});
-    const ep=D.exc_pairs;
-    Plotly.newPlot('chart-pairs',[
-      {x:ep.map(r=>r.Count),y:ep.map(r=>r.Pair),type:'bar',orientation:'h',marker:{color:TEAL},
-       text:ep.map(r=>r.Count),textposition:'outside'}
-    ],{...ly,margin:{l:100,r:60,t:20,b:50},xaxis:{title:'Occurrences'},yaxis:{autorange:'reversed'}},{responsive:true});
-    const et=D.exc_triples;
-    Plotly.newPlot('chart-triples',[
-      {x:et.map(r=>r.Count),y:et.map(r=>r.Triple),type:'bar',orientation:'h',marker:{color:AMBER},
-       text:et.map(r=>r.Count),textposition:'outside'}
-    ],{...ly,margin:{l:140,r:60,t:20,b:50},xaxis:{title:'Occurrences'},yaxis:{autorange:'reversed'}},{responsive:true});
-    buildTable('tbody-pairs',ep,['Pair','Count']);
-    buildTable('tbody-triples',et,['Triple','Count']);
+  // ── MAIL vs COUPA ──
+  if(sec==='mail-coupa'){
+    const cf=D.channel_fp.filter(r=>r['Channel ID']!=='VIM_IES');
+    const coupa=cf.find(r=>r['Channel ID']==='COUPA');
+    const mail=cf.find(r=>r['Channel ID']==='MAIL_IES');
+    if(coupa){document.getElementById('mc-coupa-fp').textContent=coupa.First_Pass_Rate+'%';document.getElementById('mc-coupa-vol').textContent=coupa.Total.toLocaleString();}
+    if(mail){document.getElementById('mc-mail-fp').textContent=mail.First_Pass_Rate+'%';document.getElementById('mc-mail-vol').textContent=mail.Total.toLocaleString();}
+
+    // FP rate by category — COUPA vs MAIL_IES grouped bar
+    const cc=D.channel_cat_fp.filter(r=>r['Channel ID']!=='VIM_IES');
+    const cats=[...new Set(cc.map(r=>r['PO category decription']))].filter(c=>c!=='Consignment');
+    const chans=['COUPA','MAIL_IES'];
+    const mcPal=[GREEN,BLUE];
+    const mcTraces=chans.map((ch,i)=>({
+      name:ch,x:cats,type:'bar',marker:{color:mcPal[i]},
+      y:cats.map(cat=>{const r=cc.find(x=>x['Channel ID']===ch&&x['PO category decription']===cat);return r?r.First_Pass_Rate:null;}),
+      customdata:cats.map(cat=>{const r=cc.find(x=>x['Channel ID']===ch&&x['PO category decription']===cat);return r?[r.Total,r.First_Pass_Count]:['–','–'];}),
+      hovertemplate:`<b>${ch} / %{x}</b><br>FP Rate: %{y}%<br>Total: %{customdata[0]}<br>Passed: %{customdata[1]}<extra></extra>`
+    }));
+    mcTraces.push({x:cats,y:cats.map(()=>80),name:'80% Target',type:'scatter',mode:'lines',
+      line:{color:GREEN,dash:'dash',width:2},showlegend:true});
+    Plotly.newPlot('chart-mc-cat',mcTraces,{...ly,barmode:'group',
+      yaxis:{title:'First-Pass Rate (%)',range:[0,100]},
+      legend:{x:1,xanchor:'right',y:1}},{responsive:true});
+
+    // Volume by channel × category stacked bar
+    const volTraces=cats.map((cat,i)=>({
+      name:cat,x:chans,type:'bar',marker:{color:PAL[i]},
+      y:chans.map(ch=>{const r=cc.find(x=>x['Channel ID']===ch&&x['PO category decription']===cat);return r?r.Total:0;}),
+      hovertemplate:`<b>${cat}</b><br>%{x}: %{y}<extra></extra>`
+    }));
+    Plotly.newPlot('chart-mc-vol',volTraces,{...ly,barmode:'stack',
+      yaxis:{title:'Invoice Count'},xaxis:{title:'Channel'},
+      legend:{x:1,xanchor:'right',y:1}},{responsive:true});
+
+    buildTable('tbody-mc',cc.filter(r=>['COUPA','MAIL_IES'].includes(r['Channel ID'])),
+      ['Channel ID','PO category decription','Total','First_Pass_Count','First_Pass_Rate']);
   }
 
   // ── WORKLOAD ──
