@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tronox 1100 — AP Invoice Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:   #1a3d6b;
+      --teal:   #0095a8;
+      --green:  #2d9948;
+      --orange: #e8913a;
+      --red:    #e8503a;
+      --purple: #7c3aed;
+      --bg:     #f0f2f5;
+      --card:   #ffffff;
+      --border: #e2e8f0;
+      --text:   #1e2535;
+      --muted:  #64748b;
+      --hdr:    64px;
+      --kpi:    108px;
+      --nav:    46px;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--bg); color: var(--text); font-size: 14px;
+    }
+
+    /* ── Header ── */
+    .hdr {
+      position: fixed; top: 0; left: 0; right: 0; height: var(--hdr);
+      background: var(--blue); display: flex; align-items: center;
+      padding: 0 28px; gap: 16px; z-index: 200;
+      box-shadow: 0 2px 12px rgba(0,0,0,.25);
+    }
+    .hdr-logo  { font-size: 20px; font-weight: 700; color: #fff; letter-spacing: 3px; text-transform: uppercase; }
+    .hdr-div   { width: 1px; height: 30px; background: rgba(255,255,255,.25); }
+    .hdr-title { font-size: 15px; font-weight: 600; color: #fff; }
+    .hdr-meta  { margin-left: auto; font-size: 12px; color: rgba(255,255,255,.6); }
+
+    /* ── KPI Strip ── */
+    .kpi-strip {
+      position: fixed; top: var(--hdr); left: 0; right: 0; height: var(--kpi);
+      background: var(--card); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 28px; gap: 14px;
+      z-index: 190; box-shadow: 0 2px 6px rgba(0,0,0,.06);
+    }
+    .kpi { flex: 1; padding: 14px 18px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); display: flex; flex-direction: column; gap: 3px; }
+    .kpi-lbl { font-size: 10.5px; font-weight: 600; letter-spacing: .6px; text-transform: uppercase; color: var(--muted); }
+    .kpi-val  { font-size: 28px; font-weight: 700; line-height: 1; color: var(--text); }
+    .kpi-sub  { font-size: 11.5px; color: var(--muted); }
+    .kpi.green  .kpi-val { color: var(--green);  }
+    .kpi.teal   .kpi-val { color: var(--teal);   }
+    .kpi.orange .kpi-val { color: var(--orange); }
+
+    /* ── Tab Nav ── */
+    .tab-nav {
+      position: fixed; top: calc(var(--hdr) + var(--kpi)); left: 0; right: 0; height: var(--nav);
+      background: var(--card); border-bottom: 2px solid var(--border);
+      display: flex; align-items: center; padding: 0 28px; gap: 2px; z-index: 180;
+    }
+    .tab-btn {
+      padding: 7px 22px; border: none; background: none; font-family: inherit;
+      font-size: 13.5px; font-weight: 500; color: var(--muted); cursor: pointer;
+      border-radius: 6px; transition: all .15s; position: relative;
+    }
+    .tab-btn:hover { background: var(--bg); color: var(--text); }
+    .tab-btn.active { color: var(--blue); font-weight: 600; }
+    .tab-btn.active::after {
+      content: ''; position: absolute; bottom: -10px; left: 0; right: 0;
+      height: 2px; background: var(--blue); border-radius: 2px 2px 0 0;
+    }
+
+    /* ── Main ── */
+    .main { margin-top: calc(var(--hdr) + var(--kpi) + var(--nav)); padding: 22px 28px 40px; }
+    .tab-pane { display: none; }
+    .tab-pane.active { display: block; }
+
+    /* ── Grid ── */
+    .g1 { margin-bottom: 16px; }
+    .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+
+    /* ── Chart Card ── */
+    .card {
+      background: var(--card); border: 1px solid var(--border); border-radius: 10px;
+      padding: 20px 22px 16px; box-shadow: 0 1px 4px rgba(0,0,0,.05);
+    }
+    .card-title { font-size: 13.5px; font-weight: 600; color: var(--text); margin-bottom: 3px; }
+    .card-desc  { font-size: 11.5px; color: var(--muted); margin-bottom: 14px; line-height: 1.45; }
+
+    /* ── Vendor Detail Card (reactive) ── */
+    .vdr-focus-empty {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      height: 280px; color: var(--muted); text-align: center; gap: 8px;
+    }
+    .vdr-focus-empty .arrow { font-size: 28px; opacity: .35; }
+    .vdr-focus-empty .msg   { font-size: 12.5px; line-height: 1.5; }
+    .vdr-focus-title {
+      font-size: 13px; font-weight: 600; color: var(--blue);
+      padding: 0 0 10px; border-bottom: 1px solid var(--border); margin-bottom: 12px;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .vdr-focus-title .badge-inf {
+      font-size: 11px; font-weight: 500; color: var(--muted);
+      background: var(--bg); border: 1px solid var(--border);
+      padding: 2px 10px; border-radius: 20px;
+    }
+
+    /* ── Vendor Table ── */
+    .tbl-controls { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; flex-wrap: wrap; }
+    .tbl-search {
+      flex: 0 0 auto; width: 260px; padding: 7px 12px;
+      border: 1px solid var(--border); border-radius: 6px;
+      font-size: 13px; font-family: inherit; outline: none;
+    }
+    .tbl-search:focus { border-color: var(--teal); box-shadow: 0 0 0 2px rgba(0,149,168,.12); }
+    .tbl-info { font-size: 11.5px; color: var(--muted); }
+    .sort-btns { display: flex; gap: 8px; margin-left: auto; }
+    .sort-opt {
+      padding: 5px 12px; border: 1px solid var(--border); border-radius: 5px;
+      font-size: 12px; font-family: inherit; cursor: pointer; background: var(--bg); color: var(--muted);
+    }
+    .sort-opt.active { border-color: var(--teal); color: var(--teal); font-weight: 600; background: #e8f7f9; }
+
+    .vtbl { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+    .vtbl thead th {
+      text-align: left; padding: 8px 12px; font-size: 10.5px; font-weight: 600;
+      text-transform: uppercase; letter-spacing: .5px; color: var(--muted);
+      background: var(--bg); border-bottom: 1px solid var(--border); white-space: nowrap;
+    }
+    .vtbl td { padding: 9px 12px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+    .vtbl tbody tr { cursor: pointer; transition: background .12s; }
+    .vtbl tbody tr:hover td { background: #f0f9ff; }
+    .vtbl tbody tr.selected td { background: #ddf0f5; }
+    .vtbl tr:last-child td { border-bottom: none; }
+    .vtbl .rank { font-weight: 600; color: var(--muted); text-align: center; }
+    .vtbl .vname { font-weight: 500; }
+    .vtbl .num { text-align: right; font-variant-numeric: tabular-nums; }
+    .vtbl .detail-icon { color: #cbd5e1; font-size: 12px; }
+    .vtbl tbody tr:hover .detail-icon,
+    .vtbl tbody tr.selected .detail-icon { color: var(--teal); }
+
+    .pill { display: inline-block; padding: 2px 9px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+    .pill-g { background: #dcfce7; color: #166534; }
+    .pill-y { background: #fef9c3; color: #854d0e; }
+    .pill-o { background: #ffedd5; color: #9a3412; }
+    .pill-r { background: #fee2e2; color: #991b1b; }
+
+    .exc-bar-wrap { display: flex; align-items: center; gap: 6px; }
+    .exc-bar { height: 7px; border-radius: 2px; background: var(--teal); opacity: .7; min-width: 2px; }
+
+    /* ── Pagination ── */
+    .pager { display: flex; align-items: center; gap: 8px; margin-top: 12px; justify-content: flex-end; }
+    .page-btn {
+      padding: 5px 12px; border: 1px solid var(--border); border-radius: 5px;
+      font-size: 12px; font-family: inherit; cursor: pointer; background: var(--bg); color: var(--muted);
+    }
+    .page-btn:hover:not(:disabled) { border-color: var(--teal); color: var(--teal); }
+    .page-btn:disabled { opacity: .4; cursor: default; }
+    .page-info { font-size: 12px; color: var(--muted); }
+  </style>
+</head>
+<body>
+
+<!-- ═══ HEADER ═══════════════════════════════════════════════════════ -->
+<header class="hdr">
+  <span class="hdr-logo">Tronox</span>
+  <div class="hdr-div"></div>
+  <span class="hdr-title">AP Invoice Processing — Plant 1100</span>
+  <span class="hdr-meta">Data: May 2025 – Jan 2026 &nbsp;|&nbsp; Posted invoices (status 15) &nbsp;|&nbsp; PO types NB &amp; ZCP &nbsp;|&nbsp; Exc 0 &amp; 91 excluded; transport vendors excluded</span>
+</header>
+
+<!-- ═══ KPI STRIP ═════════════════════════════════════════════════════ -->
+<div class="kpi-strip">
+  <div class="kpi">
+    <span class="kpi-lbl">Total Invoices</span>
+    <span class="kpi-val">16,580</span>
+    <span class="kpi-sub">Full posted invoice universe</span>
+  </div>
+  <div class="kpi green">
+    <span class="kpi-lbl">First Pass Rate</span>
+    <span class="kpi-val">49.9%</span>
+    <span class="kpi-sub">8,277 invoices — no exceptions triggered</span>
+  </div>
+  <div class="kpi orange">
+    <span class="kpi-lbl">Total Exception Events</span>
+    <span class="kpi-val">13,363</span>
+    <span class="kpi-sub">Across invoices with ≥1 exception</span>
+  </div>
+  <div class="kpi teal">
+    <span class="kpi-lbl">Vendors with Exceptions</span>
+    <span class="kpi-val">531</span>
+    <span class="kpi-sub">Top 10 account for 30.6% of events</span>
+  </div>
+</div>
+
+<!-- ═══ TAB NAV ═══════════════════════════════════════════════════════ -->
+<nav class="tab-nav">
+  <button class="tab-btn active" data-tab="overview">Overview</button>
+  <button class="tab-btn" data-tab="vendors">Vendor Analysis</button>
+  <button class="tab-btn" data-tab="exceptions">Exception Breakdown</button>
+  <button class="tab-btn" data-tab="trends">Trends</button>
+</nav>
+
+<!-- ═══ MAIN ══════════════════════════════════════════════════════════ -->
+<main class="main">
+
+  <!-- ─── Overview ──────────────────────────────────── -->
+  <div id="tab-overview" class="tab-pane active">
+    <div class="g2">
+      <div class="card">
+        <div class="card-title">Exception Frequency — Top 10 Types</div>
+        <div class="card-desc">Total occurrence count for each exception type across all processed invoices, ranked highest to lowest. Exception IDs 0 and 91 are excluded per agreed methodology.</div>
+        <div id="ch-exc-freq" style="height:340px"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Monthly First-Pass Rate</div>
+        <div class="card-desc">Percentage of invoices that passed without triggering any exception, plotted month over month (May 2025 – Jan 2026).</div>
+        <div id="ch-monthly-fp" style="height:340px"></div>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-title">First-Pass Rate by Ingestion Channel</div>
+        <div class="card-desc">Overall first-pass rate for each invoice ingestion channel: COUPA (electronic procurement), MAIL_IES (email/scan), and VIM_IES (vendor invoice management).</div>
+        <div id="ch-channel-fp" style="height:260px"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Exceptions per Invoice — Distribution</div>
+        <div class="card-desc">For invoices that triggered exceptions: how many exception events were generated per invoice. Shows the distribution of exception load across flagged invoices.</div>
+        <div id="ch-exc-dist" style="height:260px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Vendor Analysis ────────────────────────────── -->
+  <div id="tab-vendors" class="tab-pane">
+    <div class="g1">
+      <div class="card">
+        <div class="card-title">Exception Type Breakdown by Supplier — Top 18 by Volume</div>
+        <div class="card-desc">Stacked horizontal bars showing the exception type composition for each vendor, ranked by total exception events. Each color segment represents a different exception type.</div>
+        <div id="ch-vendor-breakdown" style="height:520px"></div>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-title">Vendor Processing Complexity</div>
+        <div class="card-desc">Each bubble represents a vendor. X-axis: unique invoice count. Y-axis: average exception events per invoice. Bubble size is proportional to total exception events.</div>
+        <div id="ch-vendor-scatter" style="height:340px"></div>
+      </div>
+      <div class="card" id="vdr-focus-card">
+        <div class="card-title" id="vdr-focus-heading">Vendor — Exception Breakdown</div>
+        <div class="card-desc" id="vdr-focus-desc">Select a vendor from the table below to view their exception type breakdown.</div>
+        <div id="vdr-focus-empty" class="vdr-focus-empty">
+          <span class="arrow">↓</span>
+          <span class="msg">Click any row in the<br>Vendor Detail Table to<br>load this vendor's breakdown.</span>
+        </div>
+        <div id="vdr-focus-chart" style="height:300px;display:none"></div>
+        <div id="vdr-focus-nostats" style="display:none;font-size:12px;color:var(--muted);font-style:italic;padding:16px 0">
+          Detailed exception breakdown is not available for this vendor.
+        </div>
+      </div>
+    </div>
+    <div class="g1">
+      <div class="card">
+        <div class="card-title">Vendor Detail Table</div>
+        <div class="card-desc">All tracked vendors with at least one exception event. Click any row to load that vendor's exception breakdown in the panel above. Sortable by column.</div>
+        <div class="tbl-controls">
+          <input class="tbl-search" id="vdr-search" type="text" placeholder="Search vendor name…">
+          <span class="tbl-info" id="vdr-count"></span>
+          <div class="sort-btns">
+            <button class="sort-opt active" data-sort="exc">Sort: Exception Events</button>
+            <button class="sort-opt" data-sort="inv">Sort: Invoice Count</button>
+            <button class="sort-opt" data-sort="int">Sort: Intensity</button>
+          </div>
+        </div>
+        <table class="vtbl" id="vtbl">
+          <thead>
+            <tr>
+              <th style="width:40px;text-align:center">#</th>
+              <th>Vendor Name</th>
+              <th style="text-align:right">Exception Events</th>
+              <th style="text-align:right">Unique Invoices</th>
+              <th style="text-align:right">Avg Exc / Invoice</th>
+              <th style="min-width:110px">Relative Volume</th>
+              <th style="width:28px"></th>
+            </tr>
+          </thead>
+          <tbody id="vtbl-body"></tbody>
+        </table>
+        <div class="pager">
+          <button class="page-btn" id="pg-prev">← Prev</button>
+          <span class="page-info" id="pg-info"></span>
+          <button class="page-btn" id="pg-next">Next →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Exception Breakdown ────────────────────────── -->
+  <div id="tab-exceptions" class="tab-pane">
+    <div class="g2">
+      <div class="card">
+        <div class="card-title">Exception Events by PO Category — Top 8 Types</div>
+        <div class="card-desc">Stacked bars showing exception event counts for each PO category (Standard, Service, Subcontracting, Consignment), broken down by the 8 most frequent exception types.</div>
+        <div id="ch-cat-exc" style="height:360px"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Exception Co-occurrence Pairs</div>
+        <div class="card-desc">Most frequent pairs of exception IDs that appear together on the same invoice. Arrow notation (A → B) indicates both exceptions were found on the same invoice, ordered by co-occurrence count.</div>
+        <div id="ch-pairs" style="height:360px"></div>
+      </div>
+    </div>
+    <div class="g2">
+      <div class="card">
+        <div class="card-title">First-Pass Rate by Channel × PO Category</div>
+        <div class="card-desc">First-pass rate for each combination of ingestion channel and PO category. Color encodes the rate from red (low) to green (high). Blank cells indicate no invoices in that combination.</div>
+        <div id="ch-heatmap" style="height:320px"></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Exception Events by PO Category — Share</div>
+        <div class="card-desc">Total exception events attributed to each PO category as a proportion of all 13,363 exception events.</div>
+        <div id="ch-cat-pie" style="height:320px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ─── Trends ─────────────────────────────────────── -->
+  <div id="tab-trends" class="tab-pane">
+    <div class="g1">
+      <div class="card">
+        <div class="card-title">Monthly Invoice Volume: First-Pass vs. Exception-Flagged</div>
+        <div class="card-desc">Stacked bar showing total monthly invoice counts split between first-pass (no exceptions) and exception-flagged (≥1 exception). Line overlay shows the first-pass rate for that month.</div>
+        <div id="ch-monthly-stack" style="height:380px"></div>
+      </div>
+    </div>
+    <div class="g1">
+      <div class="card">
+        <div class="card-title">Monthly Invoice Volume — Total Count</div>
+        <div class="card-desc">Total number of posted invoices processed each month from May 2025 through January 2026.</div>
+        <div id="ch-monthly-vol" style="height:300px"></div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+/* ══════════════════════════════ DATA ══════════════════════════════════ */
+const D = {
+  monthly: [
+    {m:"May '25",  total:1417, exc:1122, fp:295,  fpr:20.82},
+    {m:"Jun '25",  total:1543, exc:961,  fp:582,  fpr:37.72},
+    {m:"Jul '25",  total:1851, exc:1099, fp:752,  fpr:40.63},
+    {m:"Aug '25",  total:1664, exc:909,  fp:755,  fpr:45.37},
+    {m:"Sep '25",  total:1670, exc:1004, fp:666,  fpr:39.88},
+    {m:"Oct '25",  total:1792, exc:1214, fp:578,  fpr:32.25},
+    {m:"Nov '25",  total:1249, exc:819,  fp:430,  fpr:34.43},
+    {m:"Dec '25",  total:1658, exc:1162, fp:496,  fpr:29.92},
+    {m:"Jan '26",  total:15,   exc:13,   fp:2,    fpr:13.33}
+  ],
+  exc_freq: [
+    {id:1,   desc:"Process PO Invoice",              count:4050, pct:30.31},
+    {id:151, desc:"Manual Check / Missing Indexing", count:2621, pct:19.62},
+    {id:29,  desc:"Missing Mandatory Info",          count:2552, pct:19.10},
+    {id:75,  desc:"LIV — Price Discrepancy",         count:964,  pct:7.21},
+    {id:2,   desc:"Invalid PO Number",               count:789,  pct:5.90},
+    {id:38,  desc:"Freight on Invoice",              count:748,  pct:5.60},
+    {id:82,  desc:"Header Block",                    count:705,  pct:5.28},
+    {id:37,  desc:"Unit of Measure Mismatch",        count:224,  pct:1.68},
+    {id:6,   desc:"Suspected Duplicate",             count:213,  pct:1.59},
+    {id:34,  desc:"Vendor Mismatch",                 count:201,  pct:1.50}
+  ],
+  channel_fp: [
+    {ch:"COUPA",    total:1592,  fp:822,  fpr:51.63},
+    {ch:"MAIL_IES", total:11092, fp:3679, fpr:33.17},
+    {ch:"VIM_IES",  total:175,   fp:55,   fpr:31.43}
+  ],
+  channel_cat_fp: [
+    {ch:"COUPA",    cat:"Standard",       total:977,  fp:348,  fpr:35.62},
+    {ch:"COUPA",    cat:"Service",        total:530,  fp:442,  fpr:83.40},
+    {ch:"COUPA",    cat:"Subcontracting", total:85,   fp:32,   fpr:37.65},
+    {ch:"MAIL_IES", cat:"Standard",       total:5721, fp:1057, fpr:18.48},
+    {ch:"MAIL_IES", cat:"Service",        total:5197, fp:2589, fpr:49.82},
+    {ch:"MAIL_IES", cat:"Subcontracting", total:128,  fp:29,   fpr:22.66},
+    {ch:"MAIL_IES", cat:"Consignment",    total:46,   fp:4,    fpr:8.70},
+    {ch:"VIM_IES",  cat:"Standard",       total:122,  fp:30,   fpr:24.59},
+    {ch:"VIM_IES",  cat:"Service",        total:52,   fp:25,   fpr:48.08},
+    {ch:"VIM_IES",  cat:"Subcontracting", total:1,    fp:0,    fpr:0.00}
+  ],
+  /* Excludes Southern Ionics (51003869) and Terra First (51003955) */
+  vendor_top30: [
+    {id:"51004553", name:"MOTION INDUSTRIES INC",            inv:287, exc:441,  avg:1.54},
+    {id:"51004029", name:"PPG INDUSTRIES INC",               inv:295, exc:387,  avg:1.31},
+    {id:"51004490", name:"COLUMBUS RUBBER & GASKET CO INC",  inv:225, exc:387,  avg:1.72},
+    {id:"51004610", name:"CARMEUSE LIME AND STONE INC",      inv:327, exc:331,  avg:1.01},
+    {id:"51004581", name:"THOMPSONS WELDING SERVICES INC",   inv:169, exc:297,  avg:1.76},
+    {id:"51004749", name:"APACHE INDUSTRIAL SERVICES INC",   inv:168, exc:263,  avg:1.57},
+    {id:"51003926", name:"MSC INDUSTRIAL SUPPLY CO INC",     inv:156, exc:259,  avg:1.66},
+    {id:"51004601", name:"MEWCO, INC",                       inv:165, exc:232,  avg:1.41},
+    {id:"51004305", name:"YAZOO RIVER TOWING INC",           inv:88,  exc:211,  avg:2.40},
+    {id:"51004809", name:"FISHER SCIENTIFIC COMPANY LLC",    inv:72,  exc:195,  avg:2.71},
+    {id:"51004495", name:"HARCROS CHEMICALS INC",            inv:115, exc:194,  avg:1.69},
+    {id:"51003931", name:"GULF COAST MARINE SUPPLY CO INC",  inv:87,  exc:191,  avg:2.20},
+    {id:"51004598", name:"AIRGAS CARBONICS INC",             inv:103, exc:178,  avg:1.73},
+    {id:"51004569", name:"MARATHON PETROLEUM COMPANY LP",    inv:96,  exc:166,  avg:1.73},
+    {id:"51004873", name:"EVANS PLUMBING AND AC INC",        inv:113, exc:163,  avg:1.44},
+    {id:"51003907", name:"LHOIST NORTH AMERICA OF ALABAMA",  inv:152, exc:159,  avg:1.05},
+    {id:"51002585", name:"AMERICAN CONTROLS TECHNOLOGY INC", inv:72,  exc:149,  avg:2.07},
+    {id:"51004671", name:"SOUTHERN INDUSTRIAL SUPPLY LLC",   inv:57,  exc:136,  avg:2.39},
+    {id:"51004872", name:"BESTWADE PETROLEUM INC",           inv:70,  exc:132,  avg:1.89},
+    {id:"51004760", name:"WESTLAKE CHEMICALS & VINYLS LLC",  inv:69,  exc:125,  avg:1.81},
+    {id:"51004317", name:"MOODY PRICE LLC",                  inv:65,  exc:118,  avg:1.82},
+    {id:"51003959", name:"FASTENAL CO",                      inv:79,  exc:111,  avg:1.41},
+    {id:"51003880", name:"HYDRO-VAC INDUSTRIAL SERVICES INC",inv:59,  exc:105,  avg:1.78},
+    {id:"51004062", name:"TENN-TOM PALLET CO INC",           inv:98,  exc:104,  avg:1.06},
+    {id:"51004906", name:"GLENN MACHINE WORKS INC",          inv:40,  exc:100,  avg:2.50},
+    {id:"51004484", name:"OLIN CORP - CHLOR ALKALI",         inv:69,  exc:98,   avg:1.42},
+    {id:"51004762", name:"MRC GLOBAL (US) INC.",             inv:49,  exc:92,   avg:1.88},
+    {id:"51004941", name:"ACCEL LLC",                        inv:52,  exc:90,   avg:1.73}
+  ],
+  /* Pareto table — excludes Southern Ionics and Terra First */
+  workload_conc: [
+    {name:"MOTION INDUSTRIES INC",            exc:441, inv:287},
+    {name:"PPG INDUSTRIES INC",               exc:387, inv:295},
+    {name:"COLUMBUS RUBBER & GASKET CO INC",  exc:387, inv:225},
+    {name:"CARMEUSE LIME AND STONE INC",      exc:331, inv:327},
+    {name:"THOMPSONS WELDING SERVICES INC",   exc:297, inv:169},
+    {name:"APACHE INDUSTRIAL SERVICES INC",   exc:263, inv:168},
+    {name:"MSC INDUSTRIAL SUPPLY CO INC",     exc:259, inv:156},
+    {name:"MEWCO, INC",                       exc:232, inv:165},
+    {name:"YAZOO RIVER TOWING INC",           exc:211, inv:88},
+    {name:"FISHER SCIENTIFIC COMPANY LLC",    exc:195, inv:72},
+    {name:"HARCROS CHEMICALS INC",            exc:194, inv:115},
+    {name:"GULF COAST MARINE SUPPLY CO INC",  exc:191, inv:87},
+    {name:"AIRGAS CARBONICS INC",             exc:178, inv:103},
+    {name:"MARATHON PETROLEUM COMPANY LP",    exc:166, inv:96},
+    {name:"EVANS PLUMBING AND AC INC",        exc:163, inv:113},
+    {name:"LHOIST NORTH AMERICA OF ALABAMA",  exc:159, inv:152},
+    {name:"AMERICAN CONTROLS TECHNOLOGY INC", exc:149, inv:72},
+    {name:"SOUTHERN INDUSTRIAL SUPPLY LLC",   exc:136, inv:57},
+    {name:"BESTWADE PETROLEUM INC",           exc:132, inv:70},
+    {name:"WESTLAKE CHEMICALS & VINYLS LLC",  exc:125, inv:69},
+    {name:"MOODY PRICE LLC",                  exc:118, inv:65},
+    {name:"FASTENAL CO",                      exc:111, inv:79},
+    {name:"HYDRO-VAC INDUSTRIAL SERVICES INC",exc:105, inv:59},
+    {name:"TENN-TOM PALLET CO INC",           exc:104, inv:98},
+    {name:"GLENN MACHINE WORKS INC",          exc:100, inv:40},
+    {name:"OLIN CORP - CHLOR ALKALI",         exc:98,  inv:69},
+    {name:"MRC GLOBAL (US) INC.",             exc:92,  inv:49},
+    {name:"ACCEL LLC",                        exc:90,  inv:52},
+    {name:"MICROSOFT CORP",                   exc:90,  inv:30},
+    {name:"MEDITERRANEAN SHIPPING CO",        exc:85,  inv:17},
+    {name:"NESCO LLC",                        exc:85,  inv:41},
+    {name:"IQUISA INC.",                      exc:78,  inv:73},
+    {name:"NORFALCO LLC",                     exc:76,  inv:49},
+    {name:"CRAWFORD ELECTRIC SUPPLY CO., INC.",exc:75, inv:52},
+    {name:"UNIFIRST HOLDINGS LP",             exc:75,  inv:45},
+    {name:"FEDEX FREIGHT EAST",               exc:74,  inv:43},
+    {name:"ITT GOULDS PUMPS INC",             exc:74,  inv:43},
+    {name:"MORIN PROCESS EQUIPMENT",          exc:73,  inv:50},
+    {name:"EMERSON LLLP",                     exc:73,  inv:52},
+    {name:"WWWEX FRANCHISE HOLDINGS LLC",     exc:71,  inv:44},
+    {name:"ABTREX INDUSTRIES INC",            exc:70,  inv:29},
+    {name:"MCMASTER-CARR SUPPLY COMPANY",     exc:69,  inv:31},
+    {name:"LIONSQUARE EQUIPMENT INC.",        exc:68,  inv:23},
+    {name:"PQ LLC",                           exc:65,  inv:42},
+    {name:"UNITED RENTALS (NORTH AMERICA) INC",exc:63, inv:32},
+    {name:"CHOCTAW RAILS",                    exc:61,  inv:21},
+    {name:"WISE STAFFING SERVICES INC",       exc:61,  inv:32},
+    {name:"WOODALL ELECTRIC INC.",            exc:59,  inv:28}
+  ],
+  exc_dist: [
+    {n:1,cnt:6161},{n:2,cnt:781},{n:3,cnt:733},{n:4,cnt:275},
+    {n:5,cnt:170},{n:6,cnt:65},{n:7,cnt:44},{n:8,cnt:23},
+    {n:9,cnt:13},{n:10,cnt:8},{n:"11+",cnt:28}
+  ],
+  exc_pairs: [
+    {pair:"75 → 82",  cnt:557},{pair:"1 → 75",   cnt:274},
+    {pair:"151 → 1",  cnt:181},{pair:"2 → 151",  cnt:126},
+    {pair:"29 → 151", cnt:122},{pair:"151 → 75", cnt:79},
+    {pair:"1 → 82",   cnt:79}, {pair:"29 → 1",   cnt:72},
+    {pair:"29 → 75",  cnt:66}, {pair:"75 → 1",   cnt:58},
+    {pair:"38 → 1",   cnt:55}, {pair:"2 → 1",    cnt:51}
+  ],
+  cat_exc: {
+    cats: ["Standard","Service","Subcontracting","Consignment"],
+    types: [
+      {id:1,   label:"Process PO Invoice",             vals:[2777,1110,103,60]},
+      {id:151, label:"Manual Check/Missing Indexing",  vals:[1438,1147,35,1]},
+      {id:29,  label:"Missing Mandatory Info",         vals:[1145,1395,5,7]},
+      {id:75,  label:"LIV — Price Discrepancy",        vals:[850,43,67,4]},
+      {id:38,  label:"Freight on Invoice",             vals:[680,10,55,3]},
+      {id:82,  label:"Header Block",                   vals:[658,15,30,2]},
+      {id:2,   label:"Invalid PO Number",              vals:[277,501,11,0]},
+      {id:37,  label:"Unit of Measure Mismatch",       vals:[7,217,0,0]}
+    ]
+  },
+  /* Per-vendor exception breakdown — top 20 original vendors (includes SI/TF for drill-down) */
+  vendor_exc_detail: [
+    {sup:"51002585",name:"AMERICAN CONTROLS TECHNOLOGY INC",   inv:72,  exc:149, excs:[{id:38,desc:"Freight on Invoice",cnt:66},{id:1,desc:"Process PO Invoice",cnt:44},{id:75,desc:"LIV — Price Discrepancy",cnt:19},{id:82,desc:"Header Block",cnt:11},{id:151,desc:"Manual Check/Missing Indexing",cnt:7},{id:2,desc:"Invalid PO Number",cnt:2}]},
+    {sup:"51003869",name:"SOUTHERN IONICS INCORPORATED",       inv:946, exc:1061,excs:[{id:1,desc:"Process PO Invoice",cnt:520},{id:29,desc:"Missing Mandatory Info",cnt:367},{id:151,desc:"Manual Check/Missing Indexing",cnt:140},{id:82,desc:"Header Block",cnt:11},{id:75,desc:"LIV — Price Discrepancy",cnt:10},{id:6,desc:"Suspected Duplicate",cnt:4},{id:34,desc:"Vendor Mismatch",cnt:3},{id:76,desc:"LIV — Qty Discrepancy",cnt:3},{id:2,desc:"Invalid PO Number",cnt:2},{id:271,desc:"Validate Accounting Data",cnt:1}]},
+    {sup:"51003907",name:"LHOIST NORTH AMERICA OF ALABAMA",    inv:152, exc:159, excs:[{id:151,desc:"Manual Check/Missing Indexing",cnt:71},{id:1,desc:"Process PO Invoice",cnt:65},{id:29,desc:"Missing Mandatory Info",cnt:17},{id:2,desc:"Invalid PO Number",cnt:4},{id:75,desc:"LIV — Price Discrepancy",cnt:1},{id:82,desc:"Header Block",cnt:1}]},
+    {sup:"51003926",name:"MSC INDUSTRIAL SUPPLY CO INC",       inv:156, exc:259, excs:[{id:151,desc:"Manual Check/Missing Indexing",cnt:58},{id:1,desc:"Process PO Invoice",cnt:55},{id:38,desc:"Freight on Invoice",cnt:50},{id:29,desc:"Missing Mandatory Info",cnt:37},{id:34,desc:"Vendor Mismatch",cnt:15},{id:75,desc:"LIV — Price Discrepancy",cnt:14},{id:82,desc:"Header Block",cnt:14},{id:2,desc:"Invalid PO Number",cnt:13},{id:3,desc:"Invalid Vendor",cnt:1},{id:6,desc:"Suspected Duplicate",cnt:1},{id:85,desc:"Company Code Mismatch",cnt:1}]},
+    {sup:"51003931",name:"GULF COAST MARINE SUPPLY CO INC",    inv:87,  exc:191, excs:[{id:1,desc:"Process PO Invoice",cnt:85},{id:75,desc:"LIV — Price Discrepancy",cnt:44},{id:82,desc:"Header Block",cnt:39},{id:2,desc:"Invalid PO Number",cnt:8},{id:29,desc:"Missing Mandatory Info",cnt:8},{id:151,desc:"Manual Check/Missing Indexing",cnt:5},{id:85,desc:"Company Code Mismatch",cnt:2}]},
+    {sup:"51003955",name:"TERRA FIRST",                        inv:362, exc:425, excs:[{id:29,desc:"Missing Mandatory Info",cnt:305},{id:1,desc:"Process PO Invoice",cnt:49},{id:151,desc:"Manual Check/Missing Indexing",cnt:31},{id:75,desc:"LIV — Price Discrepancy",cnt:26},{id:82,desc:"Header Block",cnt:14}]},
+    {sup:"51004029",name:"PPG INDUSTRIES INC",                 inv:295, exc:387, excs:[{id:151,desc:"Manual Check/Missing Indexing",cnt:142},{id:1,desc:"Process PO Invoice",cnt:141},{id:75,desc:"LIV — Price Discrepancy",cnt:47},{id:82,desc:"Header Block",cnt:41},{id:2,desc:"Invalid PO Number",cnt:9},{id:29,desc:"Missing Mandatory Info",cnt:7}]},
+    {sup:"51004305",name:"YAZOO RIVER TOWING INC",             inv:88,  exc:211, excs:[{id:29,desc:"Missing Mandatory Info",cnt:81},{id:75,desc:"LIV — Price Discrepancy",cnt:45},{id:82,desc:"Header Block",cnt:43},{id:1,desc:"Process PO Invoice",cnt:26},{id:151,desc:"Manual Check/Missing Indexing",cnt:12},{id:2,desc:"Invalid PO Number",cnt:2},{id:902,desc:"Invalid Company Code",cnt:2}]},
+    {sup:"51004490",name:"COLUMBUS RUBBER & GASKET CO INC",    inv:225, exc:387, excs:[{id:1,desc:"Process PO Invoice",cnt:176},{id:75,desc:"LIV — Price Discrepancy",cnt:55},{id:38,desc:"Freight on Invoice",cnt:48},{id:82,desc:"Header Block",cnt:47},{id:151,desc:"Manual Check/Missing Indexing",cnt:26},{id:2,desc:"Invalid PO Number",cnt:15},{id:29,desc:"Missing Mandatory Info",cnt:11},{id:6,desc:"Suspected Duplicate",cnt:7},{id:85,desc:"Company Code Mismatch",cnt:1}]},
+    {sup:"51004495",name:"HARCROS CHEMICALS INC",              inv:115, exc:194, excs:[{id:29,desc:"Missing Mandatory Info",cnt:83},{id:75,desc:"LIV — Price Discrepancy",cnt:45},{id:151,desc:"Manual Check/Missing Indexing",cnt:23},{id:82,desc:"Header Block",cnt:21},{id:1,desc:"Process PO Invoice",cnt:16},{id:6,desc:"Suspected Duplicate",cnt:3},{id:2,desc:"Invalid PO Number",cnt:2},{id:34,desc:"Vendor Mismatch",cnt:1}]},
+    {sup:"51004553",name:"MOTION INDUSTRIES INC",              inv:287, exc:441, excs:[{id:38,desc:"Freight on Invoice",cnt:183},{id:1,desc:"Process PO Invoice",cnt:133},{id:75,desc:"LIV — Price Discrepancy",cnt:40},{id:151,desc:"Manual Check/Missing Indexing",cnt:26},{id:82,desc:"Header Block",cnt:26},{id:29,desc:"Missing Mandatory Info",cnt:19},{id:2,desc:"Invalid PO Number",cnt:4},{id:37,desc:"Unit of Measure Mismatch",cnt:3}]},
+    {sup:"51004569",name:"MARATHON PETROLEUM COMPANY LP",      inv:96,  exc:166, excs:[{id:1,desc:"Process PO Invoice",cnt:55},{id:82,desc:"Header Block",cnt:26},{id:151,desc:"Manual Check/Missing Indexing",cnt:26},{id:75,desc:"LIV — Price Discrepancy",cnt:24},{id:930,desc:"Down Payment Request",cnt:11},{id:29,desc:"Missing Mandatory Info",cnt:10},{id:2,desc:"Invalid PO Number",cnt:6},{id:416,desc:"Down Payment Clearing",cnt:3},{id:38,desc:"Freight on Invoice",cnt:2},{id:6,desc:"Suspected Duplicate",cnt:1},{id:34,desc:"Vendor Mismatch",cnt:1},{id:85,desc:"Company Code Mismatch",cnt:1}]},
+    {sup:"51004581",name:"THOMPSONS WELDING SERVICES INC",     inv:169, exc:297, excs:[{id:2,desc:"Invalid PO Number",cnt:94},{id:151,desc:"Manual Check/Missing Indexing",cnt:70},{id:1,desc:"Process PO Invoice",cnt:54},{id:37,desc:"Unit of Measure Mismatch",cnt:37},{id:29,desc:"Missing Mandatory Info",cnt:26},{id:34,desc:"Vendor Mismatch",cnt:9},{id:85,desc:"Company Code Mismatch",cnt:6},{id:6,desc:"Suspected Duplicate",cnt:1}]},
+    {sup:"51004598",name:"AIRGAS CARBONICS INC",               inv:103, exc:178, excs:[{id:1,desc:"Process PO Invoice",cnt:105},{id:75,desc:"LIV — Price Discrepancy",cnt:26},{id:2,desc:"Invalid PO Number",cnt:15},{id:82,desc:"Header Block",cnt:15},{id:34,desc:"Vendor Mismatch",cnt:7},{id:151,desc:"Manual Check/Missing Indexing",cnt:6},{id:29,desc:"Missing Mandatory Info",cnt:4}]},
+    {sup:"51004601",name:"MEWCO, INC",                         inv:165, exc:232, excs:[{id:1,desc:"Process PO Invoice",cnt:172},{id:151,desc:"Manual Check/Missing Indexing",cnt:25},{id:29,desc:"Missing Mandatory Info",cnt:22},{id:37,desc:"Unit of Measure Mismatch",cnt:10},{id:2,desc:"Invalid PO Number",cnt:2},{id:902,desc:"Invalid Company Code",cnt:1}]},
+    {sup:"51004610",name:"CARMEUSE LIME AND STONE INC",        inv:327, exc:331, excs:[{id:151,desc:"Manual Check/Missing Indexing",cnt:268},{id:1,desc:"Process PO Invoice",cnt:42},{id:2,desc:"Invalid PO Number",cnt:11},{id:29,desc:"Missing Mandatory Info",cnt:9},{id:6,desc:"Suspected Duplicate",cnt:1}]},
+    {sup:"51004671",name:"SOUTHERN INDUSTRIAL SUPPLY LLC",     inv:57,  exc:136, excs:[{id:1,desc:"Process PO Invoice",cnt:75},{id:75,desc:"LIV — Price Discrepancy",cnt:23},{id:2,desc:"Invalid PO Number",cnt:13},{id:82,desc:"Header Block",cnt:12},{id:151,desc:"Manual Check/Missing Indexing",cnt:7},{id:38,desc:"Freight on Invoice",cnt:5},{id:85,desc:"Company Code Mismatch",cnt:1}]},
+    {sup:"51004749",name:"APACHE INDUSTRIAL SERVICES INC",     inv:168, exc:263, excs:[{id:1,desc:"Process PO Invoice",cnt:128},{id:37,desc:"Unit of Measure Mismatch",cnt:63},{id:29,desc:"Missing Mandatory Info",cnt:28},{id:151,desc:"Manual Check/Missing Indexing",cnt:17},{id:85,desc:"Company Code Mismatch",cnt:15},{id:2,desc:"Invalid PO Number",cnt:9},{id:34,desc:"Vendor Mismatch",cnt:2},{id:6,desc:"Suspected Duplicate",cnt:1}]},
+    {sup:"51004809",name:"FISHER SCIENTIFIC COMPANY LLC",      inv:72,  exc:195, excs:[{id:1,desc:"Process PO Invoice",cnt:55},{id:75,desc:"LIV — Price Discrepancy",cnt:35},{id:2,desc:"Invalid PO Number",cnt:30},{id:82,desc:"Header Block",cnt:29},{id:38,desc:"Freight on Invoice",cnt:17},{id:29,desc:"Missing Mandatory Info",cnt:16},{id:151,desc:"Manual Check/Missing Indexing",cnt:12},{id:6,desc:"Suspected Duplicate",cnt:1}]},
+    {sup:"51004873",name:"EVANS PLUMBING AND AC INC",          inv:113, exc:163, excs:[{id:1,desc:"Process PO Invoice",cnt:123},{id:151,desc:"Manual Check/Missing Indexing",cnt:25},{id:29,desc:"Missing Mandatory Info",cnt:7},{id:2,desc:"Invalid PO Number",cnt:6},{id:6,desc:"Suspected Duplicate",cnt:1},{id:85,desc:"Company Code Mismatch",cnt:1}]}
+  ]
+};
+
+/* supplier-ID → detail record */
+const VED_MAP = {};
+D.vendor_exc_detail.forEach(v => { VED_MAP[v.sup] = v; });
+
+/* name → supplier ID (for table lookup) */
+const NAME_TO_SUP = {};
+D.vendor_exc_detail.forEach(v => { NAME_TO_SUP[v.name] = v.sup; });
+
+const EXCL_CHART = new Set(["51003869","51003955"]); /* excluded from stacked chart */
+
+/* ══════════════════════════════ HELPERS ════════════════════════════ */
+const FONT    = {family:"Inter, -apple-system, sans-serif", size:12};
+const GRIDCLR = "#f1f5f9";
+const EXC_COLORS = ["#0095a8","#1a3d6b","#2d9948","#e8913a","#e8503a","#7c3aed","#0891b2","#d97706","#6366f1","#10b981","#f43f5e","#8b5cf6"];
+
+function baseLayout(extra) {
+  return Object.assign({
+    font:FONT, paper_bgcolor:"transparent", plot_bgcolor:"transparent",
+    margin:{l:10,r:10,t:8,b:10,pad:2},
+    hoverlabel:{bgcolor:"#1e2535",font:{color:"#fff",size:12},bordercolor:"transparent"},
+    xaxis:{gridcolor:GRIDCLR,zeroline:false},
+    yaxis:{gridcolor:GRIDCLR,zeroline:false}
+  }, extra||{});
+}
+const PC = {responsive:true, displayModeBar:false};
+
+/* ══════════════════════════════ TAB SWITCHING ══════════════════════ */
+const rendered = new Set();
+
+function switchTab(id) {
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab===id));
+  document.querySelectorAll(".tab-pane").forEach(p => p.classList.toggle("active", p.id==="tab-"+id));
+  if (!rendered.has(id)) { rendered.add(id); renderTab(id); }
+  setTimeout(() => {
+    document.querySelectorAll("#tab-"+id+" [id^='ch-'], #tab-"+id+" #vdr-focus-chart").forEach(el => {
+      if (el._fullLayout) Plotly.Plots.resize(el);
+    });
+  }, 30);
+}
+document.querySelectorAll(".tab-btn").forEach(b => b.addEventListener("click", () => switchTab(b.dataset.tab)));
+
+function renderTab(id) {
+  if      (id==="overview")   renderOverview();
+  else if (id==="vendors")    renderVendors();
+  else if (id==="exceptions") renderExceptions();
+  else if (id==="trends")     renderTrends();
+}
+
+/* ══════════════════════════════ OVERVIEW ═══════════════════════════ */
+function renderOverview() {
+  const ef = [...D.exc_freq].reverse();
+  Plotly.newPlot("ch-exc-freq", [{
+    type:"bar", orientation:"h",
+    x:ef.map(d=>d.count), y:ef.map(d=>`Exc ${d.id}: ${d.desc}`),
+    text:ef.map(d=>d.count.toLocaleString()), textposition:"outside",
+    marker:{color:EXC_COLORS.slice().reverse(),opacity:0.88},
+    hovertemplate:"<b>%{y}</b><br>%{x:,} events<extra></extra>"
+  }], baseLayout({
+    margin:{l:260,r:60,t:8,b:30,pad:2},
+    xaxis:{title:{text:"Exception Events",font:{size:11}},gridcolor:GRIDCLR},
+    yaxis:{tickfont:{size:11.5}}, showlegend:false
+  }), PC);
+
+  Plotly.newPlot("ch-monthly-fp", [{
+    type:"scatter", mode:"lines+markers",
+    x:D.monthly.map(d=>d.m), y:D.monthly.map(d=>d.fpr),
+    line:{color:"#0095a8",width:2.5}, marker:{size:8,color:"#0095a8",line:{color:"#fff",width:2}},
+    fill:"tozeroy", fillcolor:"rgba(0,149,168,.08)",
+    hovertemplate:"<b>%{x}</b><br>First-Pass Rate: %{y:.1f}%<extra></extra>"
+  }], baseLayout({
+    margin:{l:52,r:24,t:8,b:50,pad:2},
+    xaxis:{tickangle:-30,tickfont:{size:11}},
+    yaxis:{title:{text:"First-Pass Rate (%)",font:{size:11}},range:[0,60],gridcolor:GRIDCLR},
+    showlegend:false
+  }), PC);
+
+  Plotly.newPlot("ch-channel-fp", [{
+    type:"bar",
+    x:D.channel_fp.map(d=>d.ch), y:D.channel_fp.map(d=>d.fpr),
+    text:D.channel_fp.map(d=>d.fpr.toFixed(1)+"%"), textposition:"outside",
+    marker:{color:["#0095a8","#1a3d6b","#7c3aed"],opacity:0.88},
+    hovertemplate:"<b>%{x}</b><br>First-Pass Rate: %{y:.1f}%<br>Total: %{customdata:,}<extra></extra>",
+    customdata:D.channel_fp.map(d=>d.total)
+  }], baseLayout({
+    margin:{l:48,r:24,t:8,b:40,pad:2},
+    yaxis:{title:{text:"First-Pass Rate (%)",font:{size:11}},range:[0,65],gridcolor:GRIDCLR},
+    showlegend:false
+  }), PC);
+
+  const bins = D.exc_dist.slice(0,10);
+  const rest = D.exc_dist.slice(10).reduce((s,d)=>s+d.cnt,0);
+  Plotly.newPlot("ch-exc-dist", [{
+    type:"bar",
+    x:[...bins.map(d=>String(d.n)),"11+"], y:[...bins.map(d=>d.cnt),rest],
+    text:[...bins.map(d=>d.cnt.toLocaleString()),rest.toLocaleString()], textposition:"outside",
+    marker:{color:"#1a3d6b",opacity:0.82},
+    hovertemplate:"<b>%{x} exception(s)</b><br>%{y:,} invoices<extra></extra>"
+  }], baseLayout({
+    margin:{l:52,r:20,t:8,b:40,pad:2},
+    xaxis:{title:{text:"Exception Events per Invoice",font:{size:11}}},
+    yaxis:{title:{text:"Invoice Count",font:{size:11}},gridcolor:GRIDCLR},
+    showlegend:false
+  }), PC);
+}
+
+/* ══════════════════════════════ VENDORS ════════════════════════════ */
+function renderVendors() {
+  /* ── Stacked breakdown chart (excluding SI and TF) ── */
+  const chartVendors = D.vendor_exc_detail
+    .filter(v => !EXCL_CHART.has(v.sup))
+    .sort((a,b) => a.exc - b.exc);
+
+  const eidTotals = {};
+  chartVendors.forEach(v => v.excs.forEach(e => { eidTotals[e.id]=(eidTotals[e.id]||0)+e.cnt; }));
+  const topEids = Object.entries(eidTotals).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([id])=>+id);
+
+  const EXC_LBL = {1:"Process PO Invoice",151:"Manual Check/Missing Indexing",29:"Missing Mandatory Info",75:"LIV — Price Discrepancy",38:"Freight on Invoice",82:"Header Block",2:"Invalid PO Number",37:"Unit of Measure Mismatch",34:"Vendor Mismatch",6:"Suspected Duplicate",85:"Company Code Mismatch",902:"Invalid Company Code",930:"Down Payment Request",416:"Down Payment Clearing"};
+  const vbNames = chartVendors.map(v => v.name.length>36 ? v.name.slice(0,34)+"…" : v.name);
+
+  const vbTraces = topEids.map((eid,i) => ({
+    name:`${eid}: ${EXC_LBL[eid]||eid}`,
+    x:chartVendors.map(v=>{ const r=v.excs.find(e=>e.id===eid); return r?r.cnt:0; }),
+    y:vbNames, type:"bar", orientation:"h",
+    marker:{color:EXC_COLORS[i%EXC_COLORS.length]},
+    hovertemplate:`<b>%{y}</b><br>Exc ${eid}: %{x:,} events<extra></extra>`
+  }));
+  const otherTrace = {
+    name:"Other",
+    x:chartVendors.map(v=>{
+      const top=topEids.reduce((s,eid)=>{ const r=v.excs.find(e=>e.id===eid); return s+(r?r.cnt:0); },0);
+      return Math.max(0, v.exc - top);
+    }),
+    y:vbNames, type:"bar", orientation:"h",
+    marker:{color:"#cbd5e1"},
+    hovertemplate:"<b>%{y}</b><br>Other: %{x:,} events<extra></extra>"
+  };
+  Plotly.newPlot("ch-vendor-breakdown", [...vbTraces, otherTrace], baseLayout({
+    barmode:"stack",
+    margin:{l:260,r:20,t:8,b:110,pad:2},
+    xaxis:{title:{text:"Exception Events",font:{size:11}},gridcolor:GRIDCLR},
+    yaxis:{tickfont:{size:11}},
+    legend:{orientation:"h",x:0,y:-0.22,font:{size:10.5}}
+  }), PC);
+
+  /* ── Scatter ── */
+  Plotly.newPlot("ch-vendor-scatter", [{
+    type:"scatter", mode:"markers",
+    x:D.vendor_top30.map(d=>d.inv), y:D.vendor_top30.map(d=>d.avg),
+    text:D.vendor_top30.map(d=>d.name),
+    marker:{
+      size:D.vendor_top30.map(d=>Math.sqrt(d.exc)*2.8),
+      color:D.vendor_top30.map(d=>d.avg),
+      colorscale:[[0,"#dcfce7"],[0.3,"#0095a8"],[0.7,"#1a3d6b"],[1,"#e8503a"]],
+      showscale:true,
+      colorbar:{title:{text:"Avg Exc/Inv",font:{size:11}},thickness:12,len:0.8},
+      opacity:0.82, line:{color:"rgba(255,255,255,.6)",width:1}
+    },
+    hovertemplate:"<b>%{text}</b><br>Invoices: %{x:,}<br>Avg Exc/Invoice: %{y:.2f}<extra></extra>"
+  }], baseLayout({
+    margin:{l:52,r:70,t:8,b:52,pad:2},
+    xaxis:{title:{text:"Unique Invoice Count",font:{size:11}},gridcolor:GRIDCLR},
+    yaxis:{title:{text:"Avg Exception Events / Invoice",font:{size:11}},gridcolor:GRIDCLR},
+    showlegend:false
+  }), PC);
+
+  /* ── Vendor table ── */
+  buildVendorTable();
+}
+
+/* ── Vendor Table & Reactive Focus Card ────────────────────────── */
+let vdrData     = D.workload_conc.map((d,i)=>({...d,rank:i+1,avg:+(d.exc/d.inv).toFixed(2)}));
+let vdrFiltered = [...vdrData];
+let vdrPage     = 0;
+const PER_PAGE  = 15;
+let vdrSort     = "exc";
+let activeVendor = null;
+
+function buildVendorTable() {
+  const maxExc = Math.max(...vdrData.map(d=>d.exc));
+  document.getElementById("vdr-search").addEventListener("input", e => {
+    vdrFiltered = vdrData.filter(d=>d.name.toLowerCase().includes(e.target.value.toLowerCase()));
+    sortVdr(); vdrPage=0; renderVdrPage(maxExc);
+  });
+  document.querySelectorAll(".sort-opt").forEach(btn => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".sort-opt").forEach(b=>b.classList.remove("active"));
+      btn.classList.add("active");
+      vdrSort=btn.dataset.sort;
+      sortVdr(); vdrPage=0; renderVdrPage(maxExc);
+    });
+  });
+  document.getElementById("pg-prev").addEventListener("click", ()=>{ if(vdrPage>0){vdrPage--;renderVdrPage(maxExc);} });
+  document.getElementById("pg-next").addEventListener("click", ()=>{ if((vdrPage+1)*PER_PAGE<vdrFiltered.length){vdrPage++;renderVdrPage(maxExc);} });
+  sortVdr(); renderVdrPage(maxExc);
+}
+
+function sortVdr() {
+  const key = vdrSort==="exc"?"exc":vdrSort==="inv"?"inv":"avg";
+  vdrFiltered.sort((a,b)=>b[key]-a[key]);
+}
+
+function pillCls(avg) { return avg<1.5?"pill-g":avg<2.0?"pill-y":avg<3.0?"pill-o":"pill-r"; }
+
+function renderVdrPage(maxExc) {
+  const start=vdrPage*PER_PAGE, page=vdrFiltered.slice(start,start+PER_PAGE), total=vdrFiltered.length;
+  document.getElementById("vdr-count").textContent=`Showing ${start+1}–${Math.min(start+PER_PAGE,total)} of ${total} vendors`;
+  document.getElementById("pg-info").textContent=`Page ${vdrPage+1} of ${Math.ceil(total/PER_PAGE)}`;
+  document.getElementById("pg-prev").disabled=vdrPage===0;
+  document.getElementById("pg-next").disabled=(vdrPage+1)*PER_PAGE>=total;
+
+  const tbody=document.getElementById("vtbl-body");
+  tbody.innerHTML=page.map((d,i)=>{
+    const sup    = NAME_TO_SUP[d.name];
+    const hasDetail = !!sup;
+    const barW   = Math.round((d.exc/maxExc)*110);
+    const isSel  = (activeVendor && activeVendor.name===d.name);
+    return `<tr data-name="${encodeURIComponent(d.name)}" class="${isSel?"selected":""}">
+      <td class="rank">${start+i+1}</td>
+      <td class="vname">${d.name}</td>
+      <td class="num">${d.exc.toLocaleString()}</td>
+      <td class="num">${d.inv.toLocaleString()}</td>
+      <td class="num"><span class="pill ${pillCls(d.avg)}">${d.avg.toFixed(2)}</span></td>
+      <td><div class="exc-bar-wrap"><div class="exc-bar" style="width:${barW}px"></div><span style="font-size:11px;color:#64748b">${d.exc}</span></div></td>
+      <td class="detail-icon">${hasDetail?"▸":"·"}</td>
+    </tr>`;
+  }).join("");
+
+  tbody.querySelectorAll("tr").forEach(row=>{
+    row.addEventListener("click", ()=>{
+      const name=decodeURIComponent(row.dataset.name);
+      const rec=vdrFiltered.find(d=>d.name===name);
+      if (rec) loadFocusCard(rec, row);
+    });
+  });
+}
+
+function loadFocusCard(record, clickedRow) {
+  /* Toggle off same vendor */
+  if (activeVendor && activeVendor.name===record.name) {
+    activeVendor=null;
+    clickedRow.classList.remove("selected");
+    resetFocusCard();
+    return;
+  }
+  activeVendor=record;
+  document.querySelectorAll("#vtbl-body tr").forEach(r=>r.classList.remove("selected"));
+  clickedRow.classList.add("selected");
+
+  const sup    = NAME_TO_SUP[record.name];
+  const detail = sup ? VED_MAP[sup] : null;
+  const empty  = document.getElementById("vdr-focus-empty");
+  const chart  = document.getElementById("vdr-focus-chart");
+  const nostat = document.getElementById("vdr-focus-nostats");
+
+  document.getElementById("vdr-focus-heading").textContent = record.name;
+  document.getElementById("vdr-focus-desc").textContent =
+    `${record.inv.toLocaleString()} invoices · ${record.exc.toLocaleString()} exception events · ${record.avg.toFixed(2)}× avg per invoice`;
+
+  empty.style.display="none";
+
+  if (detail) {
+    nostat.style.display="none";
+    chart.style.display="block";
+    const sorted=[...detail.excs].sort((a,b)=>b.cnt-a.cnt);
+    Plotly.react("vdr-focus-chart", [{
+      type:"bar", orientation:"h",
+      x:sorted.map(e=>e.cnt), y:sorted.map(e=>`${e.id}: ${e.desc}`),
+      text:sorted.map(e=>e.cnt.toLocaleString()),
+      textposition:"outside",
+      marker:{color:sorted.map((_,i)=>EXC_COLORS[i%EXC_COLORS.length]),opacity:0.88},
+      hovertemplate:"<b>%{y}</b><br>%{x:,} events<extra></extra>"
+    }], baseLayout({
+      margin:{l:220,r:55,t:4,b:30,pad:2},
+      xaxis:{title:{text:"Exception Events",font:{size:11}},gridcolor:GRIDCLR},
+      yaxis:{tickfont:{size:11.5}}, showlegend:false
+    }), PC);
+  } else {
+    chart.style.display="none";
+    nostat.style.display="block";
+  }
+
+  /* Scroll focus card into view smoothly */
+  document.getElementById("vdr-focus-card").scrollIntoView({behavior:"smooth",block:"nearest"});
+}
+
+function resetFocusCard() {
+  document.getElementById("vdr-focus-heading").textContent="Vendor — Exception Breakdown";
+  document.getElementById("vdr-focus-desc").textContent="Select a vendor from the table below to view their exception type breakdown.";
+  document.getElementById("vdr-focus-empty").style.display="flex";
+  document.getElementById("vdr-focus-chart").style.display="none";
+  document.getElementById("vdr-focus-nostats").style.display="none";
+}
+
+/* ══════════════════════════════ EXCEPTIONS ════════════════════════ */
+function renderExceptions() {
+  const traces=D.cat_exc.types.map((t,i)=>({
+    type:"bar", name:`${t.id}: ${t.label}`,
+    x:D.cat_exc.cats, y:t.vals,
+    marker:{color:EXC_COLORS[i%EXC_COLORS.length]},
+    hovertemplate:`<b>%{x} — ${t.label}</b><br>%{y:,} events<extra></extra>`
+  }));
+  Plotly.newPlot("ch-cat-exc", traces, baseLayout({
+    barmode:"stack",
+    margin:{l:52,r:16,t:8,b:50,pad:2},
+    xaxis:{title:{text:"PO Category",font:{size:11}}},
+    yaxis:{title:{text:"Exception Events",font:{size:11}},gridcolor:GRIDCLR},
+    legend:{orientation:"v",x:1.02,y:1,font:{size:10.5}}
+  }), PC);
+
+  const pairs=[...D.exc_pairs].reverse();
+  Plotly.newPlot("ch-pairs", [{
+    type:"bar", orientation:"h",
+    x:pairs.map(d=>d.cnt), y:pairs.map(d=>d.pair),
+    text:pairs.map(d=>d.cnt), textposition:"outside",
+    marker:{color:"#1a3d6b",opacity:0.8},
+    hovertemplate:"<b>%{y}</b><br>%{x:,} invoices<extra></extra>"
+  }], baseLayout({
+    margin:{l:80,r:50,t:8,b:40,pad:2},
+    xaxis:{title:{text:"Co-occurrence Count",font:{size:11}},gridcolor:GRIDCLR},
+    yaxis:{tickfont:{size:12}}, showlegend:false
+  }), PC);
+
+  const channels=["COUPA","MAIL_IES","VIM_IES"], cats=["Standard","Service","Subcontracting","Consignment"];
+  Plotly.newPlot("ch-heatmap", [{
+    type:"heatmap",
+    z:channels.map(ch=>cats.map(cat=>{ const r=D.channel_cat_fp.find(d=>d.ch===ch&&d.cat===cat); return r?r.fpr:null; })),
+    x:cats, y:channels,
+    text:channels.map(ch=>cats.map(cat=>{ const r=D.channel_cat_fp.find(d=>d.ch===ch&&d.cat===cat); return r?r.fpr.toFixed(1)+"%":"n/a"; })),
+    texttemplate:"%{text}", textfont:{size:13,color:"#1e2535"},
+    colorscale:[[0,"#fca5a5"],[0.25,"#fde68a"],[0.5,"#86efac"],[1,"#059669"]],
+    zmin:0, zmax:100,
+    colorbar:{title:{text:"FP Rate %",font:{size:11}},thickness:12,len:0.8},
+    hovertemplate:"<b>%{y} × %{x}</b><br>First-Pass Rate: %{z:.1f}%<extra></extra>"
+  }], baseLayout({
+    margin:{l:90,r:80,t:8,b:50,pad:2},
+    xaxis:{tickfont:{size:12}}, yaxis:{tickfont:{size:12}}, showlegend:false
+  }), PC);
+
+  Plotly.newPlot("ch-cat-pie", [{
+    type:"pie",
+    labels:["Standard","Service","Subcontracting","Consignment"],
+    values:[8043,4925,318,77],
+    marker:{colors:["#1a3d6b","#0095a8","#e8913a","#7c3aed"]},
+    textinfo:"label+percent", textfont:{size:12},
+    hovertemplate:"<b>%{label}</b><br>%{value:,} events (%{percent})<extra></extra>",
+    hole:0.38
+  }], baseLayout({
+    margin:{l:20,r:20,t:10,b:20,pad:2},
+    legend:{orientation:"v",x:1.02,y:0.5,yanchor:"middle",font:{size:11}}
+  }), PC);
+}
+
+/* ══════════════════════════════ TRENDS ════════════════════════════ */
+function renderTrends() {
+  const m=D.monthly;
+  Plotly.newPlot("ch-monthly-stack", [
+    {type:"bar", name:"First-Pass", x:m.map(d=>d.m), y:m.map(d=>d.fp),
+     marker:{color:"#2d9948",opacity:0.8}, hovertemplate:"<b>%{x}</b><br>First-Pass: %{y:,}<extra></extra>"},
+    {type:"bar", name:"Exception-Flagged", x:m.map(d=>d.m), y:m.map(d=>d.exc),
+     marker:{color:"#e8503a",opacity:0.72}, hovertemplate:"<b>%{x}</b><br>Exception-Flagged: %{y:,}<extra></extra>"},
+    {type:"scatter", mode:"lines+markers", name:"First-Pass Rate",
+     x:m.map(d=>d.m), y:m.map(d=>d.fpr),
+     line:{color:"#0095a8",width:2.5,dash:"dot"}, marker:{size:7,color:"#0095a8"},
+     yaxis:"y2", hovertemplate:"<b>%{x}</b><br>First-Pass Rate: %{y:.1f}%<extra></extra>"}
+  ], baseLayout({
+    barmode:"stack",
+    margin:{l:52,r:56,t:8,b:50,pad:2},
+    xaxis:{tickangle:-30,tickfont:{size:11}},
+    yaxis:{title:{text:"Invoice Count",font:{size:11}},gridcolor:GRIDCLR},
+    yaxis2:{title:{text:"First-Pass Rate (%)",font:{size:11}},overlaying:"y",side:"right",range:[0,60],gridcolor:"transparent"},
+    legend:{orientation:"h",y:1.08,x:0.5,xanchor:"center",font:{size:11}}
+  }), PC);
+
+  Plotly.newPlot("ch-monthly-vol", [{
+    type:"bar",
+    x:m.map(d=>d.m), y:m.map(d=>d.total),
+    text:m.map(d=>d.total.toLocaleString()), textposition:"outside",
+    marker:{color:"#1a3d6b",opacity:0.78},
+    hovertemplate:"<b>%{x}</b><br>Total Invoices: %{y:,}<extra></extra>"
+  }], baseLayout({
+    margin:{l:52,r:20,t:8,b:50,pad:2},
+    xaxis:{tickangle:-30,tickfont:{size:11}},
+    yaxis:{title:{text:"Invoice Count",font:{size:11}},gridcolor:GRIDCLR},
+    showlegend:false
+  }), PC);
+}
+
+/* ══════════════════════════════ INIT ═══════════════════════════════ */
+rendered.add("overview");
+renderOverview();
+</script>
+</body>
+</html>
