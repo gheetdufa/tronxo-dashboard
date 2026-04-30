@@ -242,18 +242,18 @@
   </div>
   <div class="kpi green">
     <span class="kpi-lbl">First Pass Rate</span>
-    <span class="kpi-val">49.9%</span>
-    <span class="kpi-sub">8,277 invoices — no exceptions triggered</span>
+    <span class="kpi-val">13.6%</span>
+    <span class="kpi-sub">2,262 invoices — no exceptions triggered</span>
   </div>
   <div class="kpi orange">
     <span class="kpi-lbl">Total Exception Events</span>
-    <span class="kpi-val">13,363</span>
+    <span class="kpi-val">35,142</span>
     <span class="kpi-sub">Across invoices with ≥1 exception</span>
   </div>
   <div class="kpi teal">
     <span class="kpi-lbl">Vendors with Exceptions</span>
-    <span class="kpi-val">531</span>
-    <span class="kpi-sub">Top 10 account for 30.6% of events</span>
+    <span class="kpi-val">611</span>
+    <span class="kpi-sub">All vendors including transport</span>
   </div>
 </div>
 
@@ -384,7 +384,7 @@
       </div>
       <div class="card">
         <div class="card-title">Exception Events by PO Category — Share</div>
-        <div class="card-desc">Total exception events attributed to each PO category as a proportion of all 13,363 exception events.</div>
+        <div class="card-desc">Total exception events attributed to each PO category as a proportion of all 35,142 exception events.</div>
         <div id="ch-cat-pie" style="height:320px"></div>
       </div>
     </div>
@@ -425,16 +425,21 @@ const D = {
     {m:"Jan '26",  total:15,   exc:13,   fp:2,    fpr:13.33}
   ],
   exc_freq: [
-    {id:1,   desc:"Process PO Invoice",              count:4050, pct:30.31},
-    {id:151, desc:"Manual Check / Missing Indexing", count:2621, pct:19.62},
-    {id:29,  desc:"Missing Mandatory Info",          count:2552, pct:19.10},
-    {id:75,  desc:"LIV — Price Discrepancy",         count:964,  pct:7.21},
-    {id:2,   desc:"Invalid PO Number",               count:789,  pct:5.90},
-    {id:38,  desc:"Freight on Invoice",              count:748,  pct:5.60},
-    {id:82,  desc:"Header Block",                    count:705,  pct:5.28},
-    {id:37,  desc:"Unit of Measure Mismatch",        count:224,  pct:1.68},
-    {id:6,   desc:"Suspected Duplicate",             count:213,  pct:1.59},
-    {id:34,  desc:"Vendor Mismatch",                 count:201,  pct:1.50}
+    {id:0,   desc:"PO Low-value Service Invoice",    count:12728, pct:36.22},
+    {id:91,  desc:"GR Not Done-Simple Check",        count:6573,  pct:18.70},
+    {id:29,  desc:"Missing Mandatory Info",          count:4257,  pct:12.11},
+    {id:1,   desc:"Process PO Invoice",              count:4184,  pct:11.91},
+    {id:151, desc:"Manual Check / Missing Indexing", count:2761,  pct:7.86},
+    {id:75,  desc:"LIV — Price Discrepancy",         count:1119,  pct:3.18},
+    {id:82,  desc:"Header Block",                    count:802,   pct:2.28},
+    {id:2,   desc:"Invalid PO Number",               count:802,   pct:2.28},
+    {id:38,  desc:"Freight on Invoice",              count:748,   pct:2.13},
+    {id:34,  desc:"Vendor Mismatch",                 count:384,   pct:1.09},
+    {id:37,  desc:"Unit of Measure Mismatch",        count:224,   pct:0.64},
+    {id:6,   desc:"Suspected Duplicate",             count:219,   pct:0.62},
+    {id:3,   desc:"Invalid Vendor",                  count:157,   pct:0.45},
+    {id:85,  desc:"Company Code Mismatch",           count:58,    pct:0.17},
+    {id:76,  desc:"LIV — Quantity Discrepancy",      count:31,    pct:0.09}
   ],
   channel_fp: [
     {ch:"COUPA",    total:1592,  fp:822,  fpr:51.63},
