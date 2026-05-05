@@ -1,8 +1,8 @@
 {
   "kpi": {
-    "total_invoices": 12859,
-    "first_pass_count": 4556,
-    "first_pass_rate": 35.4,
+    "total_invoices": 15157,
+    "first_pass_count": 2261,
+    "first_pass_rate": 14.9,
     "total_exception_events": 13363,
     "unique_vendors_with_exceptions": 531,
     "top10_vendor_pct": 30.6
@@ -812,91 +812,98 @@
   "channel_fp": [
     {
       "Channel ID": "COUPA",
-      "Total": 1592,
-      "First_Pass_Count": 822,
-      "First_Pass_Rate": 51.63
+      "Total": 2350,
+      "First_Pass_Count": 758,
+      "First_Pass_Rate": 32.26
     },
     {
       "Channel ID": "MAIL_IES",
-      "Total": 11092,
-      "First_Pass_Count": 3679,
-      "First_Pass_Rate": 33.17
+      "Total": 12604,
+      "First_Pass_Count": 1491,
+      "First_Pass_Rate": 11.83
     },
     {
       "Channel ID": "VIM_IES",
-      "Total": 175,
-      "First_Pass_Count": 55,
-      "First_Pass_Rate": 31.43
+      "Total": 203,
+      "First_Pass_Count": 12,
+      "First_Pass_Rate": 5.91
     }
   ],
   "channel_cat_fp": [
     {
       "Channel ID": "COUPA",
+      "PO category decription": "Consignment",
+      "Total": 1,
+      "First_Pass_Count": 1,
+      "First_Pass_Rate": 100.0
+    },
+    {
+      "Channel ID": "COUPA",
       "PO category decription": "Service",
-      "Total": 530,
-      "First_Pass_Count": 442,
-      "First_Pass_Rate": 83.4
+      "Total": 531,
+      "First_Pass_Count": 1,
+      "First_Pass_Rate": 0.19
     },
     {
       "Channel ID": "COUPA",
       "PO category decription": "Standard",
-      "Total": 977,
-      "First_Pass_Count": 348,
-      "First_Pass_Rate": 35.62
+      "Total": 1435,
+      "First_Pass_Count": 458,
+      "First_Pass_Rate": 31.92
     },
     {
       "Channel ID": "COUPA",
       "PO category decription": "Subcontracting",
-      "Total": 85,
-      "First_Pass_Count": 32,
-      "First_Pass_Rate": 37.65
+      "Total": 383,
+      "First_Pass_Count": 298,
+      "First_Pass_Rate": 77.81
     },
     {
       "Channel ID": "MAIL_IES",
       "PO category decription": "Consignment",
-      "Total": 46,
-      "First_Pass_Count": 4,
-      "First_Pass_Rate": 8.7
+      "Total": 58,
+      "First_Pass_Count": 12,
+      "First_Pass_Rate": 20.69
     },
     {
       "Channel ID": "MAIL_IES",
       "PO category decription": "Service",
-      "Total": 5197,
-      "First_Pass_Count": 2589,
-      "First_Pass_Rate": 49.82
+      "Total": 6387,
+      "First_Pass_Count": 72,
+      "First_Pass_Rate": 1.13
     },
     {
       "Channel ID": "MAIL_IES",
       "PO category decription": "Standard",
-      "Total": 5721,
-      "First_Pass_Count": 1057,
-      "First_Pass_Rate": 18.48
+      "Total": 5795,
+      "First_Pass_Count": 1167,
+      "First_Pass_Rate": 20.14
     },
     {
       "Channel ID": "MAIL_IES",
       "PO category decription": "Subcontracting",
-      "Total": 128,
-      "First_Pass_Count": 29,
-      "First_Pass_Rate": 22.66
+      "Total": 364,
+      "First_Pass_Count": 240,
+      "First_Pass_Rate": 65.93
     },
     {
       "Channel ID": "VIM_IES",
       "PO category decription": "Service",
-      "Total": 52,
-      "First_Pass_Count": 25,
-      "First_Pass_Rate": 48.08
+      "Total": 66,
+      "First_Pass_Count": 0,
+      "First_Pass_Rate": 0.0
     },
     {
       "Channel ID": "VIM_IES",
       "PO category decription": "Standard",
-      "Total": 122,
-      "First_Pass_Count": 30,
-      "First_Pass_Rate": 24.59
+      "Total": 135,
+      "First_Pass_Count": 12,
+      "First_Pass_Rate": 8.89
     },
     {
       "Channel ID": "VIM_IES",
       "PO category decription": "Subcontracting",
-      "Total": 1,
+      "Total": 2,
       "First_Pass_Count": 0,
       "First_Pass_Rate": 0.0
     }
@@ -1090,57 +1097,57 @@
   "monthly": [
     {
       "Month_str": "2025-05",
-      "Total_Invoices": 1417,
-      "Exc_Invoices": 1122,
-      "First_Pass_Rate": 20.82
+      "Total_Invoices": 1902,
+      "Exc_Invoices": 1771,
+      "First_Pass_Rate": 6.89
     },
     {
       "Month_str": "2025-06",
-      "Total_Invoices": 1543,
-      "Exc_Invoices": 961,
-      "First_Pass_Rate": 37.72
+      "Total_Invoices": 1695,
+      "Exc_Invoices": 1459,
+      "First_Pass_Rate": 13.92
     },
     {
       "Month_str": "2025-07",
-      "Total_Invoices": 1851,
-      "Exc_Invoices": 1099,
-      "First_Pass_Rate": 40.63
+      "Total_Invoices": 2211,
+      "Exc_Invoices": 1799,
+      "First_Pass_Rate": 18.63
     },
     {
       "Month_str": "2025-08",
-      "Total_Invoices": 1664,
-      "Exc_Invoices": 909,
-      "First_Pass_Rate": 45.37
+      "Total_Invoices": 1966,
+      "Exc_Invoices": 1639,
+      "First_Pass_Rate": 16.63
     },
     {
       "Month_str": "2025-09",
-      "Total_Invoices": 1670,
-      "Exc_Invoices": 1004,
-      "First_Pass_Rate": 39.88
+      "Total_Invoices": 1929,
+      "Exc_Invoices": 1625,
+      "First_Pass_Rate": 15.76
     },
     {
       "Month_str": "2025-10",
-      "Total_Invoices": 1792,
-      "Exc_Invoices": 1214,
-      "First_Pass_Rate": 32.25
+      "Total_Invoices": 2103,
+      "Exc_Invoices": 1781,
+      "First_Pass_Rate": 15.31
     },
     {
       "Month_str": "2025-11",
-      "Total_Invoices": 1249,
-      "Exc_Invoices": 819,
-      "First_Pass_Rate": 34.43
+      "Total_Invoices": 1447,
+      "Exc_Invoices": 1211,
+      "First_Pass_Rate": 16.31
     },
     {
       "Month_str": "2025-12",
-      "Total_Invoices": 1658,
-      "Exc_Invoices": 1162,
-      "First_Pass_Rate": 29.92
+      "Total_Invoices": 1884,
+      "Exc_Invoices": 1596,
+      "First_Pass_Rate": 15.29
     },
     {
       "Month_str": "2026-01",
-      "Total_Invoices": 15,
-      "Exc_Invoices": 13,
-      "First_Pass_Rate": 13.33
+      "Total_Invoices": 20,
+      "Exc_Invoices": 15,
+      "First_Pass_Rate": 25.0
     }
   ],
   "workload_conc": [

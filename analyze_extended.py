@@ -6,10 +6,11 @@ import os
 import pandas as pd
 import json
 
-SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
-SORTED_FILE = os.path.join(SCRIPT_DIR, "1100 VIM Exceptions Data(DATA - 1100 Sorted) (1).csv")
-INC_FILE = os.path.join(SCRIPT_DIR, "1100 Data inc.csv")
-OUT_DIR = os.path.join(SCRIPT_DIR, "output")
+SCRIPT_DIR    = os.path.dirname(os.path.abspath(__file__))
+SORTED_FILE   = os.path.join(SCRIPT_DIR, "1100 VIM Exceptions Data(DATA - 1100 Sorted) (1).csv")
+INC_FILE      = os.path.join(SCRIPT_DIR, "1100 Data inc.csv")
+UNIVERSE_FILE = os.path.join(SCRIPT_DIR, "data_verify", "2025 invoices US(1head data) (3).csv")
+OUT_DIR       = os.path.join(SCRIPT_DIR, "output")
 
 def load(path):
     df = pd.read_csv(path, encoding="utf-8-sig", low_memory=False)
@@ -28,6 +29,7 @@ def load(path):
 
 TRANSPORT_PREFIX = "52"
 VALID_PO_TYPES   = ["NB", "ZCP"]
+FP_EXCLUDE_VENDORS = {"SOUTHERN IONICS INCORPORATED", "TERRA FIRST"}
 
 def clean_base(df):
     df = df.copy()
@@ -40,6 +42,7 @@ def clean_base(df):
 
 sorted_raw = clean_base(load(SORTED_FILE))
 inc_raw    = clean_base(load(INC_FILE))
+universe_raw = pd.read_csv(UNIVERSE_FILE, encoding="latin-1", low_memory=False)
 
 sorted_posted = sorted_raw[
     (sorted_raw["Document Status"].astype(str).str.strip() == "15") &
@@ -50,12 +53,23 @@ inc_posted = inc_raw[
     inc_raw["PO Type"].isin(VALID_PO_TYPES)
 ]
 
-exc_inv_ids = set(sorted_posted["Document Id"].unique())
-all_inv = (
-    inc_posted.groupby(["Document Id","Channel ID","PO category decription"])
-    .first().reset_index()[["Document Id","Channel ID","PO category decription"]]
-)
-all_inv["First_Pass"] = ~all_inv["Document Id"].isin(exc_inv_ids)
+# Correct invoice universe for first-pass denominator
+universe_df = universe_raw[
+    (universe_raw["Status Descrip"].str.strip() == "Posted") &
+    (universe_raw["PO Type descr"].str.strip() == "Regular")
+].copy()
+universe_df["Channel ID"] = universe_df["Channel ID"].astype(str).str.strip()
+universe_df["PO category decription"] = universe_df["PO category decription"].astype(str).str.strip()
+universe_df["Name 1"] = universe_df["Name 1"].astype(str).str.upper().str.strip()
+universe_df["Month"] = pd.to_datetime(universe_df["Document Create Date"], errors="coerce").dt.to_period("M").astype(str)
+universe_df = universe_df[~universe_df["Name 1"].isin(FP_EXCLUDE_VENDORS)]
+
+# Strict first-pass: any inc exception (incl Exc 0 & 91, all suppliers/PO types) disqualifies
+_inc_all_posted = inc_raw[inc_raw["Document Status"].astype(str).str.strip() == "15"]
+_exc_ids = set(_inc_all_posted["Document Id"].unique())
+universe_df["First_Pass"] = ~universe_df["Document Id"].isin(_exc_ids)
+
+all_inv = universe_df[["Document Id","Channel ID","PO category decription","First_Pass","Month"]].drop_duplicates("Document Id").copy()
 
 # ═══════════════════════════════════════════════════════
 # 1. EXCEPTION 91 — GR Not Done Simple Check
@@ -255,11 +269,8 @@ exc_on_cstd_fail = (
     .sort_values("Count", ascending=False)
 )
 
-# Monthly COUPA performance by category
+# Monthly COUPA performance by category (Month already set from universe_df)
 coupa_inv = all_inv[all_inv["Channel ID"]=="COUPA"].copy()
-coupa_inv["Month"] = coupa_inv["Document Id"].map(
-    inc_posted.drop_duplicates("Document Id").set_index("Document Id")["Month"]
-)
 coupa_monthly = coupa_inv.groupby(["Month","PO category decription"]).agg(
     Total=("Document Id","count"),
     FP_Count=("First_Pass","sum")

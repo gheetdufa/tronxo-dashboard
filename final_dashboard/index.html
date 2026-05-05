@@ -221,16 +221,158 @@
       .kpi-val { font-size: 17px; }
       .tab-btn { padding: 6px 11px; font-size: 11.5px; }
     }
+
+    /* ── Password Gate ───────────────────────────────────────────── */
+    .gate-overlay {
+      position: fixed; inset: 0; z-index: 9999;
+      background: linear-gradient(135deg, #0f2647 0%, #1a3d6b 50%, #0095a8 100%);
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    .gate-card {
+      background: #fff; border-radius: 12px;
+      padding: 36px 38px 30px; width: 360px; max-width: calc(100vw - 32px);
+      box-shadow: 0 18px 48px rgba(0,0,0,.35);
+      text-align: center;
+    }
+    .gate-logo {
+      font-size: 22px; font-weight: 700; letter-spacing: 4px;
+      color: #1a3d6b; text-transform: uppercase; margin-bottom: 6px;
+    }
+    .gate-sub {
+      font-size: 12px; color: #64748b; margin-bottom: 22px;
+      letter-spacing: .3px;
+    }
+    .gate-input {
+      width: 100%; padding: 11px 14px;
+      border: 1px solid #cbd5e1; border-radius: 7px;
+      font-family: inherit; font-size: 14px; color: #1e2535;
+      outline: none; transition: border .15s, box-shadow .15s;
+    }
+    .gate-input:focus {
+      border-color: #0095a8;
+      box-shadow: 0 0 0 3px rgba(0,149,168,.18);
+    }
+    .gate-btn {
+      width: 100%; margin-top: 12px; padding: 11px 14px;
+      background: #1a3d6b; color: #fff;
+      border: none; border-radius: 7px;
+      font-family: inherit; font-size: 14px; font-weight: 600;
+      cursor: pointer; transition: background .15s;
+    }
+    .gate-btn:hover { background: #0f2647; }
+    .gate-btn:disabled { opacity: .55; cursor: wait; }
+    .gate-err {
+      margin-top: 12px; min-height: 16px;
+      font-size: 12px; color: #dc2626; font-weight: 500;
+    }
+    .gate-foot {
+      margin-top: 18px; font-size: 10.5px; color: #94a3b8;
+      letter-spacing: .4px; text-transform: uppercase;
+    }
+    body.gate-locked { overflow: hidden; }
+    body.gate-locked .hdr,
+    body.gate-locked .kpi-strip,
+    body.gate-locked .tab-nav,
+    body.gate-locked .main { visibility: hidden; }
+
+    /* Lock button in header */
+    .hdr-lock {
+      background: rgba(255,255,255,.12); color: #fff;
+      border: 1px solid rgba(255,255,255,.22);
+      padding: 5px 12px; border-radius: 6px;
+      font-family: inherit; font-size: 11.5px; font-weight: 500;
+      cursor: pointer; margin-left: 14px;
+      transition: background .15s;
+    }
+    .hdr-lock:hover { background: rgba(255,255,255,.22); }
+    @media (max-width: 768px) { .hdr-lock { display: none; } }
   </style>
 </head>
-<body>
+<body class="gate-locked">
+
+<!-- ═══ PASSWORD GATE ═════════════════════════════════════════════════ -->
+<div id="gate" class="gate-overlay">
+  <form class="gate-card" id="gate-form" autocomplete="off">
+    <div class="gate-logo">Tronox</div>
+    <div class="gate-sub">AP Invoice Dashboard — Restricted Access</div>
+    <input id="gate-input" class="gate-input" type="password" placeholder="Enter password" autofocus>
+    <button id="gate-btn" class="gate-btn" type="submit">Unlock</button>
+    <div id="gate-err" class="gate-err"></div>
+    <div class="gate-foot">Plant 1100 · Confidential</div>
+  </form>
+</div>
+
+<script>
+/* ══════════════════════════════ PASSWORD GATE ══════════════════════
+   Client-side gate. Password is never stored in plaintext: only its
+   SHA-256 hash sits below. To change the password, recompute the hash
+   of the new password (sha256 of UTF-8 bytes, lowercase hex) and
+   replace PWD_HASH.                                                   */
+const PWD_HASH = "e89a7727a828ccf4d5ae55afa465367024e539303812aec8e31d64755acb0aaf";
+const GATE_KEY = "tronox_dash_unlocked";
+
+async function sha256Hex(str) {
+  const buf = new TextEncoder().encode(str);
+  const hash = await crypto.subtle.digest("SHA-256", buf);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
+function unlockUI() {
+  const gate = document.getElementById("gate");
+  document.body.classList.remove("gate-locked");
+  if (gate) {
+    gate.style.transition = "opacity .25s";
+    gate.style.opacity = "0";
+    setTimeout(() => gate.remove(), 250);
+  }
+  /* Trigger Plotly resize once visible (charts may have rendered with 0-width parents) */
+  setTimeout(() => {
+    document.querySelectorAll("[id^='ch-']").forEach(el => {
+      if (el._fullLayout && window.Plotly) Plotly.Plots.resize(el);
+    });
+  }, 280);
+}
+
+function lockUI() {
+  try { sessionStorage.removeItem(GATE_KEY); } catch (e) {}
+  location.reload();
+}
+
+(function initGate() {
+  let unlocked = false;
+  try { unlocked = sessionStorage.getItem(GATE_KEY) === "1"; } catch (e) {}
+  if (unlocked) { unlockUI(); return; }
+
+  const form  = document.getElementById("gate-form");
+  const input = document.getElementById("gate-input");
+  const btn   = document.getElementById("gate-btn");
+  const err   = document.getElementById("gate-err");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    err.textContent = "";
+    btn.disabled = true; btn.textContent = "Checking…";
+    const h = await sha256Hex(input.value);
+    if (h === PWD_HASH) {
+      try { sessionStorage.setItem(GATE_KEY, "1"); } catch (e) {}
+      unlockUI();
+    } else {
+      err.textContent = "Incorrect password. Try again.";
+      btn.disabled = false; btn.textContent = "Unlock";
+      input.value = ""; input.focus();
+    }
+  });
+})();
+</script>
 
 <!-- ═══ HEADER ═══════════════════════════════════════════════════════ -->
 <header class="hdr">
   <span class="hdr-logo">Tronox</span>
   <div class="hdr-div"></div>
   <span class="hdr-title">AP Invoice Processing — Plant 1100</span>
-  <span class="hdr-meta">Data: May 2025 – Jan 2026 &nbsp;|&nbsp; Posted invoices (status 15) &nbsp;|&nbsp; PO types NB &amp; ZCP &nbsp;|&nbsp; Exc 0 &amp; 91 excluded; transport vendors excluded</span>
+  <span class="hdr-meta">Data: May 2025 – Jan 2026</span>
+  <button class="hdr-lock" type="button" onclick="lockUI()" title="Lock dashboard">🔒 Lock</button>
 </header>
 
 <!-- ═══ KPI STRIP ═════════════════════════════════════════════════════ -->
@@ -277,7 +419,7 @@
       </div>
       <div class="card">
         <div class="card-title">Monthly First-Pass Rate</div>
-        <div class="card-desc">Percentage of invoices that passed without triggering any exception, plotted month over month (May 2025 – Jan 2026).</div>
+        <div class="card-desc">Percentage of invoices that passed without triggering any exception, plotted month over month. Uses the full posted universe — same methodology as the 13.6% headline KPI.</div>
         <div id="ch-monthly-fp" style="height:340px"></div>
       </div>
     </div>
@@ -394,14 +536,14 @@
     <div class="g1">
       <div class="card">
         <div class="card-title">Monthly Invoice Volume: First-Pass vs. Exception-Flagged</div>
-        <div class="card-desc">Stacked bar showing total monthly invoice counts split between first-pass (no exceptions) and exception-flagged (≥1 exception). Line overlay shows the first-pass rate for that month.</div>
+        <div class="card-desc">Stacked bar showing total monthly invoice counts split between first-pass (no exceptions) and exception-flagged (≥1 exception), using the full posted universe. Line overlay shows the first-pass rate — same methodology as the 13.6% headline KPI.</div>
         <div id="ch-monthly-stack" style="height:380px"></div>
       </div>
     </div>
     <div class="g1">
       <div class="card">
         <div class="card-title">Monthly Invoice Volume — Total Count</div>
-        <div class="card-desc">Total number of posted invoices processed each month from May 2025 through January 2026.</div>
+        <div class="card-desc">Total number of posted invoices processed each month from May 2025 through January 2026. Full posted universe — matches the 13.6% headline KPI denominator.</div>
         <div id="ch-monthly-vol" style="height:300px"></div>
       </div>
     </div>
@@ -412,16 +554,21 @@
 <script>
 /* ══════════════════════════════ DATA ══════════════════════════════════ */
 const D = {
+  /* Per-month rows. Two views are stored side-by-side:
+     • total / exc / fp / fpr      → FILTERED view (Exc 0 & 91 removed, NB/ZCP only, transport excl.)
+     • total_u / exc_u / fp_u / fpr_u → STRICT/UNFILTERED view that matches the 13.6% headline KPI
+                                         (full posted universe, ANY exception disqualifies first-pass).
+     Strict numbers come from output/06_monthly_trends.csv. */
   monthly: [
-    {m:"May '25",  total:1417, exc:1122, fp:295,  fpr:20.82},
-    {m:"Jun '25",  total:1543, exc:961,  fp:582,  fpr:37.72},
-    {m:"Jul '25",  total:1851, exc:1099, fp:752,  fpr:40.63},
-    {m:"Aug '25",  total:1664, exc:909,  fp:755,  fpr:45.37},
-    {m:"Sep '25",  total:1670, exc:1004, fp:666,  fpr:39.88},
-    {m:"Oct '25",  total:1792, exc:1214, fp:578,  fpr:32.25},
-    {m:"Nov '25",  total:1249, exc:819,  fp:430,  fpr:34.43},
-    {m:"Dec '25",  total:1658, exc:1162, fp:496,  fpr:29.92},
-    {m:"Jan '26",  total:15,   exc:13,   fp:2,    fpr:13.33}
+    {m:"May '25",  total:1417, exc:1122, fp:295,  fpr:20.82, total_u:1902, exc_u:1771, fp_u:131, fpr_u:6.89},
+    {m:"Jun '25",  total:1543, exc:961,  fp:582,  fpr:37.72, total_u:1695, exc_u:1459, fp_u:236, fpr_u:13.92},
+    {m:"Jul '25",  total:1851, exc:1099, fp:752,  fpr:40.63, total_u:2211, exc_u:1799, fp_u:412, fpr_u:18.63},
+    {m:"Aug '25",  total:1664, exc:909,  fp:755,  fpr:45.37, total_u:1966, exc_u:1639, fp_u:327, fpr_u:16.63},
+    {m:"Sep '25",  total:1670, exc:1004, fp:666,  fpr:39.88, total_u:1929, exc_u:1625, fp_u:304, fpr_u:15.76},
+    {m:"Oct '25",  total:1792, exc:1214, fp:578,  fpr:32.25, total_u:2103, exc_u:1781, fp_u:322, fpr_u:15.31},
+    {m:"Nov '25",  total:1249, exc:819,  fp:430,  fpr:34.43, total_u:1447, exc_u:1211, fp_u:236, fpr_u:16.31},
+    {m:"Dec '25",  total:1658, exc:1162, fp:496,  fpr:29.92, total_u:1884, exc_u:1596, fp_u:288, fpr_u:15.29},
+    {m:"Jan '26",  total:15,   exc:13,   fp:2,    fpr:13.33, total_u:20,   exc_u:15,   fp_u:5,   fpr_u:25.00}
   ],
   exc_freq: [
     {id:0,   desc:"PO Low-value Service Invoice",    count:12728, pct:36.22},
@@ -641,56 +788,60 @@ function renderTab(id) {
 /* ══════════════════════════════ OVERVIEW ═══════════════════════════ */
 function renderOverview() {
   const ef = [...D.exc_freq].reverse();
+  const efMax = Math.max(...ef.map(d=>d.count));
   Plotly.newPlot("ch-exc-freq", [{
-    type:"bar", orientation:"h",
+    type:"bar", orientation:"h", cliponaxis:false,
     x:ef.map(d=>d.count), y:ef.map(d=>`Exc ${d.id}: ${d.desc}`),
     text:ef.map(d=>d.count.toLocaleString()), textposition:"outside",
     marker:{color:EXC_COLORS.slice().reverse(),opacity:0.88},
     hovertemplate:"<b>%{y}</b><br>%{x:,} events<extra></extra>"
   }], baseLayout({
-    margin:{l:260,r:60,t:8,b:30,pad:2},
-    xaxis:{title:{text:"Exception Events",font:{size:11}},gridcolor:GRIDCLR},
+    margin:{l:260,r:95,t:8,b:30,pad:2},
+    xaxis:{title:{text:"Exception Events",font:{size:11}},gridcolor:GRIDCLR,range:[0,efMax*1.15]},
     yaxis:{tickfont:{size:11.5}}, showlegend:false
   }), PC);
 
   Plotly.newPlot("ch-monthly-fp", [{
     type:"scatter", mode:"lines+markers",
-    x:D.monthly.map(d=>d.m), y:D.monthly.map(d=>d.fpr),
-    line:{color:"#0095a8",width:2.5}, marker:{size:8,color:"#0095a8",line:{color:"#fff",width:2}},
-    fill:"tozeroy", fillcolor:"rgba(0,149,168,.08)",
-    hovertemplate:"<b>%{x}</b><br>First-Pass Rate: %{y:.1f}%<extra></extra>"
+    x:D.monthly.map(d=>d.m), y:D.monthly.map(d=>d.fpr_u),
+    line:{color:"#1a3d6b",width:2.5}, marker:{size:8,color:"#1a3d6b",line:{color:"#fff",width:2}},
+    fill:"tozeroy", fillcolor:"rgba(26,61,107,.08)",
+    customdata:D.monthly.map(d=>[d.fp_u,d.total_u]),
+    hovertemplate:"<b>%{x}</b><br>First-Pass Rate: %{y:.1f}%<br>%{customdata[0]:,} of %{customdata[1]:,} invoices<extra></extra>"
   }], baseLayout({
     margin:{l:52,r:24,t:8,b:50,pad:2},
     xaxis:{tickangle:-30,tickfont:{size:11}},
-    yaxis:{title:{text:"First-Pass Rate (%)",font:{size:11}},range:[0,60],gridcolor:GRIDCLR},
+    yaxis:{title:{text:"First-Pass Rate (%)",font:{size:11}},range:[0,30],gridcolor:GRIDCLR},
     showlegend:false
   }), PC);
 
   Plotly.newPlot("ch-channel-fp", [{
-    type:"bar",
+    type:"bar", cliponaxis:false,
     x:D.channel_fp.map(d=>d.ch), y:D.channel_fp.map(d=>d.fpr),
     text:D.channel_fp.map(d=>d.fpr.toFixed(1)+"%"), textposition:"outside",
     marker:{color:["#0095a8","#1a3d6b","#7c3aed"],opacity:0.88},
     hovertemplate:"<b>%{x}</b><br>First-Pass Rate: %{y:.1f}%<br>Total: %{customdata:,}<extra></extra>",
     customdata:D.channel_fp.map(d=>d.total)
   }], baseLayout({
-    margin:{l:48,r:24,t:8,b:40,pad:2},
+    margin:{l:48,r:24,t:28,b:40,pad:2},
     yaxis:{title:{text:"First-Pass Rate (%)",font:{size:11}},range:[0,65],gridcolor:GRIDCLR},
     showlegend:false
   }), PC);
 
   const bins = D.exc_dist.slice(0,10);
   const rest = D.exc_dist.slice(10).reduce((s,d)=>s+d.cnt,0);
+  const distYs = [...bins.map(d=>d.cnt),rest];
+  const distMax = Math.max(...distYs);
   Plotly.newPlot("ch-exc-dist", [{
-    type:"bar",
-    x:[...bins.map(d=>String(d.n)),"11+"], y:[...bins.map(d=>d.cnt),rest],
+    type:"bar", cliponaxis:false,
+    x:[...bins.map(d=>String(d.n)),"11+"], y:distYs,
     text:[...bins.map(d=>d.cnt.toLocaleString()),rest.toLocaleString()], textposition:"outside",
     marker:{color:"#1a3d6b",opacity:0.82},
     hovertemplate:"<b>%{x} exception(s)</b><br>%{y:,} invoices<extra></extra>"
   }], baseLayout({
-    margin:{l:52,r:20,t:8,b:40,pad:2},
+    margin:{l:60,r:20,t:28,b:40,pad:2},
     xaxis:{title:{text:"Exception Events per Invoice",font:{size:11}}},
-    yaxis:{title:{text:"Invoice Count",font:{size:11}},gridcolor:GRIDCLR},
+    yaxis:{title:{text:"Invoice Count",font:{size:11}},gridcolor:GRIDCLR,range:[0,distMax*1.12]},
     showlegend:false
   }), PC);
 }
@@ -854,16 +1005,17 @@ function loadFocusCard(record, clickedRow) {
     nostat.style.display="none";
     chart.style.display="block";
     const sorted=[...detail.excs].sort((a,b)=>b.cnt-a.cnt);
+    const sMax=Math.max(...sorted.map(e=>e.cnt));
     Plotly.react("vdr-focus-chart", [{
-      type:"bar", orientation:"h",
+      type:"bar", orientation:"h", cliponaxis:false,
       x:sorted.map(e=>e.cnt), y:sorted.map(e=>`${e.id}: ${e.desc}`),
       text:sorted.map(e=>e.cnt.toLocaleString()),
       textposition:"outside",
       marker:{color:sorted.map((_,i)=>EXC_COLORS[i%EXC_COLORS.length]),opacity:0.88},
       hovertemplate:"<b>%{y}</b><br>%{x:,} events<extra></extra>"
     }], baseLayout({
-      margin:{l:220,r:55,t:4,b:30,pad:2},
-      xaxis:{title:{text:"Exception Events",font:{size:11}},gridcolor:GRIDCLR},
+      margin:{l:220,r:80,t:4,b:30,pad:2},
+      xaxis:{title:{text:"Exception Events",font:{size:11}},gridcolor:GRIDCLR,range:[0,sMax*1.18]},
       yaxis:{tickfont:{size:11.5}}, showlegend:false
     }), PC);
   } else {
@@ -900,15 +1052,16 @@ function renderExceptions() {
   }), PC);
 
   const pairs=[...D.exc_pairs].reverse();
+  const pairsMax=Math.max(...pairs.map(d=>d.cnt));
   Plotly.newPlot("ch-pairs", [{
-    type:"bar", orientation:"h",
+    type:"bar", orientation:"h", cliponaxis:false,
     x:pairs.map(d=>d.cnt), y:pairs.map(d=>d.pair),
     text:pairs.map(d=>d.cnt), textposition:"outside",
     marker:{color:"#1a3d6b",opacity:0.8},
     hovertemplate:"<b>%{y}</b><br>%{x:,} invoices<extra></extra>"
   }], baseLayout({
-    margin:{l:80,r:50,t:8,b:40,pad:2},
-    xaxis:{title:{text:"Co-occurrence Count",font:{size:11}},gridcolor:GRIDCLR},
+    margin:{l:80,r:75,t:8,b:40,pad:2},
+    xaxis:{title:{text:"Co-occurrence Count",font:{size:11}},gridcolor:GRIDCLR,range:[0,pairsMax*1.15]},
     yaxis:{tickfont:{size:12}}, showlegend:false
   }), PC);
 
@@ -933,11 +1086,13 @@ function renderExceptions() {
     labels:["Standard","Service","Subcontracting","Consignment"],
     values:[8043,4925,318,77],
     marker:{colors:["#1a3d6b","#0095a8","#e8913a","#7c3aed"]},
-    textinfo:"label+percent", textfont:{size:12},
+    textinfo:"percent", textfont:{size:12,color:"#fff"},
+    textposition:"inside", insidetextorientation:"horizontal",
+    automargin:true,
     hovertemplate:"<b>%{label}</b><br>%{value:,} events (%{percent})<extra></extra>",
     hole:0.38
   }], baseLayout({
-    margin:{l:20,r:20,t:10,b:20,pad:2},
+    margin:{l:20,r:140,t:10,b:20,pad:2},
     legend:{orientation:"v",x:1.02,y:0.5,yanchor:"middle",font:{size:11}}
   }), PC);
 }
@@ -946,33 +1101,34 @@ function renderExceptions() {
 function renderTrends() {
   const m=D.monthly;
   Plotly.newPlot("ch-monthly-stack", [
-    {type:"bar", name:"First-Pass", x:m.map(d=>d.m), y:m.map(d=>d.fp),
+    {type:"bar", name:"First-Pass", x:m.map(d=>d.m), y:m.map(d=>d.fp_u),
      marker:{color:"#2d9948",opacity:0.8}, hovertemplate:"<b>%{x}</b><br>First-Pass: %{y:,}<extra></extra>"},
-    {type:"bar", name:"Exception-Flagged", x:m.map(d=>d.m), y:m.map(d=>d.exc),
+    {type:"bar", name:"Exception-Flagged", x:m.map(d=>d.m), y:m.map(d=>d.exc_u),
      marker:{color:"#e8503a",opacity:0.72}, hovertemplate:"<b>%{x}</b><br>Exception-Flagged: %{y:,}<extra></extra>"},
     {type:"scatter", mode:"lines+markers", name:"First-Pass Rate",
-     x:m.map(d=>d.m), y:m.map(d=>d.fpr),
-     line:{color:"#0095a8",width:2.5,dash:"dot"}, marker:{size:7,color:"#0095a8"},
+     x:m.map(d=>d.m), y:m.map(d=>d.fpr_u),
+     line:{color:"#1a3d6b",width:2.5,dash:"dot"}, marker:{size:7,color:"#1a3d6b"},
      yaxis:"y2", hovertemplate:"<b>%{x}</b><br>First-Pass Rate: %{y:.1f}%<extra></extra>"}
   ], baseLayout({
     barmode:"stack",
     margin:{l:52,r:56,t:8,b:50,pad:2},
     xaxis:{tickangle:-30,tickfont:{size:11}},
     yaxis:{title:{text:"Invoice Count",font:{size:11}},gridcolor:GRIDCLR},
-    yaxis2:{title:{text:"First-Pass Rate (%)",font:{size:11}},overlaying:"y",side:"right",range:[0,60],gridcolor:"transparent"},
+    yaxis2:{title:{text:"First-Pass Rate (%)",font:{size:11}},overlaying:"y",side:"right",range:[0,30],gridcolor:"transparent"},
     legend:{orientation:"h",y:1.08,x:0.5,xanchor:"center",font:{size:11}}
   }), PC);
 
+  const volMax = Math.max(...m.map(d=>d.total_u));
   Plotly.newPlot("ch-monthly-vol", [{
-    type:"bar",
-    x:m.map(d=>d.m), y:m.map(d=>d.total),
-    text:m.map(d=>d.total.toLocaleString()), textposition:"outside",
+    type:"bar", cliponaxis:false,
+    x:m.map(d=>d.m), y:m.map(d=>d.total_u),
+    text:m.map(d=>d.total_u.toLocaleString()), textposition:"outside",
     marker:{color:"#1a3d6b",opacity:0.78},
     hovertemplate:"<b>%{x}</b><br>Total Invoices: %{y:,}<extra></extra>"
   }], baseLayout({
-    margin:{l:52,r:20,t:8,b:50,pad:2},
+    margin:{l:60,r:20,t:28,b:50,pad:2},
     xaxis:{tickangle:-30,tickfont:{size:11}},
-    yaxis:{title:{text:"Invoice Count",font:{size:11}},gridcolor:GRIDCLR},
+    yaxis:{title:{text:"Invoice Count",font:{size:11}},gridcolor:GRIDCLR,range:[0,volMax*1.12]},
     showlegend:false
   }), PC);
 }

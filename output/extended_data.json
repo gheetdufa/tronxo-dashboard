@@ -1246,73 +1246,80 @@
   "cc_fp": [
     {
       "Channel ID": "COUPA",
+      "PO category decription": "Consignment",
+      "Total": 1,
+      "FP_Count": 1,
+      "FP_Rate": 100.0
+    },
+    {
+      "Channel ID": "COUPA",
       "PO category decription": "Service",
-      "Total": 530,
-      "FP_Count": 442,
-      "FP_Rate": 83.4
+      "Total": 531,
+      "FP_Count": 1,
+      "FP_Rate": 0.2
     },
     {
       "Channel ID": "COUPA",
       "PO category decription": "Standard",
-      "Total": 977,
-      "FP_Count": 348,
-      "FP_Rate": 35.6
+      "Total": 1435,
+      "FP_Count": 458,
+      "FP_Rate": 31.9
     },
     {
       "Channel ID": "COUPA",
       "PO category decription": "Subcontracting",
-      "Total": 85,
-      "FP_Count": 32,
-      "FP_Rate": 37.6
+      "Total": 383,
+      "FP_Count": 298,
+      "FP_Rate": 77.8
     },
     {
       "Channel ID": "MAIL_IES",
       "PO category decription": "Consignment",
-      "Total": 46,
-      "FP_Count": 4,
-      "FP_Rate": 8.7
+      "Total": 58,
+      "FP_Count": 12,
+      "FP_Rate": 20.7
     },
     {
       "Channel ID": "MAIL_IES",
       "PO category decription": "Service",
-      "Total": 5197,
-      "FP_Count": 2589,
-      "FP_Rate": 49.8
+      "Total": 6387,
+      "FP_Count": 1190,
+      "FP_Rate": 18.6
     },
     {
       "Channel ID": "MAIL_IES",
       "PO category decription": "Standard",
-      "Total": 5721,
-      "FP_Count": 1057,
-      "FP_Rate": 18.5
+      "Total": 5795,
+      "FP_Count": 1473,
+      "FP_Rate": 25.4
     },
     {
       "Channel ID": "MAIL_IES",
       "PO category decription": "Subcontracting",
-      "Total": 128,
-      "FP_Count": 29,
-      "FP_Rate": 22.7
+      "Total": 364,
+      "FP_Count": 244,
+      "FP_Rate": 67.0
     },
     {
       "Channel ID": "VIM_IES",
       "PO category decription": "Service",
-      "Total": 52,
-      "FP_Count": 25,
-      "FP_Rate": 48.1
+      "Total": 66,
+      "FP_Count": 14,
+      "FP_Rate": 21.2
     },
     {
       "Channel ID": "VIM_IES",
       "PO category decription": "Standard",
-      "Total": 122,
-      "FP_Count": 30,
-      "FP_Rate": 24.6
+      "Total": 135,
+      "FP_Count": 28,
+      "FP_Rate": 20.7
     },
     {
       "Channel ID": "VIM_IES",
       "PO category decription": "Subcontracting",
-      "Total": 1,
-      "FP_Count": 0,
-      "FP_Rate": 0.0
+      "Total": 2,
+      "FP_Count": 1,
+      "FP_Rate": 50.0
     }
   ],
   "coupa_svc_fail_exc": [
@@ -1352,18 +1359,7 @@
       "Count": 1
     }
   ],
-  "coupa_svc_pass_exc": [
-    {
-      "Exception ID": 0,
-      "Exception description": "PO Low-value service invoice",
-      "Count": 675
-    },
-    {
-      "Exception ID": 91,
-      "Exception description": "GR Not Done-Simple Check",
-      "Count": 24
-    }
-  ],
+  "coupa_svc_pass_exc": [],
   "coupa_std_fail_exc": [
     {
       "Exception ID": 38,
@@ -1416,169 +1412,176 @@
       "Month": "2025-05",
       "PO category decription": "Service",
       "Total": 53,
-      "FP_Count": 34,
-      "FP_Rate": 64.2
+      "FP_Count": 0,
+      "FP_Rate": 0.0
     },
     {
       "Month": "2025-05",
       "PO category decription": "Standard",
-      "Total": 49,
-      "FP_Count": 15,
-      "FP_Rate": 30.6
+      "Total": 70,
+      "FP_Count": 21,
+      "FP_Rate": 30.0
     },
     {
       "Month": "2025-05",
       "PO category decription": "Subcontracting",
-      "Total": 4,
+      "Total": 33,
+      "FP_Count": 29,
+      "FP_Rate": 87.9
+    },
+    {
+      "Month": "2025-06",
+      "PO category decription": "Consignment",
+      "Total": 1,
       "FP_Count": 1,
-      "FP_Rate": 25.0
+      "FP_Rate": 100.0
     },
     {
       "Month": "2025-06",
       "PO category decription": "Service",
       "Total": 73,
-      "FP_Count": 51,
-      "FP_Rate": 69.9
+      "FP_Count": 0,
+      "FP_Rate": 0.0
     },
     {
       "Month": "2025-06",
       "PO category decription": "Standard",
-      "Total": 62,
-      "FP_Count": 25,
-      "FP_Rate": 40.3
+      "Total": 108,
+      "FP_Count": 46,
+      "FP_Rate": 42.6
     },
     {
       "Month": "2025-06",
       "PO category decription": "Subcontracting",
-      "Total": 6,
-      "FP_Count": 2,
-      "FP_Rate": 33.3
+      "Total": 45,
+      "FP_Count": 39,
+      "FP_Rate": 86.7
     },
     {
       "Month": "2025-07",
       "PO category decription": "Service",
       "Total": 70,
-      "FP_Count": 61,
-      "FP_Rate": 87.1
+      "FP_Count": 0,
+      "FP_Rate": 0.0
     },
     {
       "Month": "2025-07",
       "PO category decription": "Standard",
-      "Total": 141,
-      "FP_Count": 58,
-      "FP_Rate": 41.1
+      "Total": 262,
+      "FP_Count": 121,
+      "FP_Rate": 46.2
     },
     {
       "Month": "2025-07",
       "PO category decription": "Subcontracting",
-      "Total": 6,
-      "FP_Count": 2,
-      "FP_Rate": 33.3
+      "Total": 60,
+      "FP_Count": 54,
+      "FP_Rate": 90.0
     },
     {
       "Month": "2025-08",
       "PO category decription": "Service",
       "Total": 80,
-      "FP_Count": 76,
-      "FP_Rate": 95.0
+      "FP_Count": 0,
+      "FP_Rate": 0.0
     },
     {
       "Month": "2025-08",
       "PO category decription": "Standard",
-      "Total": 143,
+      "Total": 205,
       "FP_Count": 62,
-      "FP_Rate": 43.4
+      "FP_Rate": 30.2
     },
     {
       "Month": "2025-08",
       "PO category decription": "Subcontracting",
-      "Total": 21,
-      "FP_Count": 14,
-      "FP_Rate": 66.7
+      "Total": 67,
+      "FP_Count": 46,
+      "FP_Rate": 68.7
     },
     {
       "Month": "2025-09",
       "PO category decription": "Service",
-      "Total": 59,
-      "FP_Count": 51,
-      "FP_Rate": 86.4
+      "Total": 60,
+      "FP_Count": 1,
+      "FP_Rate": 1.7
     },
     {
       "Month": "2025-09",
       "PO category decription": "Standard",
-      "Total": 150,
-      "FP_Count": 59,
-      "FP_Rate": 39.3
+      "Total": 191,
+      "FP_Count": 41,
+      "FP_Rate": 21.5
     },
     {
       "Month": "2025-09",
       "PO category decription": "Subcontracting",
-      "Total": 5,
-      "FP_Count": 1,
-      "FP_Rate": 20.0
+      "Total": 70,
+      "FP_Count": 65,
+      "FP_Rate": 92.9
     },
     {
       "Month": "2025-10",
       "PO category decription": "Service",
       "Total": 70,
-      "FP_Count": 63,
-      "FP_Rate": 90.0
+      "FP_Count": 0,
+      "FP_Rate": 0.0
     },
     {
       "Month": "2025-10",
       "PO category decription": "Standard",
-      "Total": 177,
-      "FP_Count": 57,
-      "FP_Rate": 32.2
+      "Total": 230,
+      "FP_Count": 53,
+      "FP_Rate": 23.0
     },
     {
       "Month": "2025-10",
       "PO category decription": "Subcontracting",
-      "Total": 23,
-      "FP_Count": 5,
-      "FP_Rate": 21.7
+      "Total": 48,
+      "FP_Count": 25,
+      "FP_Rate": 52.1
     },
     {
       "Month": "2025-11",
       "PO category decription": "Service",
       "Total": 57,
-      "FP_Count": 46,
-      "FP_Rate": 80.7
+      "FP_Count": 0,
+      "FP_Rate": 0.0
     },
     {
       "Month": "2025-11",
       "PO category decription": "Standard",
-      "Total": 124,
-      "FP_Count": 31,
-      "FP_Rate": 25.0
+      "Total": 165,
+      "FP_Count": 41,
+      "FP_Rate": 24.8
     },
     {
       "Month": "2025-11",
       "PO category decription": "Subcontracting",
-      "Total": 13,
-      "FP_Count": 5,
-      "FP_Rate": 38.5
+      "Total": 33,
+      "FP_Count": 20,
+      "FP_Rate": 60.6
     },
     {
       "Month": "2025-12",
       "PO category decription": "Service",
       "Total": 68,
-      "FP_Count": 60,
-      "FP_Rate": 88.2
+      "FP_Count": 0,
+      "FP_Rate": 0.0
     },
     {
       "Month": "2025-12",
       "PO category decription": "Standard",
-      "Total": 131,
-      "FP_Count": 41,
-      "FP_Rate": 31.3
+      "Total": 204,
+      "FP_Count": 73,
+      "FP_Rate": 35.8
     },
     {
       "Month": "2025-12",
       "PO category decription": "Subcontracting",
-      "Total": 7,
-      "FP_Count": 2,
-      "FP_Rate": 28.6
+      "Total": 27,
+      "FP_Count": 20,
+      "FP_Rate": 74.1
     }
   ],
   "vendor_exc_detail": [
@@ -2633,10 +2636,10 @@
       "Count": 1
     }
   ],
-  "coupa_svc_total": 530,
-  "coupa_svc_fp": 442,
-  "coupa_svc_fp_rate": 83.4,
-  "coupa_std_fp_rate": 35.6,
+  "coupa_svc_total": 531,
+  "coupa_svc_fp": 1,
+  "coupa_svc_fp_rate": 0.2,
+  "coupa_std_fp_rate": 31.9,
   "e91_total": 6557,
   "e91_unique_inv": 2940,
   "e151_total": 2621,

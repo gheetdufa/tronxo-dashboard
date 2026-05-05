@@ -8,7 +8,9 @@ from itertools import combinations
 # ── Load data ───────────────────────────────────────────────────────────────
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 SORTED_FILE = os.path.join(SCRIPT_DIR, "1100 VIM Exceptions Data(DATA - 1100 Sorted) (1).csv")
-INC_FILE = os.path.join(SCRIPT_DIR, "1100 Data inc.csv")
+INC_FILE    = os.path.join(SCRIPT_DIR, "1100 Data inc.csv")
+# Correct invoice universe: 2025 Invoices US file (includes invoices with no exceptions)
+UNIVERSE_FILE = os.path.join(SCRIPT_DIR, "data_verify", "2025 invoices US(1head data) (3).csv")
 OUT_DIR = os.path.join(SCRIPT_DIR, "output")
 
 def load(path):
@@ -29,14 +31,17 @@ def load(path):
 
 sorted_raw = load(SORTED_FILE)
 inc_raw    = load(INC_FILE)
+universe_raw = pd.read_csv(UNIVERSE_FILE, encoding="latin-1", low_memory=False)
 
-print(f"Sorted raw rows: {len(sorted_raw)}")
-print(f"Inc raw rows:    {len(inc_raw)}")
-print("Columns:", list(sorted_raw.columns))
+print(f"Sorted raw rows:   {len(sorted_raw)}")
+print(f"Inc raw rows:      {len(inc_raw)}")
+print(f"Universe raw rows: {len(universe_raw)}")
 
 # ── Cleaning helpers ─────────────────────────────────────────────────────────
 TRANSPORT_PREFIX = "52"
 VALID_PO_TYPES   = ["NB", "ZCP"]
+# Vendors excluded from first-pass calculation (must match dashboard chart filter)
+FP_EXCLUDE_VENDORS = {"SOUTHERN IONICS INCORPORATED", "TERRA FIRST"}
 
 def clean(df, filter_po=True):
     df = df.copy()
@@ -61,11 +66,29 @@ def clean(df, filter_po=True):
     return df
 
 sorted_df = clean(sorted_raw)
-inc_df    = clean(inc_raw, filter_po=False)  # keep all PO types for first-pass calc
+inc_df    = clean(inc_raw, filter_po=False)  # keep all PO types for exception inc analysis
 
 # Posted only for most analyses
 sorted_posted = sorted_df[sorted_df["Document Status"].astype(str).str.strip() == "15"]
 inc_posted    = inc_df[inc_df["Document Status"].astype(str).str.strip() == "15"]
+
+# ── Correct invoice universe (denominator for first-pass) ────────────────────
+# Filter to Posted + Regular (PO Type descr = "Regular") — gives 16,580 invoices
+# matching Dheer's verified pivot in Sheet1 of 2025 Invoices US file.
+universe_df = universe_raw[
+    (universe_raw["Status Descrip"].str.strip() == "Posted") &
+    (universe_raw["PO Type descr"].str.strip() == "Regular")
+].copy()
+universe_df["Document Id"] = universe_raw.loc[universe_df.index, "Document Id"]
+universe_df["Channel ID"] = universe_df["Channel ID"].astype(str).str.strip()
+universe_df["PO category decription"] = universe_df["PO category decription"].astype(str).str.strip()
+universe_df["Name 1"] = universe_df["Name 1"].astype(str).str.upper().str.strip()
+universe_df["Month"] = pd.to_datetime(universe_df["Document Create Date"], errors="coerce").dt.to_period("M")
+# Drop the two vendors excluded from all dashboard charts so KPI + chart denominators match
+universe_df = universe_df[~universe_df["Name 1"].isin(FP_EXCLUDE_VENDORS)]
+# First_Pass will be set after inc_posted is available (section 4)
+
+print(f"\nUniverse (Posted + Regular): {len(universe_df)} rows, {universe_df['Document Id'].nunique()} unique invoices")
 
 print(f"\nAfter cleaning (non-transport, NB/ZCP):")
 print(f"  Sorted posted rows: {len(sorted_posted)}")
@@ -126,18 +149,13 @@ print("\n--- Exception Events by Category ---")
 print(cat_summary.to_string(index=False))
 
 # ── 4. Ingestion method + First-pass rate ────────────────────────────────────
-# For first-pass: use inc_posted (all exceptions incl 0,91, non-transport, any PO type)
-# An invoice is "first-pass" if its only exceptions in sorted_posted are absent
-# i.e. Document Id does NOT appear in sorted_posted at all
-
-# All unique posted invoices in inc (non-transport) – filter to NB/ZCP for apples-to-apples
-inc_posted_nb_zcp = inc_posted[inc_posted["PO Type"].isin(VALID_PO_TYPES)]
-
-all_inv = inc_posted_nb_zcp.groupby(["Document Id","Channel ID","PO category decription"]).first().reset_index()[
-    ["Document Id","Channel ID","PO category decription"]
-]
-exc_inv_ids = set(sorted_posted["Document Id"].unique())
-all_inv["First_Pass"] = ~all_inv["Document Id"].isin(exc_inv_ids)
+# Strict definition: an invoice is first-pass only if it has NO exception of any kind
+# in the inc dataset (incl. Exc 0 and 91, all PO types and suppliers). Denominator
+# excludes the two flagged vendors so KPI matches the filtered charts.
+inc_all_posted = inc_raw[inc_raw["Document Status"].astype(str).str.strip() == "15"]
+exc_inv_ids = set(inc_all_posted["Document Id"].unique())
+universe_df["First_Pass"] = ~universe_df["Document Id"].isin(exc_inv_ids)
+all_inv = universe_df[["Document Id","Channel ID","PO category decription","First_Pass"]].drop_duplicates("Document Id").copy()
 
 channel_fp = (
     all_inv.groupby("Channel ID")
@@ -158,7 +176,7 @@ channel_cat_fp["First_Pass_Rate"] = (channel_cat_fp["First_Pass_Count"]/channel_
 channel_cat_fp.to_csv(f"{OUT_DIR}/04b_channel_cat_firstpass.csv", index=False)
 
 overall_fp_rate = all_inv["First_Pass"].sum() / len(all_inv) * 100
-print(f"\nOverall first-pass rate (NB/ZCP posted, non-transport): {overall_fp_rate:.1f}%")
+print(f"\nOverall first-pass rate (Posted Regular, correct universe): {overall_fp_rate:.1f}%")
 
 # ── 5. Exception Combinations / Sequencing ───────────────────────────────────
 # Per invoice, collect ordered list of exception IDs
@@ -197,26 +215,21 @@ print("\n--- Top 10 Exception Pairs ---")
 print(pairs_df.head(10).to_string(index=False))
 
 # ── 6. Monthly Trends ────────────────────────────────────────────────────────
-sorted_posted2 = sorted_posted.copy()
-sorted_posted2["Month"] = sorted_posted2["Created at_dt"].dt.to_period("M")
-
-monthly_exc = (
-    sorted_posted2.groupby("Month")
-    .size()
-    .reset_index(name="Exception_Events")
-)
-
-# Monthly first-pass using inc
-inc_posted2 = inc_posted_nb_zcp.copy()
-inc_posted2["Month"] = inc_posted2["Created at_dt"].dt.to_period("M")
+# Total invoices per month from universe (Document Create Date).
+# Not-first-pass invoices per month = sorted exception doc IDs matched back to universe months.
 monthly_all = (
-    inc_posted2.groupby("Month")["Document Id"].nunique().reset_index(name="Total_Invoices")
+    universe_df[universe_df["Month"].notna()]
+    .groupby("Month")["Document Id"]
+    .nunique()
+    .reset_index(name="Total_Invoices")
 )
-# exception invoices per month
-exc_by_month = (
-    sorted_posted2.groupby("Month")["Document Id"].nunique().reset_index(name="Exc_Invoices")
+monthly_nfp = (
+    universe_df[universe_df["Month"].notna() & ~universe_df["First_Pass"]]
+    .groupby("Month")["Document Id"]
+    .nunique()
+    .reset_index(name="Exc_Invoices")
 )
-monthly_trend = monthly_all.merge(exc_by_month, on="Month", how="left").fillna(0)
+monthly_trend = monthly_all.merge(monthly_nfp, on="Month", how="left").fillna(0)
 monthly_trend["First_Pass_Rate"] = (
     (monthly_trend["Total_Invoices"] - monthly_trend["Exc_Invoices"])
     / monthly_trend["Total_Invoices"] * 100
