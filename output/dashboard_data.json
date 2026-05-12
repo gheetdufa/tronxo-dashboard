@@ -1150,6 +1150,567 @@
       "First_Pass_Rate": 25.0
     }
   ],
+  "monthly_kpis": [
+    {
+      "Month_str": "2025-05",
+      "Total_Invoices": 1902,
+      "First_Pass_Rate": 6.89,
+      "Total_Exception_Events": 4208,
+      "Unique_Vendors_With_Exceptions": 289
+    },
+    {
+      "Month_str": "2025-06",
+      "Total_Invoices": 1695,
+      "First_Pass_Rate": 13.92,
+      "Total_Exception_Events": 3769,
+      "Unique_Vendors_With_Exceptions": 281
+    },
+    {
+      "Month_str": "2025-07",
+      "Total_Invoices": 2211,
+      "First_Pass_Rate": 18.63,
+      "Total_Exception_Events": 4457,
+      "Unique_Vendors_With_Exceptions": 300
+    },
+    {
+      "Month_str": "2025-08",
+      "Total_Invoices": 1966,
+      "First_Pass_Rate": 16.63,
+      "Total_Exception_Events": 3883,
+      "Unique_Vendors_With_Exceptions": 299
+    },
+    {
+      "Month_str": "2025-09",
+      "Total_Invoices": 1929,
+      "First_Pass_Rate": 15.76,
+      "Total_Exception_Events": 3932,
+      "Unique_Vendors_With_Exceptions": 306
+    },
+    {
+      "Month_str": "2025-10",
+      "Total_Invoices": 2103,
+      "First_Pass_Rate": 15.31,
+      "Total_Exception_Events": 4288,
+      "Unique_Vendors_With_Exceptions": 289
+    },
+    {
+      "Month_str": "2025-11",
+      "Total_Invoices": 1447,
+      "First_Pass_Rate": 16.31,
+      "Total_Exception_Events": 2979,
+      "Unique_Vendors_With_Exceptions": 254
+    },
+    {
+      "Month_str": "2025-12",
+      "Total_Invoices": 1884,
+      "First_Pass_Rate": 15.29,
+      "Total_Exception_Events": 3324,
+      "Unique_Vendors_With_Exceptions": 274
+    },
+    {
+      "Month_str": "2026-01",
+      "Total_Invoices": 20,
+      "First_Pass_Rate": 25.0,
+      "Total_Exception_Events": 33,
+      "Unique_Vendors_With_Exceptions": 3
+    }
+  ],
+  "exc_freq_strict": [
+    {
+      "Exception ID": 0,
+      "Exception description": "PO Low-value service invoice",
+      "Count": 10953,
+      "Pct": 35.48
+    },
+    {
+      "Exception ID": 91,
+      "Exception description": "GR Not Done-Simple Check",
+      "Count": 6557,
+      "Pct": 21.24
+    },
+    {
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 4050,
+      "Pct": 13.12
+    },
+    {
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 2621,
+      "Pct": 8.49
+    },
+    {
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 2552,
+      "Pct": 8.27
+    },
+    {
+      "Exception ID": 75,
+      "Exception description": "LIV - Price Discrepancy",
+      "Count": 964,
+      "Pct": 3.12
+    },
+    {
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 789,
+      "Pct": 2.56
+    },
+    {
+      "Exception ID": 38,
+      "Exception description": "Freight on Invoice (PO)",
+      "Count": 748,
+      "Pct": 2.42
+    },
+    {
+      "Exception ID": 82,
+      "Exception description": "Header Block",
+      "Count": 705,
+      "Pct": 2.28
+    },
+    {
+      "Exception ID": 37,
+      "Exception description": "Unit of Measure Mismatch (PO)",
+      "Count": 224,
+      "Pct": 0.73
+    },
+    {
+      "Exception ID": 6,
+      "Exception description": "Suspected Duplicate (PO)",
+      "Count": 214,
+      "Pct": 0.69
+    },
+    {
+      "Exception ID": 34,
+      "Exception description": "Vendor Mismatch (PO)",
+      "Count": 201,
+      "Pct": 0.65
+    },
+    {
+      "Exception ID": 3,
+      "Exception description": "Invalid Vendor (PO)",
+      "Count": 152,
+      "Pct": 0.49
+    },
+    {
+      "Exception ID": 85,
+      "Exception description": "Company Code Mismatch(PO)",
+      "Count": 57,
+      "Pct": 0.18
+    },
+    {
+      "Exception ID": 902,
+      "Exception description": "Invalid Company Code (PO)",
+      "Count": 23,
+      "Pct": 0.07
+    },
+    {
+      "Exception ID": 930,
+      "Exception description": "Process Down Payment Request (PO)",
+      "Count": 23,
+      "Pct": 0.07
+    },
+    {
+      "Exception ID": 271,
+      "Exception description": "Validate Accounting Data (NPO)",
+      "Count": 16,
+      "Pct": 0.05
+    },
+    {
+      "Exception ID": 415,
+      "Exception description": "Check Withholding Tax Data (PO)",
+      "Count": 12,
+      "Pct": 0.04
+    },
+    {
+      "Exception ID": 47,
+      "Exception description": "Suspected Duplicate (NPO)",
+      "Count": 5,
+      "Pct": 0.02
+    },
+    {
+      "Exception ID": 76,
+      "Exception description": "LIV - Quantity Discrepancy",
+      "Count": 3,
+      "Pct": 0.01
+    }
+  ],
+  "cat_exc_strict": [
+    {
+      "PO category decription": "Consignment",
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 60
+    },
+    {
+      "PO category decription": "Consignment",
+      "Exception ID": 91,
+      "Exception description": "GR Not Done-Simple Check",
+      "Count": 15
+    },
+    {
+      "PO category decription": "Consignment",
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 7
+    },
+    {
+      "PO category decription": "Consignment",
+      "Exception ID": 75,
+      "Exception description": "LIV - Price Discrepancy",
+      "Count": 4
+    },
+    {
+      "PO category decription": "Consignment",
+      "Exception ID": 38,
+      "Exception description": "Freight on Invoice (PO)",
+      "Count": 3
+    },
+    {
+      "PO category decription": "Consignment",
+      "Exception ID": 0,
+      "Exception description": "PO Low-value service invoice",
+      "Count": 2
+    },
+    {
+      "PO category decription": "Consignment",
+      "Exception ID": 82,
+      "Exception description": "Header Block",
+      "Count": 2
+    },
+    {
+      "PO category decription": "Consignment",
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 1
+    },
+    {
+      "PO category decription": "Service",
+      "Exception ID": 0,
+      "Exception description": "PO Low-value service invoice",
+      "Count": 10273
+    },
+    {
+      "PO category decription": "Service",
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 1395
+    },
+    {
+      "PO category decription": "Service",
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 1147
+    },
+    {
+      "PO category decription": "Service",
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 1110
+    },
+    {
+      "PO category decription": "Service",
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 501
+    },
+    {
+      "PO category decription": "Service",
+      "Exception ID": 91,
+      "Exception description": "GR Not Done-Simple Check",
+      "Count": 295
+    },
+    {
+      "PO category decription": "Service",
+      "Exception ID": 37,
+      "Exception description": "Unit of Measure Mismatch (PO)",
+      "Count": 217
+    },
+    {
+      "PO category decription": "Service",
+      "Exception ID": 34,
+      "Exception description": "Vendor Mismatch (PO)",
+      "Count": 149
+    },
+    {
+      "PO category decription": "Service",
+      "Exception ID": 3,
+      "Exception description": "Invalid Vendor (PO)",
+      "Count": 134
+    },
+    {
+      "PO category decription": "Service",
+      "Exception ID": 6,
+      "Exception description": "Suspected Duplicate (PO)",
+      "Count": 113
+    },
+    {
+      "PO category decription": "Service",
+      "Exception ID": 75,
+      "Exception description": "LIV - Price Discrepancy",
+      "Count": 43
+    },
+    {
+      "PO category decription": "Service",
+      "Exception ID": 85,
+      "Exception description": "Company Code Mismatch(PO)",
+      "Count": 42
+    },
+    {
+      "PO category decription": "Service",
+      "Exception ID": 902,
+      "Exception description": "Invalid Company Code (PO)",
+      "Count": 16
+    },
+    {
+      "PO category decription": "Service",
+      "Exception ID": 82,
+      "Exception description": "Header Block",
+      "Count": 15
+    },
+    {
+      "PO category decription": "Service",
+      "Exception ID": 271,
+      "Exception description": "Validate Accounting Data (NPO)",
+      "Count": 15
+    },
+    {
+      "PO category decription": "Service",
+      "Exception ID": 38,
+      "Exception description": "Freight on Invoice (PO)",
+      "Count": 10
+    },
+    {
+      "PO category decription": "Service",
+      "Exception ID": 930,
+      "Exception description": "Process Down Payment Request (PO)",
+      "Count": 10
+    },
+    {
+      "PO category decription": "Service",
+      "Exception ID": 47,
+      "Exception description": "Suspected Duplicate (NPO)",
+      "Count": 5
+    },
+    {
+      "PO category decription": "Service",
+      "Exception ID": 415,
+      "Exception description": "Check Withholding Tax Data (PO)",
+      "Count": 2
+    },
+    {
+      "PO category decription": "Service",
+      "Exception ID": 11,
+      "Exception description": "Invalid Vendor VAT Number (PO)",
+      "Count": 1
+    },
+    {
+      "PO category decription": "Standard",
+      "Exception ID": 91,
+      "Exception description": "GR Not Done-Simple Check",
+      "Count": 6062
+    },
+    {
+      "PO category decription": "Standard",
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 2777
+    },
+    {
+      "PO category decription": "Standard",
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 1438
+    },
+    {
+      "PO category decription": "Standard",
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 1145
+    },
+    {
+      "PO category decription": "Standard",
+      "Exception ID": 75,
+      "Exception description": "LIV - Price Discrepancy",
+      "Count": 850
+    },
+    {
+      "PO category decription": "Standard",
+      "Exception ID": 38,
+      "Exception description": "Freight on Invoice (PO)",
+      "Count": 680
+    },
+    {
+      "PO category decription": "Standard",
+      "Exception ID": 0,
+      "Exception description": "PO Low-value service invoice",
+      "Count": 664
+    },
+    {
+      "PO category decription": "Standard",
+      "Exception ID": 82,
+      "Exception description": "Header Block",
+      "Count": 658
+    },
+    {
+      "PO category decription": "Standard",
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 277
+    },
+    {
+      "PO category decription": "Standard",
+      "Exception ID": 6,
+      "Exception description": "Suspected Duplicate (PO)",
+      "Count": 92
+    },
+    {
+      "PO category decription": "Standard",
+      "Exception ID": 34,
+      "Exception description": "Vendor Mismatch (PO)",
+      "Count": 52
+    },
+    {
+      "PO category decription": "Standard",
+      "Exception ID": 3,
+      "Exception description": "Invalid Vendor (PO)",
+      "Count": 16
+    },
+    {
+      "PO category decription": "Standard",
+      "Exception ID": 85,
+      "Exception description": "Company Code Mismatch(PO)",
+      "Count": 15
+    },
+    {
+      "PO category decription": "Standard",
+      "Exception ID": 930,
+      "Exception description": "Process Down Payment Request (PO)",
+      "Count": 13
+    },
+    {
+      "PO category decription": "Standard",
+      "Exception ID": 415,
+      "Exception description": "Check Withholding Tax Data (PO)",
+      "Count": 10
+    },
+    {
+      "PO category decription": "Standard",
+      "Exception ID": 37,
+      "Exception description": "Unit of Measure Mismatch (PO)",
+      "Count": 7
+    },
+    {
+      "PO category decription": "Standard",
+      "Exception ID": 902,
+      "Exception description": "Invalid Company Code (PO)",
+      "Count": 7
+    },
+    {
+      "PO category decription": "Standard",
+      "Exception ID": 76,
+      "Exception description": "LIV - Quantity Discrepancy",
+      "Count": 3
+    },
+    {
+      "PO category decription": "Standard",
+      "Exception ID": 416,
+      "Exception description": "Down Payment Clearing (PO)",
+      "Count": 3
+    },
+    {
+      "PO category decription": "Subcontracting",
+      "Exception ID": 91,
+      "Exception description": "GR Not Done-Simple Check",
+      "Count": 185
+    },
+    {
+      "PO category decription": "Subcontracting",
+      "Exception ID": 1,
+      "Exception description": "Process PO Invoice (PO)",
+      "Count": 103
+    },
+    {
+      "PO category decription": "Subcontracting",
+      "Exception ID": 75,
+      "Exception description": "LIV - Price Discrepancy",
+      "Count": 67
+    },
+    {
+      "PO category decription": "Subcontracting",
+      "Exception ID": 38,
+      "Exception description": "Freight on Invoice (PO)",
+      "Count": 55
+    },
+    {
+      "PO category decription": "Subcontracting",
+      "Exception ID": 151,
+      "Exception description": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+      "Count": 35
+    },
+    {
+      "PO category decription": "Subcontracting",
+      "Exception ID": 82,
+      "Exception description": "Header Block",
+      "Count": 30
+    },
+    {
+      "PO category decription": "Subcontracting",
+      "Exception ID": 0,
+      "Exception description": "PO Low-value service invoice",
+      "Count": 14
+    },
+    {
+      "PO category decription": "Subcontracting",
+      "Exception ID": 2,
+      "Exception description": "Invalid PO Number (PO)",
+      "Count": 11
+    },
+    {
+      "PO category decription": "Subcontracting",
+      "Exception ID": 6,
+      "Exception description": "Suspected Duplicate (PO)",
+      "Count": 9
+    },
+    {
+      "PO category decription": "Subcontracting",
+      "Exception ID": 29,
+      "Exception description": "Missing Mandatory Information(PO)",
+      "Count": 5
+    },
+    {
+      "PO category decription": "Subcontracting",
+      "Exception ID": 3,
+      "Exception description": "Invalid Vendor (PO)",
+      "Count": 2
+    },
+    {
+      "PO category decription": "Subcontracting",
+      "Exception ID": 271,
+      "Exception description": "Validate Accounting Data (NPO)",
+      "Count": 1
+    }
+  ],
+  "cat_summary_strict": [
+    {
+      "PO category decription": "Service",
+      "Exception_Events": 15493
+    },
+    {
+      "PO category decription": "Standard",
+      "Exception_Events": 14769
+    },
+    {
+      "PO category decription": "Subcontracting",
+      "Exception_Events": 517
+    },
+    {
+      "PO category decription": "Consignment",
+      "Exception_Events": 94
+    }
+  ],
   "workload_conc": [
     {
       "Name 1": "SOUTHERN IONICS INCORPORATED",
@@ -1500,6 +2061,1735 @@
       "Exception_Events": 59,
       "Unique_Invoices": 28,
       "Cumulative_Pct": 62.45
+    }
+  ],
+  "vendor_top30_strict": [
+    {
+      "Supplier": "51004581",
+      "Name 1": "THOMPSONS WELDING SERVICES INC",
+      "Unique_Invoices": 649,
+      "Exception_Events": 1462,
+      "Avg_Exc_Per_Inv": 2.25
+    },
+    {
+      "Supplier": "51004553",
+      "Name 1": "MOTION INDUSTRIES INC",
+      "Unique_Invoices": 436,
+      "Exception_Events": 1029,
+      "Avg_Exc_Per_Inv": 2.36
+    },
+    {
+      "Supplier": "51004749",
+      "Name 1": "APACHE INDUSTRIAL SERVICES INC",
+      "Unique_Invoices": 338,
+      "Exception_Events": 768,
+      "Avg_Exc_Per_Inv": 2.27
+    },
+    {
+      "Supplier": "51003926",
+      "Name 1": "MSC INDUSTRIAL SUPPLY CO INC",
+      "Unique_Invoices": 239,
+      "Exception_Events": 739,
+      "Avg_Exc_Per_Inv": 3.09
+    },
+    {
+      "Supplier": "51004029",
+      "Name 1": "PPG INDUSTRIES INC",
+      "Unique_Invoices": 368,
+      "Exception_Events": 684,
+      "Avg_Exc_Per_Inv": 1.86
+    },
+    {
+      "Supplier": "51004873",
+      "Name 1": "EVANS PLUMBING AND AC INC",
+      "Unique_Invoices": 215,
+      "Exception_Events": 621,
+      "Avg_Exc_Per_Inv": 2.89
+    },
+    {
+      "Supplier": "51004601",
+      "Name 1": "MEWCO, INC",
+      "Unique_Invoices": 305,
+      "Exception_Events": 613,
+      "Avg_Exc_Per_Inv": 2.01
+    },
+    {
+      "Supplier": "51004490",
+      "Name 1": "COLUMBUS RUBBER & GASKET CO INC",
+      "Unique_Invoices": 277,
+      "Exception_Events": 575,
+      "Avg_Exc_Per_Inv": 2.08
+    },
+    {
+      "Supplier": "51003880",
+      "Name 1": "HYDRO-VAC INDUSTRIAL SERVICES INC",
+      "Unique_Invoices": 131,
+      "Exception_Events": 476,
+      "Avg_Exc_Per_Inv": 3.63
+    },
+    {
+      "Supplier": "51004610",
+      "Name 1": "CARMEUSE LIME AND STONE INC",
+      "Unique_Invoices": 372,
+      "Exception_Events": 445,
+      "Avg_Exc_Per_Inv": 1.2
+    },
+    {
+      "Supplier": "51004841",
+      "Name 1": "SOUTHERN SYNERGY INC",
+      "Unique_Invoices": 265,
+      "Exception_Events": 437,
+      "Avg_Exc_Per_Inv": 1.65
+    },
+    {
+      "Supplier": "51004906",
+      "Name 1": "GLENN MACHINE WORKS INC",
+      "Unique_Invoices": 138,
+      "Exception_Events": 394,
+      "Avg_Exc_Per_Inv": 2.86
+    },
+    {
+      "Supplier": "51004788",
+      "Name 1": "IQUISA INC.",
+      "Unique_Invoices": 165,
+      "Exception_Events": 371,
+      "Avg_Exc_Per_Inv": 2.25
+    },
+    {
+      "Supplier": "51004881",
+      "Name 1": "WEATHERS ELECTRIC, INC.",
+      "Unique_Invoices": 108,
+      "Exception_Events": 346,
+      "Avg_Exc_Per_Inv": 3.2
+    },
+    {
+      "Supplier": "51004603",
+      "Name 1": "MORIN PROCESS EQUIPMENT",
+      "Unique_Invoices": 120,
+      "Exception_Events": 344,
+      "Avg_Exc_Per_Inv": 2.87
+    },
+    {
+      "Supplier": "51004809",
+      "Name 1": "FISHER SCIENTIFIC COMPANY LLC",
+      "Unique_Invoices": 85,
+      "Exception_Events": 338,
+      "Avg_Exc_Per_Inv": 3.98
+    },
+    {
+      "Supplier": "51004882",
+      "Name 1": "WISE STAFFING SERVICES INC",
+      "Unique_Invoices": 117,
+      "Exception_Events": 332,
+      "Avg_Exc_Per_Inv": 2.84
+    },
+    {
+      "Supplier": "51004329",
+      "Name 1": "UNITED RENTALS (NORTH AMERICA) INC",
+      "Unique_Invoices": 80,
+      "Exception_Events": 291,
+      "Avg_Exc_Per_Inv": 3.64
+    },
+    {
+      "Supplier": "51004878",
+      "Name 1": "SCOTT & SONS CONSTRUCTION & MECHANI",
+      "Unique_Invoices": 137,
+      "Exception_Events": 287,
+      "Avg_Exc_Per_Inv": 2.09
+    },
+    {
+      "Supplier": "51004317",
+      "Name 1": "MOODY PRICE LLC",
+      "Unique_Invoices": 105,
+      "Exception_Events": 273,
+      "Avg_Exc_Per_Inv": 2.6
+    },
+    {
+      "Supplier": "51004569",
+      "Name 1": "MARATHON PETROLEUM COMPANY LP",
+      "Unique_Invoices": 110,
+      "Exception_Events": 257,
+      "Avg_Exc_Per_Inv": 2.34
+    },
+    {
+      "Supplier": "51004941",
+      "Name 1": "ACCEL LLC",
+      "Unique_Invoices": 93,
+      "Exception_Events": 254,
+      "Avg_Exc_Per_Inv": 2.73
+    },
+    {
+      "Supplier": "51003907",
+      "Name 1": "LHOIST NORTH AMERICA OF ALABAMA",
+      "Unique_Invoices": 175,
+      "Exception_Events": 241,
+      "Avg_Exc_Per_Inv": 1.38
+    },
+    {
+      "Supplier": "51004671",
+      "Name 1": "SOUTHERN INDUSTRIAL SUPPLY LLC",
+      "Unique_Invoices": 75,
+      "Exception_Events": 230,
+      "Avg_Exc_Per_Inv": 3.07
+    },
+    {
+      "Supplier": "51004533",
+      "Name 1": "CENTRO INC",
+      "Unique_Invoices": 88,
+      "Exception_Events": 224,
+      "Avg_Exc_Per_Inv": 2.55
+    },
+    {
+      "Supplier": "51004305",
+      "Name 1": "YAZOO RIVER TOWING INC",
+      "Unique_Invoices": 88,
+      "Exception_Events": 218,
+      "Avg_Exc_Per_Inv": 2.48
+    },
+    {
+      "Supplier": "51004495",
+      "Name 1": "HARCROS CHEMICALS INC",
+      "Unique_Invoices": 116,
+      "Exception_Events": 217,
+      "Avg_Exc_Per_Inv": 1.87
+    },
+    {
+      "Supplier": "51003931",
+      "Name 1": "GULF COAST MARINE SUPPLY CO INC",
+      "Unique_Invoices": 92,
+      "Exception_Events": 214,
+      "Avg_Exc_Per_Inv": 2.33
+    },
+    {
+      "Supplier": "51004484",
+      "Name 1": "OLIN CORP - CHLOR ALKALI",
+      "Unique_Invoices": 88,
+      "Exception_Events": 214,
+      "Avg_Exc_Per_Inv": 2.43
+    },
+    {
+      "Supplier": "51004506",
+      "Name 1": "S AND J TRANSFER AND STORAGE LTD",
+      "Unique_Invoices": 71,
+      "Exception_Events": 206,
+      "Avg_Exc_Per_Inv": 2.9
+    }
+  ],
+  "workload_conc_strict": [
+    {
+      "Name 1": "THOMPSONS WELDING SERVICES INC",
+      "Supplier": "51004581",
+      "Exception_Events": 1462,
+      "Unique_Invoices": 649,
+      "Cumulative_Pct": 5.05
+    },
+    {
+      "Name 1": "MOTION INDUSTRIES INC",
+      "Supplier": "51004553",
+      "Exception_Events": 1029,
+      "Unique_Invoices": 436,
+      "Cumulative_Pct": 8.6
+    },
+    {
+      "Name 1": "APACHE INDUSTRIAL SERVICES INC",
+      "Supplier": "51004749",
+      "Exception_Events": 768,
+      "Unique_Invoices": 338,
+      "Cumulative_Pct": 11.25
+    },
+    {
+      "Name 1": "MSC INDUSTRIAL SUPPLY CO INC",
+      "Supplier": "51003926",
+      "Exception_Events": 739,
+      "Unique_Invoices": 239,
+      "Cumulative_Pct": 13.81
+    },
+    {
+      "Name 1": "PPG INDUSTRIES INC",
+      "Supplier": "51004029",
+      "Exception_Events": 684,
+      "Unique_Invoices": 368,
+      "Cumulative_Pct": 16.17
+    },
+    {
+      "Name 1": "EVANS PLUMBING AND AC INC",
+      "Supplier": "51004873",
+      "Exception_Events": 621,
+      "Unique_Invoices": 215,
+      "Cumulative_Pct": 18.31
+    },
+    {
+      "Name 1": "MEWCO, INC",
+      "Supplier": "51004601",
+      "Exception_Events": 613,
+      "Unique_Invoices": 305,
+      "Cumulative_Pct": 20.43
+    },
+    {
+      "Name 1": "COLUMBUS RUBBER & GASKET CO INC",
+      "Supplier": "51004490",
+      "Exception_Events": 575,
+      "Unique_Invoices": 277,
+      "Cumulative_Pct": 22.41
+    },
+    {
+      "Name 1": "HYDRO-VAC INDUSTRIAL SERVICES INC",
+      "Supplier": "51003880",
+      "Exception_Events": 476,
+      "Unique_Invoices": 131,
+      "Cumulative_Pct": 24.06
+    },
+    {
+      "Name 1": "CARMEUSE LIME AND STONE INC",
+      "Supplier": "51004610",
+      "Exception_Events": 445,
+      "Unique_Invoices": 372,
+      "Cumulative_Pct": 25.59
+    },
+    {
+      "Name 1": "SOUTHERN SYNERGY INC",
+      "Supplier": "51004841",
+      "Exception_Events": 437,
+      "Unique_Invoices": 265,
+      "Cumulative_Pct": 27.1
+    },
+    {
+      "Name 1": "GLENN MACHINE WORKS INC",
+      "Supplier": "51004906",
+      "Exception_Events": 394,
+      "Unique_Invoices": 138,
+      "Cumulative_Pct": 28.46
+    },
+    {
+      "Name 1": "IQUISA INC.",
+      "Supplier": "51004788",
+      "Exception_Events": 371,
+      "Unique_Invoices": 165,
+      "Cumulative_Pct": 29.74
+    },
+    {
+      "Name 1": "WEATHERS ELECTRIC, INC.",
+      "Supplier": "51004881",
+      "Exception_Events": 346,
+      "Unique_Invoices": 108,
+      "Cumulative_Pct": 30.94
+    },
+    {
+      "Name 1": "MORIN PROCESS EQUIPMENT",
+      "Supplier": "51004603",
+      "Exception_Events": 344,
+      "Unique_Invoices": 120,
+      "Cumulative_Pct": 32.13
+    },
+    {
+      "Name 1": "FISHER SCIENTIFIC COMPANY LLC",
+      "Supplier": "51004809",
+      "Exception_Events": 338,
+      "Unique_Invoices": 85,
+      "Cumulative_Pct": 33.29
+    },
+    {
+      "Name 1": "WISE STAFFING SERVICES INC",
+      "Supplier": "51004882",
+      "Exception_Events": 332,
+      "Unique_Invoices": 117,
+      "Cumulative_Pct": 34.44
+    },
+    {
+      "Name 1": "UNITED RENTALS (NORTH AMERICA) INC",
+      "Supplier": "51004329",
+      "Exception_Events": 291,
+      "Unique_Invoices": 80,
+      "Cumulative_Pct": 35.45
+    },
+    {
+      "Name 1": "SCOTT & SONS CONSTRUCTION & MECHANI",
+      "Supplier": "51004878",
+      "Exception_Events": 287,
+      "Unique_Invoices": 137,
+      "Cumulative_Pct": 36.44
+    },
+    {
+      "Name 1": "MOODY PRICE LLC",
+      "Supplier": "51004317",
+      "Exception_Events": 273,
+      "Unique_Invoices": 105,
+      "Cumulative_Pct": 37.38
+    },
+    {
+      "Name 1": "MARATHON PETROLEUM COMPANY LP",
+      "Supplier": "51004569",
+      "Exception_Events": 257,
+      "Unique_Invoices": 110,
+      "Cumulative_Pct": 38.27
+    },
+    {
+      "Name 1": "ACCEL LLC",
+      "Supplier": "51004941",
+      "Exception_Events": 254,
+      "Unique_Invoices": 93,
+      "Cumulative_Pct": 39.14
+    },
+    {
+      "Name 1": "LHOIST NORTH AMERICA OF ALABAMA",
+      "Supplier": "51003907",
+      "Exception_Events": 241,
+      "Unique_Invoices": 175,
+      "Cumulative_Pct": 39.98
+    },
+    {
+      "Name 1": "SOUTHERN INDUSTRIAL SUPPLY LLC",
+      "Supplier": "51004671",
+      "Exception_Events": 230,
+      "Unique_Invoices": 75,
+      "Cumulative_Pct": 40.77
+    },
+    {
+      "Name 1": "CENTRO INC",
+      "Supplier": "51004533",
+      "Exception_Events": 224,
+      "Unique_Invoices": 88,
+      "Cumulative_Pct": 41.54
+    },
+    {
+      "Name 1": "YAZOO RIVER TOWING INC",
+      "Supplier": "51004305",
+      "Exception_Events": 218,
+      "Unique_Invoices": 88,
+      "Cumulative_Pct": 42.3
+    },
+    {
+      "Name 1": "HARCROS CHEMICALS INC",
+      "Supplier": "51004495",
+      "Exception_Events": 217,
+      "Unique_Invoices": 116,
+      "Cumulative_Pct": 43.05
+    },
+    {
+      "Name 1": "GULF COAST MARINE SUPPLY CO INC",
+      "Supplier": "51003931",
+      "Exception_Events": 214,
+      "Unique_Invoices": 92,
+      "Cumulative_Pct": 43.78
+    },
+    {
+      "Name 1": "OLIN CORP - CHLOR ALKALI",
+      "Supplier": "51004484",
+      "Exception_Events": 214,
+      "Unique_Invoices": 88,
+      "Cumulative_Pct": 44.52
+    },
+    {
+      "Name 1": "S AND J TRANSFER AND STORAGE LTD",
+      "Supplier": "51004506",
+      "Exception_Events": 206,
+      "Unique_Invoices": 71,
+      "Cumulative_Pct": 45.23
+    },
+    {
+      "Name 1": "WESTLAKE CHEMICALS & VINYLS LLC",
+      "Supplier": "51004760",
+      "Exception_Events": 189,
+      "Unique_Invoices": 80,
+      "Cumulative_Pct": 45.89
+    },
+    {
+      "Name 1": "AIRGAS CARBONICS INC",
+      "Supplier": "51004598",
+      "Exception_Events": 187,
+      "Unique_Invoices": 103,
+      "Cumulative_Pct": 46.53
+    },
+    {
+      "Name 1": "NESCO LLC",
+      "Supplier": "51004875",
+      "Exception_Events": 182,
+      "Unique_Invoices": 60,
+      "Cumulative_Pct": 47.16
+    },
+    {
+      "Name 1": "AMERICAN CONTROLS TECHNOLOGY INC",
+      "Supplier": "51002585",
+      "Exception_Events": 180,
+      "Unique_Invoices": 78,
+      "Cumulative_Pct": 47.78
+    },
+    {
+      "Name 1": "WOODALL ELECTRIC INC.",
+      "Supplier": "51006056",
+      "Exception_Events": 178,
+      "Unique_Invoices": 41,
+      "Cumulative_Pct": 48.4
+    },
+    {
+      "Name 1": "LIONSQUARE EQUIPMENT INC.",
+      "Supplier": "51004874",
+      "Exception_Events": 176,
+      "Unique_Invoices": 58,
+      "Cumulative_Pct": 49.01
+    },
+    {
+      "Name 1": "UNIFIRST HOLDINGS LP",
+      "Supplier": "51004087",
+      "Exception_Events": 176,
+      "Unique_Invoices": 55,
+      "Cumulative_Pct": 49.61
+    },
+    {
+      "Name 1": "NORFALCO LLC",
+      "Supplier": "51004071",
+      "Exception_Events": 175,
+      "Unique_Invoices": 72,
+      "Cumulative_Pct": 50.22
+    },
+    {
+      "Name 1": "WWWEX FRANCHISE HOLDINGS LLC",
+      "Supplier": "51004665",
+      "Exception_Events": 165,
+      "Unique_Invoices": 65,
+      "Cumulative_Pct": 50.79
+    },
+    {
+      "Name 1": "WASTE AWAY GROUP INC",
+      "Supplier": "51004296",
+      "Exception_Events": 165,
+      "Unique_Invoices": 72,
+      "Cumulative_Pct": 51.36
+    },
+    {
+      "Name 1": "MCCRARY-WEST CONSTRUCTION CO INC",
+      "Supplier": "51004642",
+      "Exception_Events": 164,
+      "Unique_Invoices": 55,
+      "Cumulative_Pct": 51.92
+    },
+    {
+      "Name 1": "BESTWADE PETROLEUM INC",
+      "Supplier": "51004872",
+      "Exception_Events": 158,
+      "Unique_Invoices": 73,
+      "Cumulative_Pct": 52.47
+    },
+    {
+      "Name 1": "CHOCTAW RAILS",
+      "Supplier": "51004926",
+      "Exception_Events": 157,
+      "Unique_Invoices": 31,
+      "Cumulative_Pct": 53.01
+    },
+    {
+      "Name 1": "PQ LLC",
+      "Supplier": "51004517",
+      "Exception_Events": 154,
+      "Unique_Invoices": 54,
+      "Cumulative_Pct": 53.54
+    },
+    {
+      "Name 1": "MICROSOFT CORP",
+      "Supplier": "51004477",
+      "Exception_Events": 153,
+      "Unique_Invoices": 31,
+      "Cumulative_Pct": 54.07
+    },
+    {
+      "Name 1": "MRC GLOBAL (US) INC.",
+      "Supplier": "51004762",
+      "Exception_Events": 151,
+      "Unique_Invoices": 72,
+      "Cumulative_Pct": 54.59
+    },
+    {
+      "Name 1": "PREMIER EYE CARE, PLLC",
+      "Supplier": "51004734",
+      "Exception_Events": 151,
+      "Unique_Invoices": 50,
+      "Cumulative_Pct": 55.11
+    },
+    {
+      "Name 1": "FEDEX FREIGHT EAST",
+      "Supplier": "51003970",
+      "Exception_Events": 144,
+      "Unique_Invoices": 62,
+      "Cumulative_Pct": 55.61
+    },
+    {
+      "Name 1": "THE EOSYS GROUP INC",
+      "Supplier": "51003946",
+      "Exception_Events": 141,
+      "Unique_Invoices": 66,
+      "Cumulative_Pct": 56.1
+    },
+    {
+      "Name 1": "THOMPSON MACHINERY",
+      "Supplier": "51004011",
+      "Exception_Events": 134,
+      "Unique_Invoices": 72,
+      "Cumulative_Pct": 56.56
+    }
+  ],
+  "vendor_exc_detail_strict": [
+    {
+      "sup": "51004788",
+      "name": "IQUISA INC.",
+      "inv": 165,
+      "exc": 371,
+      "excs": [
+        {
+          "id": 91,
+          "desc": "GR Not Done-Simple Check",
+          "cnt": 293
+        },
+        {
+          "id": 1,
+          "desc": "Process PO Invoice (PO)",
+          "cnt": 47
+        },
+        {
+          "id": 151,
+          "desc": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+          "cnt": 26
+        },
+        {
+          "id": 6,
+          "desc": "Suspected Duplicate (PO)",
+          "cnt": 5
+        }
+      ]
+    },
+    {
+      "sup": "51003880",
+      "name": "HYDRO-VAC INDUSTRIAL SERVICES INC",
+      "inv": 131,
+      "exc": 476,
+      "excs": [
+        {
+          "id": 0,
+          "desc": "PO Low-value service invoice",
+          "cnt": 365
+        },
+        {
+          "id": 151,
+          "desc": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+          "cnt": 33
+        },
+        {
+          "id": 1,
+          "desc": "Process PO Invoice (PO)",
+          "cnt": 29
+        },
+        {
+          "id": 37,
+          "desc": "Unit of Measure Mismatch (PO)",
+          "cnt": 28
+        },
+        {
+          "id": 2,
+          "desc": "Invalid PO Number (PO)",
+          "cnt": 6
+        },
+        {
+          "id": 6,
+          "desc": "Suspected Duplicate (PO)",
+          "cnt": 6
+        },
+        {
+          "id": 91,
+          "desc": "GR Not Done-Simple Check",
+          "cnt": 6
+        },
+        {
+          "id": 29,
+          "desc": "Missing Mandatory Information(PO)",
+          "cnt": 3
+        }
+      ]
+    },
+    {
+      "sup": "51004882",
+      "name": "WISE STAFFING SERVICES INC",
+      "inv": 117,
+      "exc": 332,
+      "excs": [
+        {
+          "id": 0,
+          "desc": "PO Low-value service invoice",
+          "cnt": 271
+        },
+        {
+          "id": 29,
+          "desc": "Missing Mandatory Information(PO)",
+          "cnt": 30
+        },
+        {
+          "id": 1,
+          "desc": "Process PO Invoice (PO)",
+          "cnt": 16
+        },
+        {
+          "id": 151,
+          "desc": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+          "cnt": 13
+        },
+        {
+          "id": 2,
+          "desc": "Invalid PO Number (PO)",
+          "cnt": 2
+        }
+      ]
+    },
+    {
+      "sup": "51004809",
+      "name": "FISHER SCIENTIFIC COMPANY LLC",
+      "inv": 85,
+      "exc": 338,
+      "excs": [
+        {
+          "id": 91,
+          "desc": "GR Not Done-Simple Check",
+          "cnt": 111
+        },
+        {
+          "id": 1,
+          "desc": "Process PO Invoice (PO)",
+          "cnt": 55
+        },
+        {
+          "id": 75,
+          "desc": "LIV - Price Discrepancy",
+          "cnt": 35
+        },
+        {
+          "id": 0,
+          "desc": "PO Low-value service invoice",
+          "cnt": 32
+        },
+        {
+          "id": 2,
+          "desc": "Invalid PO Number (PO)",
+          "cnt": 30
+        },
+        {
+          "id": 82,
+          "desc": "Header Block",
+          "cnt": 29
+        },
+        {
+          "id": 38,
+          "desc": "Freight on Invoice (PO)",
+          "cnt": 17
+        },
+        {
+          "id": 29,
+          "desc": "Missing Mandatory Information(PO)",
+          "cnt": 16
+        },
+        {
+          "id": 151,
+          "desc": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+          "cnt": 12
+        },
+        {
+          "id": 6,
+          "desc": "Suspected Duplicate (PO)",
+          "cnt": 1
+        }
+      ]
+    },
+    {
+      "sup": "51003955",
+      "name": "TERRA FIRST",
+      "inv": 370,
+      "exc": 447,
+      "excs": [
+        {
+          "id": 29,
+          "desc": "Missing Mandatory Information(PO)",
+          "cnt": 305
+        },
+        {
+          "id": 1,
+          "desc": "Process PO Invoice (PO)",
+          "cnt": 49
+        },
+        {
+          "id": 151,
+          "desc": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+          "cnt": 31
+        },
+        {
+          "id": 75,
+          "desc": "LIV - Price Discrepancy",
+          "cnt": 26
+        },
+        {
+          "id": 91,
+          "desc": "GR Not Done-Simple Check",
+          "cnt": 20
+        },
+        {
+          "id": 82,
+          "desc": "Header Block",
+          "cnt": 14
+        },
+        {
+          "id": 0,
+          "desc": "PO Low-value service invoice",
+          "cnt": 2
+        }
+      ]
+    },
+    {
+      "sup": "51003926",
+      "name": "MSC INDUSTRIAL SUPPLY CO INC",
+      "inv": 239,
+      "exc": 739,
+      "excs": [
+        {
+          "id": 91,
+          "desc": "GR Not Done-Simple Check",
+          "cnt": 373
+        },
+        {
+          "id": 0,
+          "desc": "PO Low-value service invoice",
+          "cnt": 107
+        },
+        {
+          "id": 151,
+          "desc": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+          "cnt": 58
+        },
+        {
+          "id": 1,
+          "desc": "Process PO Invoice (PO)",
+          "cnt": 55
+        },
+        {
+          "id": 38,
+          "desc": "Freight on Invoice (PO)",
+          "cnt": 50
+        },
+        {
+          "id": 29,
+          "desc": "Missing Mandatory Information(PO)",
+          "cnt": 37
+        },
+        {
+          "id": 34,
+          "desc": "Vendor Mismatch (PO)",
+          "cnt": 15
+        },
+        {
+          "id": 75,
+          "desc": "LIV - Price Discrepancy",
+          "cnt": 14
+        },
+        {
+          "id": 82,
+          "desc": "Header Block",
+          "cnt": 14
+        },
+        {
+          "id": 2,
+          "desc": "Invalid PO Number (PO)",
+          "cnt": 13
+        },
+        {
+          "id": 3,
+          "desc": "Invalid Vendor (PO)",
+          "cnt": 1
+        },
+        {
+          "id": 6,
+          "desc": "Suspected Duplicate (PO)",
+          "cnt": 1
+        },
+        {
+          "id": 85,
+          "desc": "Company Code Mismatch(PO)",
+          "cnt": 1
+        }
+      ]
+    },
+    {
+      "sup": "51004603",
+      "name": "MORIN PROCESS EQUIPMENT",
+      "inv": 120,
+      "exc": 344,
+      "excs": [
+        {
+          "id": 91,
+          "desc": "GR Not Done-Simple Check",
+          "cnt": 246
+        },
+        {
+          "id": 151,
+          "desc": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+          "cnt": 26
+        },
+        {
+          "id": 0,
+          "desc": "PO Low-value service invoice",
+          "cnt": 25
+        },
+        {
+          "id": 1,
+          "desc": "Process PO Invoice (PO)",
+          "cnt": 12
+        },
+        {
+          "id": 75,
+          "desc": "LIV - Price Discrepancy",
+          "cnt": 10
+        },
+        {
+          "id": 2,
+          "desc": "Invalid PO Number (PO)",
+          "cnt": 9
+        },
+        {
+          "id": 82,
+          "desc": "Header Block",
+          "cnt": 9
+        },
+        {
+          "id": 6,
+          "desc": "Suspected Duplicate (PO)",
+          "cnt": 3
+        },
+        {
+          "id": 29,
+          "desc": "Missing Mandatory Information(PO)",
+          "cnt": 2
+        },
+        {
+          "id": 38,
+          "desc": "Freight on Invoice (PO)",
+          "cnt": 1
+        },
+        {
+          "id": 85,
+          "desc": "Company Code Mismatch(PO)",
+          "cnt": 1
+        }
+      ]
+    },
+    {
+      "sup": "51004841",
+      "name": "SOUTHERN SYNERGY INC",
+      "inv": 265,
+      "exc": 437,
+      "excs": [
+        {
+          "id": 0,
+          "desc": "PO Low-value service invoice",
+          "cnt": 379
+        },
+        {
+          "id": 151,
+          "desc": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+          "cnt": 19
+        },
+        {
+          "id": 2,
+          "desc": "Invalid PO Number (PO)",
+          "cnt": 18
+        },
+        {
+          "id": 29,
+          "desc": "Missing Mandatory Information(PO)",
+          "cnt": 15
+        },
+        {
+          "id": 1,
+          "desc": "Process PO Invoice (PO)",
+          "cnt": 5
+        },
+        {
+          "id": 6,
+          "desc": "Suspected Duplicate (PO)",
+          "cnt": 1
+        }
+      ]
+    },
+    {
+      "sup": "51004601",
+      "name": "MEWCO, INC",
+      "inv": 305,
+      "exc": 613,
+      "excs": [
+        {
+          "id": 0,
+          "desc": "PO Low-value service invoice",
+          "cnt": 381
+        },
+        {
+          "id": 1,
+          "desc": "Process PO Invoice (PO)",
+          "cnt": 172
+        },
+        {
+          "id": 151,
+          "desc": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+          "cnt": 25
+        },
+        {
+          "id": 29,
+          "desc": "Missing Mandatory Information(PO)",
+          "cnt": 22
+        },
+        {
+          "id": 37,
+          "desc": "Unit of Measure Mismatch (PO)",
+          "cnt": 10
+        },
+        {
+          "id": 2,
+          "desc": "Invalid PO Number (PO)",
+          "cnt": 2
+        },
+        {
+          "id": 902,
+          "desc": "Invalid Company Code (PO)",
+          "cnt": 1
+        }
+      ]
+    },
+    {
+      "sup": "51004553",
+      "name": "MOTION INDUSTRIES INC",
+      "inv": 436,
+      "exc": 1029,
+      "excs": [
+        {
+          "id": 91,
+          "desc": "GR Not Done-Simple Check",
+          "cnt": 565
+        },
+        {
+          "id": 38,
+          "desc": "Freight on Invoice (PO)",
+          "cnt": 183
+        },
+        {
+          "id": 1,
+          "desc": "Process PO Invoice (PO)",
+          "cnt": 133
+        },
+        {
+          "id": 75,
+          "desc": "LIV - Price Discrepancy",
+          "cnt": 40
+        },
+        {
+          "id": 151,
+          "desc": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+          "cnt": 33
+        },
+        {
+          "id": 82,
+          "desc": "Header Block",
+          "cnt": 26
+        },
+        {
+          "id": 0,
+          "desc": "PO Low-value service invoice",
+          "cnt": 23
+        },
+        {
+          "id": 29,
+          "desc": "Missing Mandatory Information(PO)",
+          "cnt": 19
+        },
+        {
+          "id": 2,
+          "desc": "Invalid PO Number (PO)",
+          "cnt": 4
+        },
+        {
+          "id": 37,
+          "desc": "Unit of Measure Mismatch (PO)",
+          "cnt": 3
+        }
+      ]
+    },
+    {
+      "sup": "51004329",
+      "name": "UNITED RENTALS (NORTH AMERICA) INC",
+      "inv": 80,
+      "exc": 291,
+      "excs": [
+        {
+          "id": 0,
+          "desc": "PO Low-value service invoice",
+          "cnt": 217
+        },
+        {
+          "id": 29,
+          "desc": "Missing Mandatory Information(PO)",
+          "cnt": 30
+        },
+        {
+          "id": 91,
+          "desc": "GR Not Done-Simple Check",
+          "cnt": 11
+        },
+        {
+          "id": 151,
+          "desc": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+          "cnt": 10
+        },
+        {
+          "id": 2,
+          "desc": "Invalid PO Number (PO)",
+          "cnt": 7
+        },
+        {
+          "id": 6,
+          "desc": "Suspected Duplicate (PO)",
+          "cnt": 6
+        },
+        {
+          "id": 37,
+          "desc": "Unit of Measure Mismatch (PO)",
+          "cnt": 6
+        },
+        {
+          "id": 34,
+          "desc": "Vendor Mismatch (PO)",
+          "cnt": 3
+        },
+        {
+          "id": 1,
+          "desc": "Process PO Invoice (PO)",
+          "cnt": 1
+        }
+      ]
+    },
+    {
+      "sup": "51004490",
+      "name": "COLUMBUS RUBBER & GASKET CO INC",
+      "inv": 277,
+      "exc": 575,
+      "excs": [
+        {
+          "id": 1,
+          "desc": "Process PO Invoice (PO)",
+          "cnt": 176
+        },
+        {
+          "id": 91,
+          "desc": "GR Not Done-Simple Check",
+          "cnt": 145
+        },
+        {
+          "id": 75,
+          "desc": "LIV - Price Discrepancy",
+          "cnt": 55
+        },
+        {
+          "id": 38,
+          "desc": "Freight on Invoice (PO)",
+          "cnt": 48
+        },
+        {
+          "id": 82,
+          "desc": "Header Block",
+          "cnt": 47
+        },
+        {
+          "id": 0,
+          "desc": "PO Low-value service invoice",
+          "cnt": 43
+        },
+        {
+          "id": 151,
+          "desc": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+          "cnt": 26
+        },
+        {
+          "id": 2,
+          "desc": "Invalid PO Number (PO)",
+          "cnt": 15
+        },
+        {
+          "id": 29,
+          "desc": "Missing Mandatory Information(PO)",
+          "cnt": 11
+        },
+        {
+          "id": 6,
+          "desc": "Suspected Duplicate (PO)",
+          "cnt": 8
+        },
+        {
+          "id": 85,
+          "desc": "Company Code Mismatch(PO)",
+          "cnt": 1
+        }
+      ]
+    },
+    {
+      "sup": "51004029",
+      "name": "PPG INDUSTRIES INC",
+      "inv": 368,
+      "exc": 684,
+      "excs": [
+        {
+          "id": 91,
+          "desc": "GR Not Done-Simple Check",
+          "cnt": 297
+        },
+        {
+          "id": 151,
+          "desc": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+          "cnt": 142
+        },
+        {
+          "id": 1,
+          "desc": "Process PO Invoice (PO)",
+          "cnt": 141
+        },
+        {
+          "id": 75,
+          "desc": "LIV - Price Discrepancy",
+          "cnt": 47
+        },
+        {
+          "id": 82,
+          "desc": "Header Block",
+          "cnt": 41
+        },
+        {
+          "id": 2,
+          "desc": "Invalid PO Number (PO)",
+          "cnt": 9
+        },
+        {
+          "id": 29,
+          "desc": "Missing Mandatory Information(PO)",
+          "cnt": 7
+        }
+      ]
+    },
+    {
+      "sup": "51004610",
+      "name": "CARMEUSE LIME AND STONE INC",
+      "inv": 372,
+      "exc": 445,
+      "excs": [
+        {
+          "id": 151,
+          "desc": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+          "cnt": 268
+        },
+        {
+          "id": 91,
+          "desc": "GR Not Done-Simple Check",
+          "cnt": 114
+        },
+        {
+          "id": 1,
+          "desc": "Process PO Invoice (PO)",
+          "cnt": 42
+        },
+        {
+          "id": 2,
+          "desc": "Invalid PO Number (PO)",
+          "cnt": 11
+        },
+        {
+          "id": 29,
+          "desc": "Missing Mandatory Information(PO)",
+          "cnt": 9
+        },
+        {
+          "id": 6,
+          "desc": "Suspected Duplicate (PO)",
+          "cnt": 1
+        }
+      ]
+    },
+    {
+      "sup": "51004581",
+      "name": "THOMPSONS WELDING SERVICES INC",
+      "inv": 649,
+      "exc": 1462,
+      "excs": [
+        {
+          "id": 0,
+          "desc": "PO Low-value service invoice",
+          "cnt": 1124
+        },
+        {
+          "id": 2,
+          "desc": "Invalid PO Number (PO)",
+          "cnt": 94
+        },
+        {
+          "id": 151,
+          "desc": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+          "cnt": 70
+        },
+        {
+          "id": 1,
+          "desc": "Process PO Invoice (PO)",
+          "cnt": 54
+        },
+        {
+          "id": 91,
+          "desc": "GR Not Done-Simple Check",
+          "cnt": 41
+        },
+        {
+          "id": 37,
+          "desc": "Unit of Measure Mismatch (PO)",
+          "cnt": 37
+        },
+        {
+          "id": 29,
+          "desc": "Missing Mandatory Information(PO)",
+          "cnt": 26
+        },
+        {
+          "id": 34,
+          "desc": "Vendor Mismatch (PO)",
+          "cnt": 9
+        },
+        {
+          "id": 85,
+          "desc": "Company Code Mismatch(PO)",
+          "cnt": 6
+        },
+        {
+          "id": 6,
+          "desc": "Suspected Duplicate (PO)",
+          "cnt": 1
+        }
+      ]
+    },
+    {
+      "sup": "51004749",
+      "name": "APACHE INDUSTRIAL SERVICES INC",
+      "inv": 338,
+      "exc": 768,
+      "excs": [
+        {
+          "id": 0,
+          "desc": "PO Low-value service invoice",
+          "cnt": 500
+        },
+        {
+          "id": 1,
+          "desc": "Process PO Invoice (PO)",
+          "cnt": 128
+        },
+        {
+          "id": 37,
+          "desc": "Unit of Measure Mismatch (PO)",
+          "cnt": 63
+        },
+        {
+          "id": 29,
+          "desc": "Missing Mandatory Information(PO)",
+          "cnt": 28
+        },
+        {
+          "id": 151,
+          "desc": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+          "cnt": 17
+        },
+        {
+          "id": 85,
+          "desc": "Company Code Mismatch(PO)",
+          "cnt": 15
+        },
+        {
+          "id": 2,
+          "desc": "Invalid PO Number (PO)",
+          "cnt": 9
+        },
+        {
+          "id": 91,
+          "desc": "GR Not Done-Simple Check",
+          "cnt": 5
+        },
+        {
+          "id": 34,
+          "desc": "Vendor Mismatch (PO)",
+          "cnt": 2
+        },
+        {
+          "id": 6,
+          "desc": "Suspected Duplicate (PO)",
+          "cnt": 1
+        }
+      ]
+    },
+    {
+      "sup": "51004881",
+      "name": "WEATHERS ELECTRIC, INC.",
+      "inv": 108,
+      "exc": 346,
+      "excs": [
+        {
+          "id": 0,
+          "desc": "PO Low-value service invoice",
+          "cnt": 269
+        },
+        {
+          "id": 91,
+          "desc": "GR Not Done-Simple Check",
+          "cnt": 43
+        },
+        {
+          "id": 151,
+          "desc": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+          "cnt": 12
+        },
+        {
+          "id": 2,
+          "desc": "Invalid PO Number (PO)",
+          "cnt": 10
+        },
+        {
+          "id": 29,
+          "desc": "Missing Mandatory Information(PO)",
+          "cnt": 5
+        },
+        {
+          "id": 1,
+          "desc": "Process PO Invoice (PO)",
+          "cnt": 3
+        },
+        {
+          "id": 34,
+          "desc": "Vendor Mismatch (PO)",
+          "cnt": 2
+        },
+        {
+          "id": 6,
+          "desc": "Suspected Duplicate (PO)",
+          "cnt": 1
+        },
+        {
+          "id": 85,
+          "desc": "Company Code Mismatch(PO)",
+          "cnt": 1
+        }
+      ]
+    },
+    {
+      "sup": "51004317",
+      "name": "MOODY PRICE LLC",
+      "inv": 105,
+      "exc": 273,
+      "excs": [
+        {
+          "id": 91,
+          "desc": "GR Not Done-Simple Check",
+          "cnt": 155
+        },
+        {
+          "id": 1,
+          "desc": "Process PO Invoice (PO)",
+          "cnt": 31
+        },
+        {
+          "id": 38,
+          "desc": "Freight on Invoice (PO)",
+          "cnt": 27
+        },
+        {
+          "id": 151,
+          "desc": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+          "cnt": 15
+        },
+        {
+          "id": 75,
+          "desc": "LIV - Price Discrepancy",
+          "cnt": 12
+        },
+        {
+          "id": 82,
+          "desc": "Header Block",
+          "cnt": 11
+        },
+        {
+          "id": 29,
+          "desc": "Missing Mandatory Information(PO)",
+          "cnt": 9
+        },
+        {
+          "id": 2,
+          "desc": "Invalid PO Number (PO)",
+          "cnt": 8
+        },
+        {
+          "id": 37,
+          "desc": "Unit of Measure Mismatch (PO)",
+          "cnt": 4
+        },
+        {
+          "id": 6,
+          "desc": "Suspected Duplicate (PO)",
+          "cnt": 1
+        }
+      ]
+    },
+    {
+      "sup": "51003869",
+      "name": "SOUTHERN IONICS INCORPORATED",
+      "inv": 1052,
+      "exc": 1466,
+      "excs": [
+        {
+          "id": 1,
+          "desc": "Process PO Invoice (PO)",
+          "cnt": 520
+        },
+        {
+          "id": 91,
+          "desc": "GR Not Done-Simple Check",
+          "cnt": 405
+        },
+        {
+          "id": 29,
+          "desc": "Missing Mandatory Information(PO)",
+          "cnt": 367
+        },
+        {
+          "id": 151,
+          "desc": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+          "cnt": 140
+        },
+        {
+          "id": 82,
+          "desc": "Header Block",
+          "cnt": 11
+        },
+        {
+          "id": 75,
+          "desc": "LIV - Price Discrepancy",
+          "cnt": 10
+        },
+        {
+          "id": 6,
+          "desc": "Suspected Duplicate (PO)",
+          "cnt": 4
+        },
+        {
+          "id": 34,
+          "desc": "Vendor Mismatch (PO)",
+          "cnt": 3
+        },
+        {
+          "id": 76,
+          "desc": "LIV - Quantity Discrepancy",
+          "cnt": 3
+        },
+        {
+          "id": 2,
+          "desc": "Invalid PO Number (PO)",
+          "cnt": 2
+        },
+        {
+          "id": 271,
+          "desc": "Validate Accounting Data (NPO)",
+          "cnt": 1
+        }
+      ]
+    },
+    {
+      "sup": "51004906",
+      "name": "GLENN MACHINE WORKS INC",
+      "inv": 138,
+      "exc": 394,
+      "excs": [
+        {
+          "id": 0,
+          "desc": "PO Low-value service invoice",
+          "cnt": 281
+        },
+        {
+          "id": 1,
+          "desc": "Process PO Invoice (PO)",
+          "cnt": 41
+        },
+        {
+          "id": 29,
+          "desc": "Missing Mandatory Information(PO)",
+          "cnt": 32
+        },
+        {
+          "id": 37,
+          "desc": "Unit of Measure Mismatch (PO)",
+          "cnt": 16
+        },
+        {
+          "id": 91,
+          "desc": "GR Not Done-Simple Check",
+          "cnt": 13
+        },
+        {
+          "id": 2,
+          "desc": "Invalid PO Number (PO)",
+          "cnt": 5
+        },
+        {
+          "id": 151,
+          "desc": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+          "cnt": 5
+        },
+        {
+          "id": 6,
+          "desc": "Suspected Duplicate (PO)",
+          "cnt": 1
+        }
+      ]
+    },
+    {
+      "sup": "51004878",
+      "name": "SCOTT & SONS CONSTRUCTION & MECHANI",
+      "inv": 137,
+      "exc": 287,
+      "excs": [
+        {
+          "id": 0,
+          "desc": "PO Low-value service invoice",
+          "cnt": 234
+        },
+        {
+          "id": 91,
+          "desc": "GR Not Done-Simple Check",
+          "cnt": 43
+        },
+        {
+          "id": 2,
+          "desc": "Invalid PO Number (PO)",
+          "cnt": 5
+        },
+        {
+          "id": 1,
+          "desc": "Process PO Invoice (PO)",
+          "cnt": 3
+        },
+        {
+          "id": 151,
+          "desc": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+          "cnt": 2
+        }
+      ]
+    },
+    {
+      "sup": "51004873",
+      "name": "EVANS PLUMBING AND AC INC",
+      "inv": 215,
+      "exc": 621,
+      "excs": [
+        {
+          "id": 0,
+          "desc": "PO Low-value service invoice",
+          "cnt": 457
+        },
+        {
+          "id": 1,
+          "desc": "Process PO Invoice (PO)",
+          "cnt": 123
+        },
+        {
+          "id": 151,
+          "desc": "Manual Check Needed / Missing Data for Indexing Lines (PO)",
+          "cnt": 25
+        },
+        {
+          "id": 29,
+          "desc": "Missing Mandatory Information(PO)",
+          "cnt": 7
+        },
+        {
+          "id": 2,
+          "desc": "Invalid PO Number (PO)",
+          "cnt": 6
+        },
+        {
+          "id": 6,
+          "desc": "Suspected Duplicate (PO)",
+          "cnt": 1
+        },
+        {
+          "id": 85,
+          "desc": "Company Code Mismatch(PO)",
+          "cnt": 1
+        },
+        {
+          "id": 91,
+          "desc": "GR Not Done-Simple Check",
+          "cnt": 1
+        }
+      ]
+    }
+  ],
+  "exc_pairs_strict": [
+    {
+      "Pair": "29 -> 0",
+      "Count": 866
+    },
+    {
+      "Pair": "75 -> 82",
+      "Count": 550
+    },
+    {
+      "Pair": "91 -> 151",
+      "Count": 493
+    },
+    {
+      "Pair": "0 -> 151",
+      "Count": 422
+    },
+    {
+      "Pair": "2 -> 0",
+      "Count": 320
+    },
+    {
+      "Pair": "91 -> 38",
+      "Count": 280
+    },
+    {
+      "Pair": "1 -> 75",
+      "Count": 271
+    },
+    {
+      "Pair": "91 -> 1",
+      "Count": 224
+    },
+    {
+      "Pair": "0 -> 1",
+      "Count": 210
+    },
+    {
+      "Pair": "91 -> 0",
+      "Count": 194
+    },
+    {
+      "Pair": "151 -> 1",
+      "Count": 173
+    },
+    {
+      "Pair": "1 -> 0",
+      "Count": 112
+    },
+    {
+      "Pair": "0 -> 29",
+      "Count": 109
+    },
+    {
+      "Pair": "151 -> 0",
+      "Count": 108
+    },
+    {
+      "Pair": "91 -> 75",
+      "Count": 101
     }
   ]
 }

@@ -239,6 +239,168 @@ monthly_trend.to_csv(f"{OUT_DIR}/06_monthly_trends.csv", index=False)
 print("\n--- Monthly Trends ---")
 print(monthly_trend[["Month_str","Total_Invoices","Exc_Invoices","First_Pass_Rate"]].to_string(index=False))
 
+# ── 6b. Per-Month KPI Rollup (STRICT, matches headline KPIs) ─────────────────
+# All four headline KPIs broken down by month. Total_Invoices and FP Rate come
+# from universe_df (Document Create Date). Exception events and unique vendors
+# come from inc_posted using its own Created at month.
+inc_posted_m = inc_posted.copy()
+inc_posted_m["Month"] = pd.to_datetime(inc_posted_m["Created at"], errors="coerce").dt.to_period("M")
+
+monthly_exc_events = (
+    inc_posted_m[inc_posted_m["Month"].notna()]
+    .groupby("Month").size().reset_index(name="Total_Exception_Events")
+)
+monthly_exc_vendors = (
+    inc_posted_m[inc_posted_m["Month"].notna()]
+    .groupby("Month")["Supplier"].nunique()
+    .reset_index(name="Unique_Vendors_With_Exceptions")
+)
+
+monthly_kpis = (
+    monthly_trend[["Month","Month_str","Total_Invoices","Exc_Invoices","First_Pass_Rate"]]
+    .merge(monthly_exc_events, on="Month", how="left")
+    .merge(monthly_exc_vendors, on="Month", how="left")
+    .fillna(0)
+)
+monthly_kpis["Total_Exception_Events"] = monthly_kpis["Total_Exception_Events"].astype(int)
+monthly_kpis["Unique_Vendors_With_Exceptions"] = monthly_kpis["Unique_Vendors_With_Exceptions"].astype(int)
+monthly_kpis.to_csv(f"{OUT_DIR}/06b_monthly_kpis.csv", index=False)
+print("\n--- Monthly KPIs (strict, per-month rollup) ---")
+print(monthly_kpis[["Month_str","Total_Invoices","First_Pass_Rate","Total_Exception_Events","Unique_Vendors_With_Exceptions"]].to_string(index=False))
+
+# ── 6c. Strict Exception Frequency (incl. Exc 0 & 91) ────────────────────────
+exc_freq_strict = (
+    inc_posted
+    .groupby(["Exception ID","Exception description"])
+    .size()
+    .reset_index(name="Count")
+    .sort_values("Count", ascending=False)
+)
+exc_freq_strict["Pct"] = (exc_freq_strict["Count"] / exc_freq_strict["Count"].sum() * 100).round(2)
+exc_freq_strict.to_csv(f"{OUT_DIR}/01b_exception_freq_strict.csv", index=False)
+print("\n--- Exception Frequency STRICT (top 15, includes Exc 0 & 91) ---")
+print(exc_freq_strict.head(15).to_string(index=False))
+
+# ── 6d. Strict Exception by Category (incl. Exc 0 & 91) ──────────────────────
+cat_exc_strict = (
+    inc_posted
+    .groupby(["PO category decription","Exception ID","Exception description"])
+    .size()
+    .reset_index(name="Count")
+    .sort_values(["PO category decription","Count"], ascending=[True,False])
+)
+cat_exc_strict.to_csv(f"{OUT_DIR}/03b_cat_exc_strict.csv", index=False)
+
+cat_summary_strict = (
+    inc_posted
+    .groupby("PO category decription")
+    .size()
+    .reset_index(name="Exception_Events")
+    .sort_values("Exception_Events", ascending=False)
+)
+print("\n--- Exception Events by Category STRICT (incl. Exc 0 & 91) ---")
+print(cat_summary_strict.to_string(index=False))
+
+# ── 6e. Strict Vendor Aggregations (incl. Exc 0 & 91) ────────────────────────
+# Same SI/TF vendor exclusion as the filtered view so the toggle is an
+# apples-to-apples "Exc 0 & 91 in or out" comparison.
+inc_posted_vend = inc_posted.copy()
+inc_posted_vend["Name 1"] = inc_posted_vend["Name 1"].astype(str).str.upper().str.strip()
+inc_posted_excl = inc_posted_vend[~inc_posted_vend["Name 1"].isin(FP_EXCLUDE_VENDORS)]
+
+vendor_inv_strict = (
+    inc_posted_excl
+    .groupby(["Supplier","Name 1"])["Document Id"]
+    .nunique()
+    .reset_index(name="Unique_Invoices")
+)
+vendor_events_strict = (
+    inc_posted_excl
+    .groupby(["Supplier","Name 1"])
+    .size()
+    .reset_index(name="Exception_Events")
+)
+vendor_strict = vendor_inv_strict.merge(vendor_events_strict, on=["Supplier","Name 1"])
+vendor_strict["Avg_Exc_Per_Inv"] = (vendor_strict["Exception_Events"] / vendor_strict["Unique_Invoices"]).round(2)
+vendor_top_strict = vendor_strict.sort_values("Exception_Events", ascending=False).head(50)
+vendor_top_strict.to_csv(f"{OUT_DIR}/02b_top_vendors_strict.csv", index=False)
+print("\n--- Top 10 Vendors STRICT (incl. Exc 0 & 91) ---")
+print(vendor_top_strict.head(10)[["Name 1","Unique_Invoices","Exception_Events","Avg_Exc_Per_Inv"]].to_string(index=False))
+
+# ── 6f. Strict Workload Concentration (Pareto, incl. Exc 0 & 91) ─────────────
+total_events_strict_all = vendor_strict["Exception_Events"].sum()
+vendor_strict_sorted = vendor_strict.sort_values("Exception_Events", ascending=False).reset_index(drop=True)
+vendor_strict_sorted["Cumulative_Events"] = vendor_strict_sorted["Exception_Events"].cumsum()
+vendor_strict_sorted["Cumulative_Pct"] = (
+    vendor_strict_sorted["Cumulative_Events"] / total_events_strict_all * 100
+).round(2)
+vendor_strict_sorted.to_csv(f"{OUT_DIR}/07b_workload_conc_strict.csv", index=False)
+
+# ── 6g. Strict Vendor Exception Detail (top 20 + SI/TF for drill-down) ──────
+# Per-vendor exception-type breakdown using inc_posted (incl. 0 & 91). Includes
+# the two SI/TF vendors so the vendor table can drill into them on demand.
+top_strict_sup_ids = set(vendor_top_strict.head(20)["Supplier"].astype(str)) | {"51003869","51003955"}
+ved_strict_rows = []
+for sup_id in top_strict_sup_ids:
+    sub = inc_posted_vend[inc_posted_vend["Supplier"].astype(str) == sup_id]
+    if sub.empty:
+        continue
+    name = sub["Name 1"].iloc[0]
+    excs = (
+        sub.groupby(["Exception ID","Exception description"])
+        .size()
+        .reset_index(name="cnt")
+        .sort_values("cnt", ascending=False)
+    )
+    excs_records = []
+    for _, r in excs.iterrows():
+        try:
+            eid = int(r["Exception ID"])
+        except (ValueError, TypeError):
+            eid = str(r["Exception ID"])
+        excs_records.append({
+            "id": eid,
+            "desc": str(r["Exception description"]),
+            "cnt": int(r["cnt"]),
+        })
+    ved_strict_rows.append({
+        "sup": str(sup_id),
+        "name": name,
+        "inv": int(sub["Document Id"].nunique()),
+        "exc": int(len(sub)),
+        "excs": excs_records,
+    })
+
+# ── 6h. Strict Co-occurrence Pairs (from inc_posted, incl. Exc 0 & 91) ───────
+# Sort by Created at since inc_raw lacks Work Item ID; this gives chronological
+# ordering of exceptions for pair detection.
+inc_pairs_src = inc_posted.copy()
+if "Created at" in inc_pairs_src.columns:
+    inc_pairs_src["Created at_sort"] = pd.to_datetime(inc_pairs_src["Created at"], errors="coerce")
+    inc_pairs_src = inc_pairs_src.sort_values(["Document Id","Created at_sort"])
+else:
+    inc_pairs_src = inc_pairs_src.sort_values(["Document Id"])
+
+inv_exc_seq_strict = (
+    inc_pairs_src
+    .groupby("Document Id")["Exception ID"]
+    .apply(list)
+    .reset_index(name="Exc_Seq")
+)
+pairs_strict = Counter()
+for seq in inv_exc_seq_strict["Exc_Seq"]:
+    unique_ids = list(dict.fromkeys(seq))
+    if len(unique_ids) >= 2:
+        for a, b in zip(unique_ids, unique_ids[1:]):
+            pairs_strict[(a, b)] += 1
+pairs_strict_df = pd.DataFrame(
+    [(f"{a} -> {b}", v) for (a,b), v in pairs_strict.most_common(20)],
+    columns=["Pair","Count"]
+)
+pairs_strict_df.to_csv(f"{OUT_DIR}/05b_exception_pairs_strict.csv", index=False)
+print("\n--- Top 10 Exception Pairs STRICT (incl. Exc 0 & 91) ---")
+print(pairs_strict_df.head(10).to_string(index=False))
+
 # ── 7. AP Workload Concentration ─────────────────────────────────────────────
 total_events = vendor["Exception_Events"].sum()
 vendor_sorted_by_events = vendor.sort_values("Exception_Events", ascending=False).reset_index(drop=True)
@@ -285,7 +447,15 @@ dashboard_data = {
     "exc_pairs": pairs_df.head(15).to_dict(orient="records"),
     "exc_triples": triples_df.head(10).to_dict(orient="records"),
     "monthly": monthly_trend[["Month_str","Total_Invoices","Exc_Invoices","First_Pass_Rate"]].to_dict(orient="records"),
+    "monthly_kpis": monthly_kpis[["Month_str","Total_Invoices","First_Pass_Rate","Total_Exception_Events","Unique_Vendors_With_Exceptions"]].to_dict(orient="records"),
+    "exc_freq_strict": exc_freq_strict.head(20).to_dict(orient="records"),
+    "cat_exc_strict": cat_exc_strict.to_dict(orient="records"),
+    "cat_summary_strict": cat_summary_strict.to_dict(orient="records"),
     "workload_conc": vendor_sorted_by_events.head(50)[["Name 1","Supplier","Exception_Events","Unique_Invoices","Cumulative_Pct"]].to_dict(orient="records"),
+    "vendor_top30_strict": vendor_top_strict.head(30).to_dict(orient="records"),
+    "workload_conc_strict": vendor_strict_sorted.head(50)[["Name 1","Supplier","Exception_Events","Unique_Invoices","Cumulative_Pct"]].to_dict(orient="records"),
+    "vendor_exc_detail_strict": ved_strict_rows,
+    "exc_pairs_strict": pairs_strict_df.head(15).to_dict(orient="records"),
 }
 
 with open(f"{OUT_DIR}/dashboard_data.json", "w") as f:

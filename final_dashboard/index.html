@@ -6,6 +6,7 @@
   <title>Tronox 1100 — AP Invoice Dashboard</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -22,7 +23,8 @@
       --text:   #1e2535;
       --muted:  #64748b;
       --hdr:    64px;
-      --kpi:    108px;
+      --kpi:    132px;
+      --filter: 44px;
       --nav:    46px;
     }
 
@@ -50,17 +52,129 @@
       display: flex; align-items: center; padding: 0 28px; gap: 14px;
       z-index: 190; box-shadow: 0 2px 6px rgba(0,0,0,.06);
     }
-    .kpi { flex: 1; padding: 14px 18px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); display: flex; flex-direction: column; gap: 3px; }
+    .kpi { flex: 1; padding: 12px 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--bg); display: flex; flex-direction: column; gap: 2px; }
     .kpi-lbl { font-size: 10.5px; font-weight: 600; letter-spacing: .6px; text-transform: uppercase; color: var(--muted); }
-    .kpi-val  { font-size: 28px; font-weight: 700; line-height: 1; color: var(--text); }
-    .kpi-sub  { font-size: 11.5px; color: var(--muted); }
+    .kpi-val  { font-size: 26px; font-weight: 700; line-height: 1.05; color: var(--text); }
+    .kpi-sub  { font-size: 11px; color: var(--muted); }
     .kpi.green  .kpi-val { color: var(--green);  }
     .kpi.teal   .kpi-val { color: var(--teal);   }
     .kpi.orange .kpi-val { color: var(--orange); }
+    .kpi-mom {
+      margin-top: 6px; padding-top: 6px;
+      border-top: 1px dashed var(--border);
+      font-size: 11px; color: var(--muted);
+      display: flex; align-items: baseline; gap: 6px; flex-wrap: wrap;
+    }
+    .kpi-mom .mom-lbl   { font-size: 9.5px; text-transform: uppercase; letter-spacing: .5px; font-weight: 600; color: var(--muted); }
+    .kpi-mom .mom-val   { font-size: 13px; font-weight: 700; color: var(--text); }
+    .kpi.green  .kpi-mom .mom-val { color: var(--green);  }
+    .kpi.teal   .kpi-mom .mom-val { color: var(--teal);   }
+    .kpi.orange .kpi-mom .mom-val { color: var(--orange); }
+    .delta { font-size: 10.5px; font-weight: 600; padding: 1px 6px; border-radius: 10px; }
+    .delta.up   { color: #166534; background: #dcfce7; }
+    .delta.down { color: #991b1b; background: #fee2e2; }
+    .delta.flat { color: #64748b; background: #e2e8f0; }
+
+    /* ── Filter Bar ── */
+    .filter-bar {
+      position: fixed; top: calc(var(--hdr) + var(--kpi)); left: 0; right: 0; height: var(--filter);
+      background: var(--card); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; padding: 0 28px; gap: 12px; z-index: 185;
+    }
+    .filter-bar .switch { position: relative; display: inline-block; width: 36px; height: 20px; flex-shrink: 0; }
+    .filter-bar .switch input { opacity: 0; width: 0; height: 0; }
+    .filter-bar .slider {
+      position: absolute; cursor: pointer; inset: 0;
+      background-color: #cbd5e1; transition: .2s; border-radius: 20px;
+    }
+    .filter-bar .slider::before {
+      position: absolute; content: ""; height: 16px; width: 16px;
+      left: 2px; top: 2px; background-color: #fff; transition: .2s; border-radius: 50%;
+      box-shadow: 0 1px 2px rgba(0,0,0,.18);
+    }
+    .filter-bar .switch input:checked + .slider { background-color: var(--teal); }
+    .filter-bar .switch input:checked + .slider::before { transform: translateX(16px); }
+    .filter-label { font-size: 12.5px; font-weight: 600; color: var(--text); }
+    .filter-hint  { font-size: 11.5px; color: var(--muted); font-style: italic; }
+    .custom-data-btn {
+      margin-left: auto; padding: 6px 14px; font-size: 12px; font-weight: 600;
+      color: #fff; background: var(--blue); border: 0; border-radius: 6px;
+      cursor: pointer; transition: background .15s, transform .12s;
+      display: inline-flex; align-items: center; gap: 6px; flex-shrink: 0;
+    }
+    .custom-data-btn:hover { background: #122e54; }
+    .custom-data-btn:active { transform: translateY(1px); }
+    .custom-data-btn.active-data {
+      background: var(--teal);
+    }
+    .custom-data-btn.active-data:hover { background: #007a8a; }
+    .hdr-meta-custom {
+      cursor: pointer; color: var(--teal) !important; font-weight: 500;
+      text-decoration: underline; text-decoration-style: dotted;
+    }
+
+    /* ── Custom Data Modal ── */
+    .custom-modal {
+      position: fixed; inset: 0; background: rgba(15, 23, 42, .55);
+      display: none; align-items: center; justify-content: center; z-index: 9000;
+      padding: 24px;
+    }
+    .custom-modal.open { display: flex; }
+    .custom-card {
+      background: var(--card); border-radius: 12px; box-shadow: 0 24px 64px rgba(0,0,0,.32);
+      width: 100%; max-width: 620px; max-height: 90vh; overflow-y: auto;
+      padding: 28px 30px;
+    }
+    .custom-card h2 { margin: 0 0 6px; font-size: 18px; color: var(--blue); }
+    .custom-desc {
+      margin: 0 0 18px; font-size: 12.5px; color: var(--muted); line-height: 1.55;
+    }
+    .custom-card .dz {
+      border: 1.5px dashed #cbd5e1; border-radius: 8px;
+      padding: 12px 14px; margin-bottom: 12px;
+      background: #f8fafc; transition: border-color .15s, background .15s;
+    }
+    .custom-card .dz.has-file { border-color: var(--teal); background: #ecfeff; }
+    .custom-card .dz strong { display: block; font-size: 13px; color: var(--text); margin-bottom: 3px; }
+    .custom-card .dz span {
+      display: block; font-size: 11px; color: var(--muted);
+      line-height: 1.45; margin-bottom: 8px;
+    }
+    .custom-card .dz input[type=file] {
+      font-size: 12px; width: 100%;
+      color: var(--text);
+    }
+    .custom-card .dz .file-status {
+      display: block; font-size: 11.5px; font-weight: 600;
+      color: var(--teal); margin-top: 4px;
+    }
+    .custom-actions {
+      display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px;
+      flex-wrap: wrap;
+    }
+    .custom-actions button {
+      padding: 8px 18px; font-size: 12.5px; font-weight: 600;
+      border-radius: 6px; cursor: pointer; border: 1px solid transparent;
+      transition: background .15s, opacity .15s;
+    }
+    #custom-cancel { background: transparent; color: var(--muted); border-color: var(--border); }
+    #custom-cancel:hover { background: #f1f5f9; }
+    #custom-reset  { background: transparent; color: #b91c1c; border-color: #fecaca; }
+    #custom-reset:hover { background: #fef2f2; }
+    #custom-run    { background: var(--blue); color: #fff; }
+    #custom-run:hover:not(:disabled) { background: #122e54; }
+    #custom-run:disabled { opacity: 0.45; cursor: not-allowed; }
+    .custom-status {
+      margin-top: 14px; padding: 10px 12px; font-size: 12px; border-radius: 6px;
+      display: none; line-height: 1.5;
+    }
+    .custom-status.info { display: block; background: #eff6ff; color: #1e40af; border-left: 3px solid #3b82f6; }
+    .custom-status.error{ display: block; background: #fef2f2; color: #991b1b; border-left: 3px solid #dc2626; }
+    .custom-status.ok   { display: block; background: #f0fdf4; color: #166534; border-left: 3px solid #16a34a; }
 
     /* ── Tab Nav ── */
     .tab-nav {
-      position: fixed; top: calc(var(--hdr) + var(--kpi)); left: 0; right: 0; height: var(--nav);
+      position: fixed; top: calc(var(--hdr) + var(--kpi) + var(--filter)); left: 0; right: 0; height: var(--nav);
       background: var(--card); border-bottom: 2px solid var(--border);
       display: flex; align-items: center; padding: 0 28px; gap: 2px; z-index: 180;
     }
@@ -77,7 +191,7 @@
     }
 
     /* ── Main ── */
-    .main { margin-top: calc(var(--hdr) + var(--kpi) + var(--nav)); padding: 22px 28px 40px; }
+    .main { margin-top: calc(var(--hdr) + var(--kpi) + var(--filter) + var(--nav)); padding: 22px 28px 40px; }
     .tab-pane { display: none; }
     .tab-pane.active { display: block; }
 
@@ -167,7 +281,7 @@
     /* ══ MOBILE ══════════════════════════════════════════════════════ */
     @media (max-width: 768px) {
       /* Shrink fixed strip heights so calc() stays accurate */
-      :root { --hdr: 52px; --kpi: 118px; --nav: 44px; }
+      :root { --hdr: 52px; --kpi: 188px; --filter: 64px; --nav: 44px; }
 
       /* Header */
       .hdr { padding: 0 14px; gap: 10px; }
@@ -181,10 +295,19 @@
         height: var(--kpi); padding: 8px 12px; gap: 8px;
         align-content: center;
       }
-      .kpi { padding: 8px 10px; flex: unset; }
+      .kpi { padding: 6px 8px; flex: unset; }
       .kpi-lbl { font-size: 9px; }
-      .kpi-val { font-size: 19px; }
+      .kpi-val { font-size: 18px; }
       .kpi-sub { display: none; }
+      .kpi-mom { margin-top: 4px; padding-top: 4px; font-size: 9.5px; gap: 4px; }
+      .kpi-mom .mom-lbl { font-size: 8.5px; }
+      .kpi-mom .mom-val { font-size: 11px; }
+      .delta { font-size: 9px; padding: 0 4px; }
+
+      /* Filter bar — wraps to two lines on phones */
+      .filter-bar { padding: 6px 12px; gap: 8px; flex-wrap: wrap; align-content: center; }
+      .filter-label { font-size: 11.5px; }
+      .filter-hint { font-size: 10.5px; flex-basis: 100%; margin-left: 0; text-align: left; }
 
       /* Tab nav → horizontal scroll */
       .tab-nav {
@@ -217,8 +340,9 @@
     }
 
     @media (max-width: 420px) {
-      :root { --kpi: 130px; }
-      .kpi-val { font-size: 17px; }
+      :root { --kpi: 200px; }
+      .kpi-val { font-size: 16px; }
+      .kpi-mom .mom-val { font-size: 10.5px; }
       .tab-btn { padding: 6px 11px; font-size: 11.5px; }
     }
 
@@ -371,30 +495,84 @@ function lockUI() {
   <span class="hdr-logo">Tronox</span>
   <div class="hdr-div"></div>
   <span class="hdr-title">AP Invoice Processing — Plant 1100</span>
-  <span class="hdr-meta">Data: May 2025 – Jan 2026</span>
+  <span class="hdr-meta" id="hdr-meta">Data: May 2025 – Jan 2026</span>
   <button class="hdr-lock" type="button" onclick="lockUI()" title="Lock dashboard">🔒 Lock</button>
 </header>
 
 <!-- ═══ KPI STRIP ═════════════════════════════════════════════════════ -->
 <div class="kpi-strip">
-  <div class="kpi">
+  <div class="kpi" data-kpi-card="total">
     <span class="kpi-lbl">Total Invoices</span>
-    <span class="kpi-val">16,580</span>
+    <span class="kpi-val" data-kpi-val="total">16,580</span>
     <span class="kpi-sub">Full posted invoice universe</span>
+    <span class="kpi-mom" data-kpi="total"></span>
   </div>
-  <div class="kpi green">
+  <div class="kpi green" data-kpi-card="fpr">
     <span class="kpi-lbl">First Pass Rate</span>
-    <span class="kpi-val">13.6%</span>
+    <span class="kpi-val" data-kpi-val="fpr">13.6%</span>
+    <span class="kpi-sub">All time, full universe</span>
+    <span class="kpi-mom" data-kpi="fpr"></span>
   </div>
-  <div class="kpi orange">
+  <div class="kpi orange" data-kpi-card="exc">
     <span class="kpi-lbl">Total Exception Events</span>
-    <span class="kpi-val">35,142</span>
+    <span class="kpi-val" data-kpi-val="exc">35,142</span>
     <span class="kpi-sub">Across invoices with ≥1 exception</span>
+    <span class="kpi-mom" data-kpi="exc"></span>
   </div>
-  <div class="kpi teal">
+  <div class="kpi teal" data-kpi-card="vendors">
     <span class="kpi-lbl">Vendors with Exceptions</span>
-    <span class="kpi-val">611</span>
+    <span class="kpi-val" data-kpi-val="vendors">611</span>
     <span class="kpi-sub">All vendors including transport</span>
+    <span class="kpi-mom" data-kpi="vendors"></span>
+  </div>
+</div>
+
+<!-- ═══ FILTER BAR ════════════════════════════════════════════════════ -->
+<div class="filter-bar">
+  <label class="switch" title="Toggle to exclude Exception IDs 0 (PO Low-value Service Invoice) and 91 (GR Not Done) from the affected charts">
+    <input type="checkbox" id="excl-toggle">
+    <span class="slider"></span>
+  </label>
+  <span class="filter-label">Exclude Exception IDs 0 &amp; 91</span>
+  <span class="filter-hint" id="excl-hint">Currently showing all exceptions (matches headline KPIs)</span>
+  <button class="custom-data-btn" id="custom-data-btn" type="button" title="Re-run the dashboard against your own CSVs (processed entirely in your browser)">
+    Load Custom Data
+  </button>
+</div>
+
+<!-- ═══ CUSTOM DATA MODAL ════════════════════════════════════════════ -->
+<div id="custom-modal" class="custom-modal" role="dialog" aria-modal="true" aria-labelledby="custom-modal-title">
+  <div class="custom-card">
+    <h2 id="custom-modal-title">Load Your Own Data</h2>
+    <p class="custom-desc">
+      Upload your three source CSVs and the dashboard will recompute every chart and KPI against your data.
+      <strong>Files stay in your browser</strong> &mdash; nothing is uploaded to any server. Refreshing the page
+      reverts to the published data.
+    </p>
+    <div class="dz" data-key="universe">
+      <strong>1. Invoice Universe</strong>
+      <span>e.g. <em>2025 invoices US.csv</em>. Required columns: <code>Document Id</code>, <code>Channel ID</code>, <code>PO category decription</code>, <code>Status Descrip</code>, <code>PO Type descr</code>, <code>Document Create Date</code>, <code>Name 1</code>.</span>
+      <input type="file" accept=".csv" data-key="universe">
+      <span class="file-status" data-status-for="universe"></span>
+    </div>
+    <div class="dz" data-key="inc">
+      <strong>2. Exception Events (inc)</strong>
+      <span>e.g. <em>1100 Data inc.csv</em>. Required columns: <code>Document Id</code>, <code>Document Status</code>, <code>Supplier</code>, <code>Name 1</code>, <code>PO Type</code>, <code>Channel ID</code>, <code>PO category decription</code>, <code>Exception ID</code>, <code>Exception description</code>, <code>Created at</code>.</span>
+      <input type="file" accept=".csv" data-key="inc">
+      <span class="file-status" data-status-for="inc"></span>
+    </div>
+    <div class="dz" data-key="sorted">
+      <strong>3. Sorted Exceptions</strong>
+      <span>e.g. <em>1100 VIM Exceptions Data Sorted.csv</em>. Same schema as the inc file but pre-filtered to NB/ZCP and excluding Exc 0 &amp; 91. Used for the legacy filtered view that the toggle switches into.</span>
+      <input type="file" accept=".csv" data-key="sorted">
+      <span class="file-status" data-status-for="sorted"></span>
+    </div>
+    <div class="custom-actions">
+      <button id="custom-cancel" type="button">Cancel</button>
+      <button id="custom-reset"  type="button" title="Reload the page and restore the published dataset">Reset to Default Data</button>
+      <button id="custom-run"    type="button" disabled>Run Analysis</button>
+    </div>
+    <div id="custom-status" class="custom-status"></div>
   </div>
 </div>
 
@@ -413,8 +591,8 @@ function lockUI() {
   <div id="tab-overview" class="tab-pane active">
     <div class="g2">
       <div class="card">
-        <div class="card-title">Exception Frequency — Top 10 Types</div>
-        <div class="card-desc">Total occurrence count for each exception type across all processed invoices, ranked highest to lowest. Exception IDs 0 and 91 are excluded per agreed methodology.</div>
+        <div class="card-title">Exception Frequency — Top Types</div>
+        <div class="card-desc">Total occurrence count for each exception type across all processed invoices, ranked highest to lowest. Use the filter above to hide Exc 0 &amp; 91.</div>
         <div id="ch-exc-freq" style="height:340px"></div>
       </div>
       <div class="card">
@@ -426,7 +604,7 @@ function lockUI() {
     <div class="g2">
       <div class="card">
         <div class="card-title">First-Pass Rate by Ingestion Channel</div>
-        <div class="card-desc">Overall first-pass rate for each invoice ingestion channel: COUPA (electronic procurement), MAIL_IES (email/scan), and VIM_IES (vendor invoice management).</div>
+        <div class="card-desc">Overall first-pass rate for each invoice ingestion channel: COUPA (electronic procurement), MAIL_IES (email/scan), and VIM_IES (vendor invoice management). Uses the same strict methodology as the 13.6% headline KPI by default.</div>
         <div id="ch-channel-fp" style="height:260px"></div>
       </div>
       <div class="card">
@@ -441,15 +619,15 @@ function lockUI() {
   <div id="tab-vendors" class="tab-pane">
     <div class="g1">
       <div class="card">
-        <div class="card-title">Exception Type Breakdown by Supplier — Top 18 by Volume</div>
-        <div class="card-desc">Stacked horizontal bars showing the exception type composition for each vendor, ranked by total exception events. Each color segment represents a different exception type.</div>
+        <div class="card-title">Exception Type Breakdown by Supplier — Top Vendors by Volume</div>
+        <div class="card-desc">Stacked horizontal bars showing the exception type composition for each vendor, ranked by total exception events. Includes Exc 0 &amp; 91 by default — toggle above hides them and switches to the legacy filtered view.</div>
         <div id="ch-vendor-breakdown" style="height:520px"></div>
       </div>
     </div>
     <div class="g2">
       <div class="card">
         <div class="card-title">Vendor Processing Complexity</div>
-        <div class="card-desc">Each bubble represents a vendor. X-axis: unique invoice count. Y-axis: average exception events per invoice. Bubble size is proportional to total exception events.</div>
+        <div class="card-desc">Each bubble represents a vendor. X-axis: unique invoice count. Y-axis: average exception events per invoice. Bubble size is proportional to total exception events. Defaults to all exceptions; toggle above switches to the filtered view.</div>
         <div id="ch-vendor-scatter" style="height:340px"></div>
       </div>
       <div class="card" id="vdr-focus-card">
@@ -507,25 +685,25 @@ function lockUI() {
   <div id="tab-exceptions" class="tab-pane">
     <div class="g2">
       <div class="card">
-        <div class="card-title">Exception Events by PO Category — Top 8 Types</div>
-        <div class="card-desc">Stacked bars showing exception event counts for each PO category (Standard, Service, Subcontracting, Consignment), broken down by the 8 most frequent exception types.</div>
+        <div class="card-title">Exception Events by PO Category — Top Types</div>
+        <div class="card-desc">Stacked bars showing exception event counts for each PO category (Standard, Service, Subcontracting, Consignment), broken down by the most frequent exception types. By default includes Exc 0 (PO Low-value Service Invoice) and Exc 91 (GR Not Done) — use the filter above to hide them.</div>
         <div id="ch-cat-exc" style="height:360px"></div>
       </div>
       <div class="card">
         <div class="card-title">Exception Co-occurrence Pairs</div>
-        <div class="card-desc">Most frequent pairs of exception IDs that appear together on the same invoice. Arrow notation (A → B) indicates both exceptions were found on the same invoice, ordered by co-occurrence count.</div>
+        <div class="card-desc">Most frequent pairs of exception IDs that appear together on the same invoice. Arrow notation (A → B) indicates both exceptions were found on the same invoice, ordered by co-occurrence count. Includes Exc 0 &amp; 91 by default — toggle above hides them.</div>
         <div id="ch-pairs" style="height:360px"></div>
       </div>
     </div>
     <div class="g2">
       <div class="card">
         <div class="card-title">First-Pass Rate by Channel × PO Category</div>
-        <div class="card-desc">First-pass rate for each combination of ingestion channel and PO category. Color encodes the rate from red (low) to green (high). Blank cells indicate no invoices in that combination.</div>
+        <div class="card-desc">First-pass rate for each combination of ingestion channel and PO category, using the strict methodology by default. Color encodes the rate from red (low) to green (high). Blank cells indicate no invoices in that combination.</div>
         <div id="ch-heatmap" style="height:320px"></div>
       </div>
       <div class="card">
         <div class="card-title">Exception Events by PO Category — Share</div>
-        <div class="card-desc">Total exception events attributed to each PO category as a proportion of all 35,142 exception events.</div>
+        <div class="card-desc">Total exception events attributed to each PO category as a proportion of <span id="pie-total-text">30,873 exception events</span>.</div>
         <div id="ch-cat-pie" style="height:320px"></div>
       </div>
     </div>
@@ -552,7 +730,19 @@ function lockUI() {
 </main>
 
 <script>
-/* ══════════════════════════════ DATA ══════════════════════════════════ */
+/* ══════════════════════════════ DATA ══════════════════════════════════
+   The dashboard currently runs off a hardcoded snapshot of three CSV
+   exports (1100 Data inc.csv, 1100 VIM Exceptions Data Sorted.csv,
+   2025 invoices US.csv) that have been pre-aggregated by analyze.py
+   into the D object below.
+
+   TODO (future): allow the user to drop their own copies of those three
+   source CSVs into a file picker and have the dashboard re-aggregate
+   them in-browser (likely via PapaParse + a small JS port of the key
+   analyze.py groupbys), replacing the hardcoded D object on the fly.
+   The "current data published" view stays as the default; the
+   "load my own data" action would only run when the user opts in.
+   Out of scope for the current change.                                  */
 const D = {
   /* Per-month rows. Two views are stored side-by-side:
      • total / exc / fp / fpr      → FILTERED view (Exc 0 & 91 removed, NB/ZCP only, transport excl.)
@@ -587,23 +777,53 @@ const D = {
     {id:85,  desc:"Company Code Mismatch",           count:58,    pct:0.17},
     {id:76,  desc:"LIV — Quantity Discrepancy",      count:31,    pct:0.09}
   ],
+  /* Per-channel FP rate. Two views stored side-by-side:
+     • total/fp/fpr      → FILTERED (Exc 0 & 91 excluded; same dataset as old chart)
+     • total_u/fp_u/fpr_u → STRICT (any exception disqualifies; matches headline KPI)
+     Strict numbers come from output/04_channel_firstpass.csv. */
   channel_fp: [
-    {ch:"COUPA",    total:1592,  fp:822,  fpr:51.63},
-    {ch:"MAIL_IES", total:11092, fp:3679, fpr:33.17},
-    {ch:"VIM_IES",  total:175,   fp:55,   fpr:31.43}
+    {ch:"COUPA",    total:1592,  fp:822,  fpr:51.63, total_u:2350,  fp_u:758,  fpr_u:32.26},
+    {ch:"MAIL_IES", total:11092, fp:3679, fpr:33.17, total_u:12604, fp_u:1491, fpr_u:11.83},
+    {ch:"VIM_IES",  total:175,   fp:55,   fpr:31.43, total_u:203,   fp_u:12,   fpr_u:5.91}
   ],
+  /* Channel × PO Category FP rate. Same two-view structure.
+     Strict numbers come from output/04b_channel_cat_firstpass.csv. */
   channel_cat_fp: [
-    {ch:"COUPA",    cat:"Standard",       total:977,  fp:348,  fpr:35.62},
-    {ch:"COUPA",    cat:"Service",        total:530,  fp:442,  fpr:83.40},
-    {ch:"COUPA",    cat:"Subcontracting", total:85,   fp:32,   fpr:37.65},
-    {ch:"MAIL_IES", cat:"Standard",       total:5721, fp:1057, fpr:18.48},
-    {ch:"MAIL_IES", cat:"Service",        total:5197, fp:2589, fpr:49.82},
-    {ch:"MAIL_IES", cat:"Subcontracting", total:128,  fp:29,   fpr:22.66},
-    {ch:"MAIL_IES", cat:"Consignment",    total:46,   fp:4,    fpr:8.70},
-    {ch:"VIM_IES",  cat:"Standard",       total:122,  fp:30,   fpr:24.59},
-    {ch:"VIM_IES",  cat:"Service",        total:52,   fp:25,   fpr:48.08},
-    {ch:"VIM_IES",  cat:"Subcontracting", total:1,    fp:0,    fpr:0.00}
+    {ch:"COUPA",    cat:"Standard",       total:977,  fp:348,  fpr:35.62, total_u:1435, fp_u:458,  fpr_u:31.92},
+    {ch:"COUPA",    cat:"Service",        total:530,  fp:442,  fpr:83.40, total_u:531,  fp_u:1,    fpr_u:0.19},
+    {ch:"COUPA",    cat:"Subcontracting", total:85,   fp:32,   fpr:37.65, total_u:383,  fp_u:298,  fpr_u:77.81},
+    {ch:"COUPA",    cat:"Consignment",    total:0,    fp:0,    fpr:null,  total_u:1,    fp_u:1,    fpr_u:100.00},
+    {ch:"MAIL_IES", cat:"Standard",       total:5721, fp:1057, fpr:18.48, total_u:5795, fp_u:1167, fpr_u:20.14},
+    {ch:"MAIL_IES", cat:"Service",        total:5197, fp:2589, fpr:49.82, total_u:6387, fp_u:72,   fpr_u:1.13},
+    {ch:"MAIL_IES", cat:"Subcontracting", total:128,  fp:29,   fpr:22.66, total_u:364,  fp_u:240,  fpr_u:65.93},
+    {ch:"MAIL_IES", cat:"Consignment",    total:46,   fp:4,    fpr:8.70,  total_u:58,   fp_u:12,   fpr_u:20.69},
+    {ch:"VIM_IES",  cat:"Standard",       total:122,  fp:30,   fpr:24.59, total_u:135,  fp_u:12,   fpr_u:8.89},
+    {ch:"VIM_IES",  cat:"Service",        total:52,   fp:25,   fpr:48.08, total_u:66,   fp_u:0,    fpr_u:0.00},
+    {ch:"VIM_IES",  cat:"Subcontracting", total:1,    fp:0,    fpr:0.00,  total_u:2,    fp_u:0,    fpr_u:0.00}
   ],
+  /* Per-month KPI rollup (STRICT view, source: output/06b_monthly_kpis.csv).
+     Used for the "Last month" subline shown beneath each headline KPI card.
+     The auto-selector picks the most recent month with total >= 500 invoices,
+     so partial months (Jan '26 with 20 invoices) are skipped. */
+  monthly_kpis: [
+    {m:"May '25", total:1902, fpr:6.89,  exc_events:4208, vendors:289},
+    {m:"Jun '25", total:1695, fpr:13.92, exc_events:3769, vendors:281},
+    {m:"Jul '25", total:2211, fpr:18.63, exc_events:4457, vendors:300},
+    {m:"Aug '25", total:1966, fpr:16.63, exc_events:3883, vendors:299},
+    {m:"Sep '25", total:1929, fpr:15.76, exc_events:3932, vendors:306},
+    {m:"Oct '25", total:2103, fpr:15.31, exc_events:4288, vendors:289},
+    {m:"Nov '25", total:1447, fpr:16.31, exc_events:2979, vendors:254},
+    {m:"Dec '25", total:1884, fpr:15.29, exc_events:3324, vendors:274},
+    {m:"Jan '26", total:20,   fpr:25.00, exc_events:33,   vendors:3}
+  ],
+  /* Pie chart per-category exception event totals.
+     • Filtered (cat_pie.filtered): Exc 0 & 91 removed → 13,363 events total
+     • Strict   (cat_pie.strict):   all exceptions     → 30,873 events total
+     Strict source: output/03b_cat_exc_strict.csv. */
+  cat_pie: {
+    filtered: {labels:["Standard","Service","Subcontracting","Consignment"], values:[8043,4925,318,77],     total:13363},
+    strict:   {labels:["Standard","Service","Subcontracting","Consignment"], values:[14769,15493,517,94], total:30873}
+  },
   /* Excludes Southern Ionics (51003869) and Terra First (51003955) */
   vendor_top30: [
     {id:"51004553", name:"MOTION INDUSTRIES INC",            inv:287, exc:441,  avg:1.54},
@@ -634,6 +854,40 @@ const D = {
     {id:"51004484", name:"OLIN CORP - CHLOR ALKALI",         inv:69,  exc:98,   avg:1.42},
     {id:"51004762", name:"MRC GLOBAL (US) INC.",             inv:49,  exc:92,   avg:1.88},
     {id:"51004941", name:"ACCEL LLC",                        inv:52,  exc:90,   avg:1.73}
+  ],
+  /* STRICT vendor_top30 (incl. Exc 0 & 91, source: 02b_top_vendors_strict.csv).
+     Same SI/TF exclusion as the filtered view. */
+  vendor_top30_strict: [
+    {id:"51004581", name:"THOMPSONS WELDING SERVICES INC",   inv:649, exc:1462, avg:2.25},
+    {id:"51004553", name:"MOTION INDUSTRIES INC",            inv:436, exc:1029, avg:2.36},
+    {id:"51004749", name:"APACHE INDUSTRIAL SERVICES INC",   inv:338, exc:768,  avg:2.27},
+    {id:"51003926", name:"MSC INDUSTRIAL SUPPLY CO INC",     inv:239, exc:739,  avg:3.09},
+    {id:"51004029", name:"PPG INDUSTRIES INC",               inv:368, exc:684,  avg:1.86},
+    {id:"51004873", name:"EVANS PLUMBING AND AC INC",        inv:215, exc:621,  avg:2.89},
+    {id:"51004601", name:"MEWCO, INC",                       inv:305, exc:613,  avg:2.01},
+    {id:"51004490", name:"COLUMBUS RUBBER & GASKET CO INC",  inv:277, exc:575,  avg:2.08},
+    {id:"51003880", name:"HYDRO-VAC INDUSTRIAL SERVICES INC",inv:131, exc:476,  avg:3.63},
+    {id:"51004610", name:"CARMEUSE LIME AND STONE INC",      inv:372, exc:445,  avg:1.20},
+    {id:"51004841", name:"SOUTHERN SYNERGY INC",             inv:265, exc:437,  avg:1.65},
+    {id:"51004906", name:"GLENN MACHINE WORKS INC",          inv:138, exc:394,  avg:2.86},
+    {id:"51004788", name:"IQUISA INC.",                      inv:165, exc:371,  avg:2.25},
+    {id:"51004881", name:"WEATHERS ELECTRIC, INC.",          inv:108, exc:346,  avg:3.20},
+    {id:"51004603", name:"MORIN PROCESS EQUIPMENT",          inv:120, exc:344,  avg:2.87},
+    {id:"51004809", name:"FISHER SCIENTIFIC COMPANY LLC",    inv:85,  exc:338,  avg:3.98},
+    {id:"51004882", name:"WISE STAFFING SERVICES INC",       inv:117, exc:332,  avg:2.84},
+    {id:"51004329", name:"UNITED RENTALS (NORTH AMERICA) INC",inv:80, exc:291,  avg:3.64},
+    {id:"51004878", name:"SCOTT & SONS CONSTRUCTION & MECHANI",inv:137,exc:287, avg:2.09},
+    {id:"51004317", name:"MOODY PRICE LLC",                  inv:105, exc:273,  avg:2.60},
+    {id:"51004569", name:"MARATHON PETROLEUM COMPANY LP",    inv:110, exc:257,  avg:2.34},
+    {id:"51004941", name:"ACCEL LLC",                        inv:93,  exc:254,  avg:2.73},
+    {id:"51003907", name:"LHOIST NORTH AMERICA OF ALABAMA",  inv:175, exc:241,  avg:1.38},
+    {id:"51004671", name:"SOUTHERN INDUSTRIAL SUPPLY LLC",   inv:75,  exc:230,  avg:3.07},
+    {id:"51004533", name:"CENTRO INC",                       inv:88,  exc:224,  avg:2.55},
+    {id:"51004305", name:"YAZOO RIVER TOWING INC",           inv:88,  exc:218,  avg:2.48},
+    {id:"51004495", name:"HARCROS CHEMICALS INC",            inv:116, exc:217,  avg:1.87},
+    {id:"51003931", name:"GULF COAST MARINE SUPPLY CO INC",  inv:92,  exc:214,  avg:2.33},
+    {id:"51004484", name:"OLIN CORP - CHLOR ALKALI",         inv:88,  exc:214,  avg:2.43},
+    {id:"51004506", name:"S AND J TRANSFER AND STORAGE LTD", inv:71,  exc:206,  avg:2.90}
   ],
   /* Pareto table — excludes Southern Ionics and Terra First */
   workload_conc: [
@@ -686,11 +940,67 @@ const D = {
     {name:"WISE STAFFING SERVICES INC",       exc:61,  inv:32},
     {name:"WOODALL ELECTRIC INC.",            exc:59,  inv:28}
   ],
+  /* STRICT Pareto table — incl. Exc 0 & 91 (source: 07b_workload_conc_strict.csv) */
+  workload_conc_strict: [
+    {name:"THOMPSONS WELDING SERVICES INC",   exc:1462,inv:649},
+    {name:"MOTION INDUSTRIES INC",            exc:1029,inv:436},
+    {name:"APACHE INDUSTRIAL SERVICES INC",   exc:768, inv:338},
+    {name:"MSC INDUSTRIAL SUPPLY CO INC",     exc:739, inv:239},
+    {name:"PPG INDUSTRIES INC",               exc:684, inv:368},
+    {name:"EVANS PLUMBING AND AC INC",        exc:621, inv:215},
+    {name:"MEWCO, INC",                       exc:613, inv:305},
+    {name:"COLUMBUS RUBBER & GASKET CO INC",  exc:575, inv:277},
+    {name:"HYDRO-VAC INDUSTRIAL SERVICES INC",exc:476, inv:131},
+    {name:"CARMEUSE LIME AND STONE INC",      exc:445, inv:372},
+    {name:"SOUTHERN SYNERGY INC",             exc:437, inv:265},
+    {name:"GLENN MACHINE WORKS INC",          exc:394, inv:138},
+    {name:"IQUISA INC.",                      exc:371, inv:165},
+    {name:"WEATHERS ELECTRIC, INC.",          exc:346, inv:108},
+    {name:"MORIN PROCESS EQUIPMENT",          exc:344, inv:120},
+    {name:"FISHER SCIENTIFIC COMPANY LLC",    exc:338, inv:85},
+    {name:"WISE STAFFING SERVICES INC",       exc:332, inv:117},
+    {name:"UNITED RENTALS (NORTH AMERICA) INC",exc:291,inv:80},
+    {name:"SCOTT & SONS CONSTRUCTION & MECHANI",exc:287,inv:137},
+    {name:"MOODY PRICE LLC",                  exc:273, inv:105},
+    {name:"MARATHON PETROLEUM COMPANY LP",    exc:257, inv:110},
+    {name:"ACCEL LLC",                        exc:254, inv:93},
+    {name:"LHOIST NORTH AMERICA OF ALABAMA",  exc:241, inv:175},
+    {name:"SOUTHERN INDUSTRIAL SUPPLY LLC",   exc:230, inv:75},
+    {name:"CENTRO INC",                       exc:224, inv:88},
+    {name:"YAZOO RIVER TOWING INC",           exc:218, inv:88},
+    {name:"HARCROS CHEMICALS INC",            exc:217, inv:116},
+    {name:"GULF COAST MARINE SUPPLY CO INC",  exc:214, inv:92},
+    {name:"OLIN CORP - CHLOR ALKALI",         exc:214, inv:88},
+    {name:"S AND J TRANSFER AND STORAGE LTD", exc:206, inv:71},
+    {name:"WESTLAKE CHEMICALS & VINYLS LLC",  exc:189, inv:80},
+    {name:"AIRGAS CARBONICS INC",             exc:187, inv:103},
+    {name:"NESCO LLC",                        exc:182, inv:60},
+    {name:"AMERICAN CONTROLS TECHNOLOGY INC", exc:180, inv:78},
+    {name:"WOODALL ELECTRIC INC.",            exc:178, inv:41},
+    {name:"LIONSQUARE EQUIPMENT INC.",        exc:176, inv:58},
+    {name:"UNIFIRST HOLDINGS LP",             exc:176, inv:55},
+    {name:"NORFALCO LLC",                     exc:175, inv:72},
+    {name:"WWWEX FRANCHISE HOLDINGS LLC",     exc:165, inv:65},
+    {name:"WASTE AWAY GROUP INC",             exc:165, inv:72},
+    {name:"MCCRARY-WEST CONSTRUCTION CO INC", exc:164, inv:55},
+    {name:"BESTWADE PETROLEUM INC",           exc:158, inv:73},
+    {name:"CHOCTAW RAILS",                    exc:157, inv:31},
+    {name:"PQ LLC",                           exc:154, inv:54},
+    {name:"MICROSOFT CORP",                   exc:153, inv:31},
+    {name:"MRC GLOBAL (US) INC.",             exc:151, inv:72},
+    {name:"PREMIER EYE CARE, PLLC",           exc:151, inv:50},
+    {name:"FEDEX FREIGHT EAST",               exc:144, inv:62},
+    {name:"THE EOSYS GROUP INC",              exc:141, inv:66},
+    {name:"THOMPSON MACHINERY",               exc:134, inv:72}
+  ],
   exc_dist: [
     {n:1,cnt:6161},{n:2,cnt:781},{n:3,cnt:733},{n:4,cnt:275},
     {n:5,cnt:170},{n:6,cnt:65},{n:7,cnt:44},{n:8,cnt:23},
     {n:9,cnt:13},{n:10,cnt:8},{n:"11+",cnt:28}
   ],
+  /* Co-occurrence pairs. exc_pairs is the FILTERED view (Exc 0 & 91 removed,
+     source: output/05_exception_pairs.csv). exc_pairs_strict includes 0 & 91
+     (source: output/05b_exception_pairs_strict.csv). */
   exc_pairs: [
     {pair:"75 → 82",  cnt:557},{pair:"1 → 75",   cnt:274},
     {pair:"151 → 1",  cnt:181},{pair:"2 → 151",  cnt:126},
@@ -699,9 +1009,37 @@ const D = {
     {pair:"29 → 75",  cnt:66}, {pair:"75 → 1",   cnt:58},
     {pair:"38 → 1",   cnt:55}, {pair:"2 → 1",    cnt:51}
   ],
+  exc_pairs_strict: [
+    {pair:"29 → 0",   cnt:866},{pair:"75 → 82",  cnt:550},
+    {pair:"91 → 151", cnt:493},{pair:"0 → 151",  cnt:422},
+    {pair:"2 → 0",    cnt:320},{pair:"91 → 38",  cnt:280},
+    {pair:"1 → 75",   cnt:271},{pair:"91 → 1",   cnt:224},
+    {pair:"0 → 1",    cnt:210},{pair:"91 → 0",   cnt:194},
+    {pair:"151 → 1",  cnt:173},{pair:"1 → 0",    cnt:112},
+    {pair:"0 → 29",   cnt:109},{pair:"151 → 0",  cnt:108},
+    {pair:"91 → 75",  cnt:101}
+  ],
+  /* Per-category top exception types. cat_exc is FILTERED view (top 8 from
+     sorted_posted, excludes Exc 0 & 91). cat_exc_strict is the strict view
+     (top 10 from inc_posted, includes Exc 0 & 91). */
   cat_exc: {
     cats: ["Standard","Service","Subcontracting","Consignment"],
     types: [
+      {id:1,   label:"Process PO Invoice",             vals:[2777,1110,103,60]},
+      {id:151, label:"Manual Check/Missing Indexing",  vals:[1438,1147,35,1]},
+      {id:29,  label:"Missing Mandatory Info",         vals:[1145,1395,5,7]},
+      {id:75,  label:"LIV — Price Discrepancy",        vals:[850,43,67,4]},
+      {id:38,  label:"Freight on Invoice",             vals:[680,10,55,3]},
+      {id:82,  label:"Header Block",                   vals:[658,15,30,2]},
+      {id:2,   label:"Invalid PO Number",              vals:[277,501,11,0]},
+      {id:37,  label:"Unit of Measure Mismatch",       vals:[7,217,0,0]}
+    ]
+  },
+  cat_exc_strict: {
+    cats: ["Standard","Service","Subcontracting","Consignment"],
+    types: [
+      {id:0,   label:"PO Low-value Service Invoice",   vals:[664,10273,14,2]},
+      {id:91,  label:"GR Not Done-Simple Check",       vals:[6062,295,185,15]},
       {id:1,   label:"Process PO Invoice",             vals:[2777,1110,103,60]},
       {id:151, label:"Manual Check/Missing Indexing",  vals:[1438,1147,35,1]},
       {id:29,  label:"Missing Mandatory Info",         vals:[1145,1395,5,7]},
@@ -734,18 +1072,179 @@ const D = {
     {sup:"51004749",name:"APACHE INDUSTRIAL SERVICES INC",     inv:168, exc:263, excs:[{id:1,desc:"Process PO Invoice",cnt:128},{id:37,desc:"Unit of Measure Mismatch",cnt:63},{id:29,desc:"Missing Mandatory Info",cnt:28},{id:151,desc:"Manual Check/Missing Indexing",cnt:17},{id:85,desc:"Company Code Mismatch",cnt:15},{id:2,desc:"Invalid PO Number",cnt:9},{id:34,desc:"Vendor Mismatch",cnt:2},{id:6,desc:"Suspected Duplicate",cnt:1}]},
     {sup:"51004809",name:"FISHER SCIENTIFIC COMPANY LLC",      inv:72,  exc:195, excs:[{id:1,desc:"Process PO Invoice",cnt:55},{id:75,desc:"LIV — Price Discrepancy",cnt:35},{id:2,desc:"Invalid PO Number",cnt:30},{id:82,desc:"Header Block",cnt:29},{id:38,desc:"Freight on Invoice",cnt:17},{id:29,desc:"Missing Mandatory Info",cnt:16},{id:151,desc:"Manual Check/Missing Indexing",cnt:12},{id:6,desc:"Suspected Duplicate",cnt:1}]},
     {sup:"51004873",name:"EVANS PLUMBING AND AC INC",          inv:113, exc:163, excs:[{id:1,desc:"Process PO Invoice",cnt:123},{id:151,desc:"Manual Check/Missing Indexing",cnt:25},{id:29,desc:"Missing Mandatory Info",cnt:7},{id:2,desc:"Invalid PO Number",cnt:6},{id:6,desc:"Suspected Duplicate",cnt:1},{id:85,desc:"Company Code Mismatch",cnt:1}]}
+  ],
+  /* STRICT per-vendor exception breakdown — top 20 strict + SI/TF for drill-down.
+     Includes Exc 0 & 91. Source: dashboard_data.json → vendor_exc_detail_strict. */
+  vendor_exc_detail_strict: [
+    {sup:"51002585",name:"AMERICAN CONTROLS TECHNOLOGY INC",   inv:78,  exc:180, excs:[{id:38,desc:"Freight on Invoice",cnt:66},{id:1,desc:"Process PO Invoice",cnt:44},{id:0,desc:"PO Low-value Service Invoice",cnt:23},{id:75,desc:"LIV — Price Discrepancy",cnt:19},{id:82,desc:"Header Block",cnt:11},{id:91,desc:"GR Not Done-Simple Check",cnt:8},{id:151,desc:"Manual Check/Missing Indexing",cnt:7},{id:2,desc:"Invalid PO Number",cnt:2}]},
+    {sup:"51003869",name:"SOUTHERN IONICS INCORPORATED",       inv:1052,exc:1466,excs:[{id:1,desc:"Process PO Invoice",cnt:520},{id:91,desc:"GR Not Done-Simple Check",cnt:405},{id:29,desc:"Missing Mandatory Info",cnt:367},{id:151,desc:"Manual Check/Missing Indexing",cnt:140},{id:82,desc:"Header Block",cnt:11},{id:75,desc:"LIV — Price Discrepancy",cnt:10},{id:6,desc:"Suspected Duplicate",cnt:4},{id:34,desc:"Vendor Mismatch",cnt:3},{id:76,desc:"LIV — Qty Discrepancy",cnt:3},{id:2,desc:"Invalid PO Number",cnt:2},{id:271,desc:"Validate Accounting Data",cnt:1}]},
+    {sup:"51003880",name:"HYDRO-VAC INDUSTRIAL SERVICES INC",  inv:131, exc:476, excs:[{id:0,desc:"PO Low-value Service Invoice",cnt:365},{id:151,desc:"Manual Check/Missing Indexing",cnt:33},{id:1,desc:"Process PO Invoice",cnt:29},{id:37,desc:"Unit of Measure Mismatch",cnt:28},{id:2,desc:"Invalid PO Number",cnt:6},{id:6,desc:"Suspected Duplicate",cnt:6},{id:91,desc:"GR Not Done-Simple Check",cnt:6},{id:29,desc:"Missing Mandatory Info",cnt:3}]},
+    {sup:"51003907",name:"LHOIST NORTH AMERICA OF ALABAMA",    inv:175, exc:241, excs:[{id:151,desc:"Manual Check/Missing Indexing",cnt:71},{id:1,desc:"Process PO Invoice",cnt:65},{id:91,desc:"GR Not Done-Simple Check",cnt:56},{id:29,desc:"Missing Mandatory Info",cnt:17},{id:0,desc:"PO Low-value Service Invoice",cnt:26},{id:2,desc:"Invalid PO Number",cnt:4},{id:75,desc:"LIV — Price Discrepancy",cnt:1},{id:82,desc:"Header Block",cnt:1}]},
+    {sup:"51003926",name:"MSC INDUSTRIAL SUPPLY CO INC",       inv:239, exc:739, excs:[{id:91,desc:"GR Not Done-Simple Check",cnt:373},{id:0,desc:"PO Low-value Service Invoice",cnt:107},{id:151,desc:"Manual Check/Missing Indexing",cnt:58},{id:1,desc:"Process PO Invoice",cnt:55},{id:38,desc:"Freight on Invoice",cnt:50},{id:29,desc:"Missing Mandatory Info",cnt:37},{id:34,desc:"Vendor Mismatch",cnt:15},{id:75,desc:"LIV — Price Discrepancy",cnt:14},{id:82,desc:"Header Block",cnt:14},{id:2,desc:"Invalid PO Number",cnt:13},{id:3,desc:"Invalid Vendor",cnt:1},{id:6,desc:"Suspected Duplicate",cnt:1},{id:85,desc:"Company Code Mismatch",cnt:1}]},
+    {sup:"51003931",name:"GULF COAST MARINE SUPPLY CO INC",    inv:92,  exc:214, excs:[{id:1,desc:"Process PO Invoice",cnt:85},{id:75,desc:"LIV — Price Discrepancy",cnt:44},{id:82,desc:"Header Block",cnt:39},{id:91,desc:"GR Not Done-Simple Check",cnt:18},{id:0,desc:"PO Low-value Service Invoice",cnt:5},{id:2,desc:"Invalid PO Number",cnt:8},{id:29,desc:"Missing Mandatory Info",cnt:8},{id:151,desc:"Manual Check/Missing Indexing",cnt:5},{id:85,desc:"Company Code Mismatch",cnt:2}]},
+    {sup:"51003955",name:"TERRA FIRST",                        inv:370, exc:447, excs:[{id:29,desc:"Missing Mandatory Info",cnt:305},{id:1,desc:"Process PO Invoice",cnt:49},{id:151,desc:"Manual Check/Missing Indexing",cnt:31},{id:75,desc:"LIV — Price Discrepancy",cnt:26},{id:91,desc:"GR Not Done-Simple Check",cnt:20},{id:82,desc:"Header Block",cnt:14},{id:0,desc:"PO Low-value Service Invoice",cnt:2}]},
+    {sup:"51004029",name:"PPG INDUSTRIES INC",                 inv:368, exc:684, excs:[{id:91,desc:"GR Not Done-Simple Check",cnt:297},{id:151,desc:"Manual Check/Missing Indexing",cnt:142},{id:1,desc:"Process PO Invoice",cnt:141},{id:75,desc:"LIV — Price Discrepancy",cnt:47},{id:82,desc:"Header Block",cnt:41},{id:2,desc:"Invalid PO Number",cnt:9},{id:29,desc:"Missing Mandatory Info",cnt:7}]},
+    {sup:"51004305",name:"YAZOO RIVER TOWING INC",             inv:88,  exc:218, excs:[{id:29,desc:"Missing Mandatory Info",cnt:81},{id:75,desc:"LIV — Price Discrepancy",cnt:45},{id:82,desc:"Header Block",cnt:43},{id:1,desc:"Process PO Invoice",cnt:26},{id:151,desc:"Manual Check/Missing Indexing",cnt:12},{id:91,desc:"GR Not Done-Simple Check",cnt:5},{id:0,desc:"PO Low-value Service Invoice",cnt:2},{id:2,desc:"Invalid PO Number",cnt:2},{id:902,desc:"Invalid Company Code",cnt:2}]},
+    {sup:"51004317",name:"MOODY PRICE LLC",                    inv:105, exc:273, excs:[{id:91,desc:"GR Not Done-Simple Check",cnt:155},{id:1,desc:"Process PO Invoice",cnt:31},{id:38,desc:"Freight on Invoice",cnt:27},{id:151,desc:"Manual Check/Missing Indexing",cnt:15},{id:75,desc:"LIV — Price Discrepancy",cnt:12},{id:82,desc:"Header Block",cnt:11},{id:29,desc:"Missing Mandatory Info",cnt:9},{id:2,desc:"Invalid PO Number",cnt:8},{id:37,desc:"Unit of Measure Mismatch",cnt:4},{id:6,desc:"Suspected Duplicate",cnt:1}]},
+    {sup:"51004329",name:"UNITED RENTALS (NORTH AMERICA) INC", inv:80,  exc:291, excs:[{id:0,desc:"PO Low-value Service Invoice",cnt:217},{id:29,desc:"Missing Mandatory Info",cnt:30},{id:91,desc:"GR Not Done-Simple Check",cnt:11},{id:151,desc:"Manual Check/Missing Indexing",cnt:10},{id:2,desc:"Invalid PO Number",cnt:7},{id:6,desc:"Suspected Duplicate",cnt:6},{id:37,desc:"Unit of Measure Mismatch",cnt:6},{id:34,desc:"Vendor Mismatch",cnt:3},{id:1,desc:"Process PO Invoice",cnt:1}]},
+    {sup:"51004490",name:"COLUMBUS RUBBER & GASKET CO INC",    inv:277, exc:575, excs:[{id:1,desc:"Process PO Invoice",cnt:176},{id:91,desc:"GR Not Done-Simple Check",cnt:145},{id:75,desc:"LIV — Price Discrepancy",cnt:55},{id:38,desc:"Freight on Invoice",cnt:48},{id:82,desc:"Header Block",cnt:47},{id:0,desc:"PO Low-value Service Invoice",cnt:43},{id:151,desc:"Manual Check/Missing Indexing",cnt:26},{id:2,desc:"Invalid PO Number",cnt:15},{id:29,desc:"Missing Mandatory Info",cnt:11},{id:6,desc:"Suspected Duplicate",cnt:8},{id:85,desc:"Company Code Mismatch",cnt:1}]},
+    {sup:"51004553",name:"MOTION INDUSTRIES INC",              inv:436, exc:1029,excs:[{id:91,desc:"GR Not Done-Simple Check",cnt:565},{id:38,desc:"Freight on Invoice",cnt:183},{id:1,desc:"Process PO Invoice",cnt:133},{id:75,desc:"LIV — Price Discrepancy",cnt:40},{id:151,desc:"Manual Check/Missing Indexing",cnt:33},{id:82,desc:"Header Block",cnt:26},{id:0,desc:"PO Low-value Service Invoice",cnt:23},{id:29,desc:"Missing Mandatory Info",cnt:19},{id:2,desc:"Invalid PO Number",cnt:4},{id:37,desc:"Unit of Measure Mismatch",cnt:3}]},
+    {sup:"51004581",name:"THOMPSONS WELDING SERVICES INC",     inv:649, exc:1462,excs:[{id:0,desc:"PO Low-value Service Invoice",cnt:1124},{id:2,desc:"Invalid PO Number",cnt:94},{id:151,desc:"Manual Check/Missing Indexing",cnt:70},{id:1,desc:"Process PO Invoice",cnt:54},{id:91,desc:"GR Not Done-Simple Check",cnt:41},{id:37,desc:"Unit of Measure Mismatch",cnt:37},{id:29,desc:"Missing Mandatory Info",cnt:26},{id:34,desc:"Vendor Mismatch",cnt:9},{id:85,desc:"Company Code Mismatch",cnt:6},{id:6,desc:"Suspected Duplicate",cnt:1}]},
+    {sup:"51004601",name:"MEWCO, INC",                         inv:305, exc:613, excs:[{id:0,desc:"PO Low-value Service Invoice",cnt:381},{id:1,desc:"Process PO Invoice",cnt:172},{id:151,desc:"Manual Check/Missing Indexing",cnt:25},{id:29,desc:"Missing Mandatory Info",cnt:22},{id:37,desc:"Unit of Measure Mismatch",cnt:10},{id:2,desc:"Invalid PO Number",cnt:2},{id:902,desc:"Invalid Company Code",cnt:1}]},
+    {sup:"51004603",name:"MORIN PROCESS EQUIPMENT",            inv:120, exc:344, excs:[{id:91,desc:"GR Not Done-Simple Check",cnt:246},{id:151,desc:"Manual Check/Missing Indexing",cnt:26},{id:0,desc:"PO Low-value Service Invoice",cnt:25},{id:1,desc:"Process PO Invoice",cnt:12},{id:75,desc:"LIV — Price Discrepancy",cnt:10},{id:2,desc:"Invalid PO Number",cnt:9},{id:82,desc:"Header Block",cnt:9},{id:6,desc:"Suspected Duplicate",cnt:3},{id:29,desc:"Missing Mandatory Info",cnt:2},{id:38,desc:"Freight on Invoice",cnt:1},{id:85,desc:"Company Code Mismatch",cnt:1}]},
+    {sup:"51004610",name:"CARMEUSE LIME AND STONE INC",        inv:372, exc:445, excs:[{id:151,desc:"Manual Check/Missing Indexing",cnt:268},{id:91,desc:"GR Not Done-Simple Check",cnt:114},{id:1,desc:"Process PO Invoice",cnt:42},{id:2,desc:"Invalid PO Number",cnt:11},{id:29,desc:"Missing Mandatory Info",cnt:9},{id:6,desc:"Suspected Duplicate",cnt:1}]},
+    {sup:"51004749",name:"APACHE INDUSTRIAL SERVICES INC",     inv:338, exc:768, excs:[{id:0,desc:"PO Low-value Service Invoice",cnt:500},{id:1,desc:"Process PO Invoice",cnt:128},{id:37,desc:"Unit of Measure Mismatch",cnt:63},{id:29,desc:"Missing Mandatory Info",cnt:28},{id:151,desc:"Manual Check/Missing Indexing",cnt:17},{id:85,desc:"Company Code Mismatch",cnt:15},{id:2,desc:"Invalid PO Number",cnt:9},{id:91,desc:"GR Not Done-Simple Check",cnt:5},{id:34,desc:"Vendor Mismatch",cnt:2},{id:6,desc:"Suspected Duplicate",cnt:1}]},
+    {sup:"51004788",name:"IQUISA INC.",                        inv:165, exc:371, excs:[{id:91,desc:"GR Not Done-Simple Check",cnt:293},{id:1,desc:"Process PO Invoice",cnt:47},{id:151,desc:"Manual Check/Missing Indexing",cnt:26},{id:6,desc:"Suspected Duplicate",cnt:5}]},
+    {sup:"51004809",name:"FISHER SCIENTIFIC COMPANY LLC",      inv:85,  exc:338, excs:[{id:91,desc:"GR Not Done-Simple Check",cnt:111},{id:1,desc:"Process PO Invoice",cnt:55},{id:75,desc:"LIV — Price Discrepancy",cnt:35},{id:0,desc:"PO Low-value Service Invoice",cnt:32},{id:2,desc:"Invalid PO Number",cnt:30},{id:82,desc:"Header Block",cnt:29},{id:38,desc:"Freight on Invoice",cnt:17},{id:29,desc:"Missing Mandatory Info",cnt:16},{id:151,desc:"Manual Check/Missing Indexing",cnt:12},{id:6,desc:"Suspected Duplicate",cnt:1}]},
+    {sup:"51004841",name:"SOUTHERN SYNERGY INC",               inv:265, exc:437, excs:[{id:0,desc:"PO Low-value Service Invoice",cnt:379},{id:151,desc:"Manual Check/Missing Indexing",cnt:19},{id:2,desc:"Invalid PO Number",cnt:18},{id:29,desc:"Missing Mandatory Info",cnt:15},{id:1,desc:"Process PO Invoice",cnt:5},{id:6,desc:"Suspected Duplicate",cnt:1}]},
+    {sup:"51004873",name:"EVANS PLUMBING AND AC INC",          inv:215, exc:621, excs:[{id:0,desc:"PO Low-value Service Invoice",cnt:457},{id:1,desc:"Process PO Invoice",cnt:123},{id:151,desc:"Manual Check/Missing Indexing",cnt:25},{id:29,desc:"Missing Mandatory Info",cnt:7},{id:2,desc:"Invalid PO Number",cnt:6},{id:6,desc:"Suspected Duplicate",cnt:1},{id:85,desc:"Company Code Mismatch",cnt:1},{id:91,desc:"GR Not Done-Simple Check",cnt:1}]},
+    {sup:"51004878",name:"SCOTT & SONS CONSTRUCTION & MECHANI",inv:137, exc:287, excs:[{id:0,desc:"PO Low-value Service Invoice",cnt:234},{id:91,desc:"GR Not Done-Simple Check",cnt:43},{id:2,desc:"Invalid PO Number",cnt:5},{id:1,desc:"Process PO Invoice",cnt:3},{id:151,desc:"Manual Check/Missing Indexing",cnt:2}]},
+    {sup:"51004881",name:"WEATHERS ELECTRIC, INC.",            inv:108, exc:346, excs:[{id:0,desc:"PO Low-value Service Invoice",cnt:269},{id:91,desc:"GR Not Done-Simple Check",cnt:43},{id:151,desc:"Manual Check/Missing Indexing",cnt:12},{id:2,desc:"Invalid PO Number",cnt:10},{id:29,desc:"Missing Mandatory Info",cnt:5},{id:1,desc:"Process PO Invoice",cnt:3},{id:34,desc:"Vendor Mismatch",cnt:2},{id:6,desc:"Suspected Duplicate",cnt:1},{id:85,desc:"Company Code Mismatch",cnt:1}]},
+    {sup:"51004882",name:"WISE STAFFING SERVICES INC",         inv:117, exc:332, excs:[{id:0,desc:"PO Low-value Service Invoice",cnt:271},{id:29,desc:"Missing Mandatory Info",cnt:30},{id:1,desc:"Process PO Invoice",cnt:16},{id:151,desc:"Manual Check/Missing Indexing",cnt:13},{id:2,desc:"Invalid PO Number",cnt:2}]},
+    {sup:"51004906",name:"GLENN MACHINE WORKS INC",            inv:138, exc:394, excs:[{id:0,desc:"PO Low-value Service Invoice",cnt:281},{id:1,desc:"Process PO Invoice",cnt:41},{id:29,desc:"Missing Mandatory Info",cnt:32},{id:37,desc:"Unit of Measure Mismatch",cnt:16},{id:91,desc:"GR Not Done-Simple Check",cnt:13},{id:2,desc:"Invalid PO Number",cnt:5},{id:151,desc:"Manual Check/Missing Indexing",cnt:5},{id:6,desc:"Suspected Duplicate",cnt:1}]}
   ]
 };
 
-/* supplier-ID → detail record */
-const VED_MAP = {};
-D.vendor_exc_detail.forEach(v => { VED_MAP[v.sup] = v; });
+/* supplier-ID → detail record. Rebuilt by rebuildVendorMaps() whenever the
+   toggle (or a custom-data load) swaps between strict and filtered datasets. */
+let VED_MAP = {};
+let NAME_TO_SUP = {};
 
-/* name → supplier ID (for table lookup) */
-const NAME_TO_SUP = {};
-D.vendor_exc_detail.forEach(v => { NAME_TO_SUP[v.name] = v.sup; });
+function activeVendorDetail() {
+  /* When toggle is OFF (default) we show strict data (incl. Exc 0 & 91).
+     When ON, we hide them and show the legacy filtered data. */
+  return isExclOn() ? D.vendor_exc_detail : (D.vendor_exc_detail_strict || D.vendor_exc_detail);
+}
+function activeVendorTop() {
+  return isExclOn() ? D.vendor_top30 : (D.vendor_top30_strict || D.vendor_top30);
+}
+function activeWorkloadConc() {
+  return isExclOn() ? D.workload_conc : (D.workload_conc_strict || D.workload_conc);
+}
+function rebuildVendorMaps() {
+  VED_MAP = {};
+  NAME_TO_SUP = {};
+  activeVendorDetail().forEach(v => { VED_MAP[v.sup] = v; NAME_TO_SUP[v.name] = v.sup; });
+}
+rebuildVendorMaps();
 
 const EXCL_CHART = new Set(["51003869","51003955"]); /* excluded from stacked chart */
+
+/* ══════════════════════════════ LAST-MONTH KPI SUBLINES ════════════
+   Picks the most recent COMPLETE month from D.monthly_kpis (skips months
+   with < 500 invoices, which catches partial months like Jan '26 with 20)
+   and writes a small subline into each .kpi-mom span. Auto-rolls forward
+   as new months fill in.                                              */
+function pickLastCompleteMonth(arr, minTotal) {
+  for (let i = arr.length - 1; i >= 0; i--) {
+    if (arr[i].total >= (minTotal || 500)) return i;
+  }
+  return arr.length - 1;
+}
+
+function fmtDelta(curr, prev, isPct) {
+  if (prev == null || prev === 0) return {cls:"flat", text:"new"};
+  const diff = curr - prev;
+  if (Math.abs(diff) < (isPct ? 0.05 : 0.5)) return {cls:"flat", text:"flat vs prev"};
+  const pct = (diff / prev) * 100;
+  const arrow = diff > 0 ? "▲" : "▼";
+  /* For FP rate, "up" is good (green). For exception counts and vendor
+     counts, "up" means MORE problems (red). Total invoices is neutral. */
+  const goodWhenUp = isPct;
+  const cls = (diff > 0) === goodWhenUp ? "up" : "down";
+  return {cls, text: `${arrow} ${Math.abs(pct).toFixed(0)}% vs prev`};
+}
+
+function populateLastMonthKpis() {
+  const arr = D.monthly_kpis;
+  if (!arr || !arr.length) return;
+  const i = pickLastCompleteMonth(arr, 500);
+  if (i < 0) return;
+  const cur = arr[i], prv = i > 0 ? arr[i-1] : null;
+
+  const cards = {
+    total:   {val: cur.total.toLocaleString(),       prev: prv?.total,      isPct:false, neutral:true},
+    fpr:     {val: cur.fpr.toFixed(1) + "%",         prev: prv?.fpr,        isPct:true},
+    exc:     {val: cur.exc_events.toLocaleString(),  prev: prv?.exc_events, isPct:false},
+    vendors: {val: cur.vendors.toLocaleString(),     prev: prv?.vendors,    isPct:false}
+  };
+
+  const curKey = {total:"total", fpr:"fpr", exc:"exc_events", vendors:"vendors"};
+
+  document.querySelectorAll(".kpi-mom").forEach(el => {
+    const key = el.dataset.kpi;
+    const c = cards[key];
+    if (!c) return;
+    const d = fmtDelta(cur[curKey[key]], c.prev, c.isPct);
+    const deltaHtml = c.neutral
+      ? ""
+      : ` <span class="delta ${d.cls}">${d.text}</span>`;
+    el.innerHTML =
+      `<span class="mom-lbl">${cur.m}</span>` +
+      `<span class="mom-val">${c.val}</span>` +
+      deltaHtml;
+  });
+}
+
+/* ══════════════════════════════ FILTER TOGGLE ══════════════════════
+   Single global toggle to exclude Exception IDs 0 & 91 from the four
+   charts where the distinction matters: Exception Frequency,
+   Channel FP, Channel × Cat heatmap, per-category pie.
+   Headline KPIs are NOT affected — they always reflect the strict view. */
+const EXCL_KEY = "tronox_excl_0_91";
+const EXCL_SCHEMA_KEY = "tronox_excl_schema_v";
+const EXCL_SCHEMA_VERSION = "2"; // bump whenever default semantics change
+const EXCL_SET = new Set([0, 91]);
+
+/* One-time migration: if a previous version of the dashboard set
+   tronox_excl_0_91 = "1" while the user was experimenting, that stale value
+   would currently force the toggle ON and hide the strict numbers everyone
+   should see by default. On first load of a new schema version, wipe it. */
+try {
+  if (localStorage.getItem(EXCL_SCHEMA_KEY) !== EXCL_SCHEMA_VERSION) {
+    localStorage.removeItem(EXCL_KEY);
+    localStorage.setItem(EXCL_SCHEMA_KEY, EXCL_SCHEMA_VERSION);
+  }
+} catch (e) { /* private mode / disabled storage — non-fatal */ }
+
+function isExclOn() {
+  try { return localStorage.getItem(EXCL_KEY) === "1"; } catch (e) { return false; }
+}
+
+function setExclOn(on) {
+  try { localStorage.setItem(EXCL_KEY, on ? "1" : "0"); } catch (e) {}
+}
+
+function updateExclHint() {
+  const hint = document.getElementById("excl-hint");
+  if (!hint) return;
+  hint.textContent = isExclOn()
+    ? "Filter ON — Exc 0 & 91 hidden from charts below (KPIs unchanged)"
+    : "Currently showing all exceptions (matches headline KPIs)";
+}
+
+function initFilterToggle() {
+  const cb = document.getElementById("excl-toggle");
+  if (!cb) return;
+  cb.checked = isExclOn();
+  updateExclHint();
+  cb.addEventListener("change", () => {
+    setExclOn(cb.checked);
+    updateExclHint();
+    rerenderAffectedCharts();
+  });
+}
+
+function rerenderAffectedCharts() {
+  /* Re-renders every affected chart in whichever tabs are currently mounted.
+     Charts in not-yet-rendered tabs will pick up the new state when
+     their tab is opened (renderTab reads the toggle at render time).
+     Vendors and Exceptions tabs both swap between strict and filtered
+     datasets, so they need a full re-render on toggle change. */
+  if (typeof renderOverview   === "function" && rendered.has("overview"))   renderOverview();
+  if (typeof renderVendors    === "function" && rendered.has("vendors"))    renderVendors();
+  if (typeof renderExceptions === "function" && rendered.has("exceptions")) renderExceptions();
+}
 
 /* ══════════════════════════════ HELPERS ════════════════════════════ */
 const FONT    = {family:"Inter, -apple-system, sans-serif", size:12};
@@ -787,13 +1286,15 @@ function renderTab(id) {
 
 /* ══════════════════════════════ OVERVIEW ═══════════════════════════ */
 function renderOverview() {
-  const ef = [...D.exc_freq].reverse();
+  /* Exception Frequency — when filter ON, drop Exc 0 & 91 rows. */
+  const efSrc = isExclOn() ? D.exc_freq.filter(d=>!EXCL_SET.has(d.id)) : D.exc_freq;
+  const ef = [...efSrc].reverse();
   const efMax = Math.max(...ef.map(d=>d.count));
   Plotly.newPlot("ch-exc-freq", [{
     type:"bar", orientation:"h", cliponaxis:false,
     x:ef.map(d=>d.count), y:ef.map(d=>`Exc ${d.id}: ${d.desc}`),
     text:ef.map(d=>d.count.toLocaleString()), textposition:"outside",
-    marker:{color:EXC_COLORS.slice().reverse(),opacity:0.88},
+    marker:{color:EXC_COLORS.slice(0, ef.length).reverse(),opacity:0.88},
     hovertemplate:"<b>%{y}</b><br>%{x:,} events<extra></extra>"
   }], baseLayout({
     margin:{l:260,r:95,t:8,b:30,pad:2},
@@ -815,16 +1316,21 @@ function renderOverview() {
     showlegend:false
   }), PC);
 
+  /* Channel FP — strict view by default (matches headline KPI).
+     When filter ON, show the filtered rate (Exc 0 & 91 not counted as exceptions). */
+  const cfRate  = isExclOn() ? "fpr"   : "fpr_u";
+  const cfTotal = isExclOn() ? "total" : "total_u";
+  const cfMax   = Math.max(...D.channel_fp.map(d=>d[cfRate])) * 1.18;
   Plotly.newPlot("ch-channel-fp", [{
     type:"bar", cliponaxis:false,
-    x:D.channel_fp.map(d=>d.ch), y:D.channel_fp.map(d=>d.fpr),
-    text:D.channel_fp.map(d=>d.fpr.toFixed(1)+"%"), textposition:"outside",
+    x:D.channel_fp.map(d=>d.ch), y:D.channel_fp.map(d=>d[cfRate]),
+    text:D.channel_fp.map(d=>d[cfRate].toFixed(1)+"%"), textposition:"outside",
     marker:{color:["#0095a8","#1a3d6b","#7c3aed"],opacity:0.88},
     hovertemplate:"<b>%{x}</b><br>First-Pass Rate: %{y:.1f}%<br>Total: %{customdata:,}<extra></extra>",
-    customdata:D.channel_fp.map(d=>d.total)
+    customdata:D.channel_fp.map(d=>d[cfTotal])
   }], baseLayout({
     margin:{l:48,r:24,t:28,b:40,pad:2},
-    yaxis:{title:{text:"First-Pass Rate (%)",font:{size:11}},range:[0,65],gridcolor:GRIDCLR},
+    yaxis:{title:{text:"First-Pass Rate (%)",font:{size:11}},range:[0,Math.max(cfMax,40)],gridcolor:GRIDCLR},
     showlegend:false
   }), PC);
 
@@ -848,8 +1354,13 @@ function renderOverview() {
 
 /* ══════════════════════════════ VENDORS ════════════════════════════ */
 function renderVendors() {
+  /* Make sure the supplier-ID lookups reflect the current toggle state
+     before the focus card or breakdown chart query them. */
+  rebuildVendorMaps();
+  rebuildVendorTableData();
+
   /* ── Stacked breakdown chart (excluding SI and TF) ── */
-  const chartVendors = D.vendor_exc_detail
+  const chartVendors = activeVendorDetail()
     .filter(v => !EXCL_CHART.has(v.sup))
     .sort((a,b) => a.exc - b.exc);
 
@@ -857,7 +1368,7 @@ function renderVendors() {
   chartVendors.forEach(v => v.excs.forEach(e => { eidTotals[e.id]=(eidTotals[e.id]||0)+e.cnt; }));
   const topEids = Object.entries(eidTotals).sort((a,b)=>b[1]-a[1]).slice(0,10).map(([id])=>+id);
 
-  const EXC_LBL = {1:"Process PO Invoice",151:"Manual Check/Missing Indexing",29:"Missing Mandatory Info",75:"LIV — Price Discrepancy",38:"Freight on Invoice",82:"Header Block",2:"Invalid PO Number",37:"Unit of Measure Mismatch",34:"Vendor Mismatch",6:"Suspected Duplicate",85:"Company Code Mismatch",902:"Invalid Company Code",930:"Down Payment Request",416:"Down Payment Clearing"};
+  const EXC_LBL = {0:"PO Low-value Service Invoice",91:"GR Not Done-Simple Check",1:"Process PO Invoice",151:"Manual Check/Missing Indexing",29:"Missing Mandatory Info",75:"LIV — Price Discrepancy",38:"Freight on Invoice",82:"Header Block",2:"Invalid PO Number",37:"Unit of Measure Mismatch",34:"Vendor Mismatch",6:"Suspected Duplicate",85:"Company Code Mismatch",902:"Invalid Company Code",930:"Down Payment Request",416:"Down Payment Clearing"};
   const vbNames = chartVendors.map(v => v.name.length>36 ? v.name.slice(0,34)+"…" : v.name);
 
   const vbTraces = topEids.map((eid,i) => ({
@@ -885,14 +1396,15 @@ function renderVendors() {
     legend:{orientation:"h",x:0,y:-0.22,font:{size:10.5}}
   }), PC);
 
-  /* ── Scatter ── */
+  /* ── Scatter — strict by default, switches to filtered when toggle ON ── */
+  const scTop = activeVendorTop();
   Plotly.newPlot("ch-vendor-scatter", [{
     type:"scatter", mode:"markers",
-    x:D.vendor_top30.map(d=>d.inv), y:D.vendor_top30.map(d=>d.avg),
-    text:D.vendor_top30.map(d=>d.name),
+    x:scTop.map(d=>d.inv), y:scTop.map(d=>d.avg),
+    text:scTop.map(d=>d.name),
     marker:{
-      size:D.vendor_top30.map(d=>Math.sqrt(d.exc)*2.8),
-      color:D.vendor_top30.map(d=>d.avg),
+      size:scTop.map(d=>Math.sqrt(d.exc)*2.8),
+      color:scTop.map(d=>d.avg),
       colorscale:[[0,"#dcfce7"],[0.3,"#0095a8"],[0.7,"#1a3d6b"],[1,"#e8503a"]],
       showscale:true,
       colorbar:{title:{text:"Avg Exc/Inv",font:{size:11}},thickness:12,len:0.8},
@@ -911,30 +1423,59 @@ function renderVendors() {
 }
 
 /* ── Vendor Table & Reactive Focus Card ────────────────────────── */
-let vdrData     = D.workload_conc.map((d,i)=>({...d,rank:i+1,avg:+(d.exc/d.inv).toFixed(2)}));
-let vdrFiltered = [...vdrData];
+let vdrData     = [];
+let vdrFiltered = [];
 let vdrPage     = 0;
 const PER_PAGE  = 15;
 let vdrSort     = "exc";
 let activeVendor = null;
 
+function rebuildVendorTableData() {
+  /* Re-derive vendor table backing data from whichever workload_conc list
+     matches the current toggle state. Preserves the user's current search
+     filter; resets page+selection because rankings/counts will have shifted. */
+  const src = activeWorkloadConc();
+  vdrData = src.map((d,i) => ({...d, rank:i+1, avg:+(d.exc/d.inv).toFixed(2)}));
+  const searchEl = document.getElementById("vdr-search");
+  const q = searchEl ? searchEl.value.toLowerCase() : "";
+  vdrFiltered = q ? vdrData.filter(d=>d.name.toLowerCase().includes(q)) : [...vdrData];
+  vdrPage = 0;
+  /* If a vendor was selected but no longer appears under the new dataset,
+     drop the focus card so it doesn't show stale numbers. */
+  if (activeVendor && !vdrData.some(d => d.name === activeVendor.name)) {
+    activeVendor = null;
+    const focusEl = document.getElementById("vdr-focus-empty");
+    if (focusEl) resetFocusCard();
+  }
+}
+rebuildVendorTableData();
+
+function currentMaxExc() {
+  return vdrData.length ? Math.max(...vdrData.map(d=>d.exc)) : 1;
+}
+
+let vdrListenersBound = false;
 function buildVendorTable() {
-  const maxExc = Math.max(...vdrData.map(d=>d.exc));
-  document.getElementById("vdr-search").addEventListener("input", e => {
-    vdrFiltered = vdrData.filter(d=>d.name.toLowerCase().includes(e.target.value.toLowerCase()));
-    sortVdr(); vdrPage=0; renderVdrPage(maxExc);
-  });
-  document.querySelectorAll(".sort-opt").forEach(btn => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll(".sort-opt").forEach(b=>b.classList.remove("active"));
-      btn.classList.add("active");
-      vdrSort=btn.dataset.sort;
-      sortVdr(); vdrPage=0; renderVdrPage(maxExc);
+  if (!vdrListenersBound) {
+    /* One-time event wiring; subsequent renderVendors() calls just resort+repaint. */
+    vdrListenersBound = true;
+    document.getElementById("vdr-search").addEventListener("input", e => {
+      const q = e.target.value.toLowerCase();
+      vdrFiltered = vdrData.filter(d=>d.name.toLowerCase().includes(q));
+      sortVdr(); vdrPage=0; renderVdrPage(currentMaxExc());
     });
-  });
-  document.getElementById("pg-prev").addEventListener("click", ()=>{ if(vdrPage>0){vdrPage--;renderVdrPage(maxExc);} });
-  document.getElementById("pg-next").addEventListener("click", ()=>{ if((vdrPage+1)*PER_PAGE<vdrFiltered.length){vdrPage++;renderVdrPage(maxExc);} });
-  sortVdr(); renderVdrPage(maxExc);
+    document.querySelectorAll(".sort-opt").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".sort-opt").forEach(b=>b.classList.remove("active"));
+        btn.classList.add("active");
+        vdrSort=btn.dataset.sort;
+        sortVdr(); vdrPage=0; renderVdrPage(currentMaxExc());
+      });
+    });
+    document.getElementById("pg-prev").addEventListener("click", ()=>{ if(vdrPage>0){vdrPage--;renderVdrPage(currentMaxExc());} });
+    document.getElementById("pg-next").addEventListener("click", ()=>{ if((vdrPage+1)*PER_PAGE<vdrFiltered.length){vdrPage++;renderVdrPage(currentMaxExc());} });
+  }
+  sortVdr(); renderVdrPage(currentMaxExc());
 }
 
 function sortVdr() {
@@ -1037,9 +1578,11 @@ function resetFocusCard() {
 
 /* ══════════════════════════════ EXCEPTIONS ════════════════════════ */
 function renderExceptions() {
-  const traces=D.cat_exc.types.map((t,i)=>({
+  /* Cat-Exc Top Types — strict by default (incl. Exc 0 & 91), filtered when toggle ON. */
+  const catExcSrc = isExclOn() ? D.cat_exc : (D.cat_exc_strict || D.cat_exc);
+  const traces=catExcSrc.types.map((t,i)=>({
     type:"bar", name:`${t.id}: ${t.label}`,
-    x:D.cat_exc.cats, y:t.vals,
+    x:catExcSrc.cats, y:t.vals,
     marker:{color:EXC_COLORS[i%EXC_COLORS.length]},
     hovertemplate:`<b>%{x} — ${t.label}</b><br>%{y:,} events<extra></extra>`
   }));
@@ -1051,7 +1594,9 @@ function renderExceptions() {
     legend:{orientation:"v",x:1.02,y:1,font:{size:10.5}}
   }), PC);
 
-  const pairs=[...D.exc_pairs].reverse();
+  /* Co-occurrence pairs — strict by default, filtered when toggle ON. */
+  const pairsSrc = isExclOn() ? D.exc_pairs : (D.exc_pairs_strict || D.exc_pairs);
+  const pairs=[...pairsSrc].reverse();
   const pairsMax=Math.max(...pairs.map(d=>d.cnt));
   Plotly.newPlot("ch-pairs", [{
     type:"bar", orientation:"h", cliponaxis:false,
@@ -1065,12 +1610,14 @@ function renderExceptions() {
     yaxis:{tickfont:{size:12}}, showlegend:false
   }), PC);
 
+  /* Heatmap — strict view by default; filtered (excl. Exc 0 & 91) when toggle ON. */
   const channels=["COUPA","MAIL_IES","VIM_IES"], cats=["Standard","Service","Subcontracting","Consignment"];
+  const hmRate = isExclOn() ? "fpr" : "fpr_u";
   Plotly.newPlot("ch-heatmap", [{
     type:"heatmap",
-    z:channels.map(ch=>cats.map(cat=>{ const r=D.channel_cat_fp.find(d=>d.ch===ch&&d.cat===cat); return r?r.fpr:null; })),
+    z:channels.map(ch=>cats.map(cat=>{ const r=D.channel_cat_fp.find(d=>d.ch===ch&&d.cat===cat); return r&&r[hmRate]!=null?r[hmRate]:null; })),
     x:cats, y:channels,
-    text:channels.map(ch=>cats.map(cat=>{ const r=D.channel_cat_fp.find(d=>d.ch===ch&&d.cat===cat); return r?r.fpr.toFixed(1)+"%":"n/a"; })),
+    text:channels.map(ch=>cats.map(cat=>{ const r=D.channel_cat_fp.find(d=>d.ch===ch&&d.cat===cat); return r&&r[hmRate]!=null?r[hmRate].toFixed(1)+"%":"n/a"; })),
     texttemplate:"%{text}", textfont:{size:13,color:"#1e2535"},
     colorscale:[[0,"#fca5a5"],[0.25,"#fde68a"],[0.5,"#86efac"],[1,"#059669"]],
     zmin:0, zmax:100,
@@ -1081,10 +1628,13 @@ function renderExceptions() {
     xaxis:{tickfont:{size:12}}, yaxis:{tickfont:{size:12}}, showlegend:false
   }), PC);
 
+  /* Pie chart — strict view by default; filtered (excl. Exc 0 & 91) when toggle ON.
+     Also updates the description span to show the matching total. */
+  const pie = isExclOn() ? D.cat_pie.filtered : D.cat_pie.strict;
   Plotly.newPlot("ch-cat-pie", [{
     type:"pie",
-    labels:["Standard","Service","Subcontracting","Consignment"],
-    values:[8043,4925,318,77],
+    labels:pie.labels,
+    values:pie.values,
     marker:{colors:["#1a3d6b","#0095a8","#e8913a","#7c3aed"]},
     textinfo:"percent", textfont:{size:12,color:"#fff"},
     textposition:"inside", insidetextorientation:"horizontal",
@@ -1095,6 +1645,14 @@ function renderExceptions() {
     margin:{l:20,r:140,t:10,b:20,pad:2},
     legend:{orientation:"v",x:1.02,y:0.5,yanchor:"middle",font:{size:11}}
   }), PC);
+
+  /* Sync the description text with whichever total the pie is using. */
+  const pieTotalEl = document.getElementById("pie-total-text");
+  if (pieTotalEl) {
+    pieTotalEl.textContent = isExclOn()
+      ? `${pie.total.toLocaleString()} exception events (Exc 0 & 91 excluded)`
+      : `${pie.total.toLocaleString()} exception events`;
+  }
 }
 
 /* ══════════════════════════════ TRENDS ════════════════════════════ */
@@ -1133,7 +1691,483 @@ function renderTrends() {
   }), PC);
 }
 
+/* ══════════════════════════════ CUSTOM DATA ENGINE ═════════════════
+   Loads three user-supplied CSVs, replays the analyze.py groupbys in JS,
+   and produces a fresh `D` object so every chart can re-render with the
+   uploaded numbers. Pure data layer — UI wiring lives further below. */
+const ENGINE = (function() {
+  const TRANSPORT_PREFIX = "52";
+  const VALID_PO_TYPES = new Set(["NB","ZCP"]);
+  const FP_EXCLUDE_VENDORS = new Set(["SOUTHERN IONICS INCORPORATED","TERRA FIRST"]);
+  const EXC_0_91 = new Set([0, 91, "0", "91"]);
+  const MONTH_LBL = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+
+  function parseFile(file) {
+    return new Promise((resolve, reject) => {
+      Papa.parse(file, {
+        header: true, skipEmptyLines: true, dynamicTyping: false,
+        worker: false,
+        complete: r => resolve(r.data),
+        error: err => reject(err)
+      });
+    });
+  }
+
+  function tryNum(v) {
+    if (v == null || v === "") return null;
+    const n = Number(String(v).replace(/,/g,"").replace(/"/g,""));
+    return Number.isFinite(n) ? n : null;
+  }
+
+  function asStr(v) {
+    return v == null ? "" : String(v).trim();
+  }
+
+  function monthKeyFromDate(dateStr) {
+    if (!dateStr) return null;
+    const s = String(dateStr).trim();
+    if (!s) return null;
+    /* Accept ISO (2025-05-01), US (5/1/2025), Excel-style. */
+    let d = new Date(s);
+    if (isNaN(d.getTime())) {
+      const m = s.match(/^(\d{1,2})[\/-](\d{1,2})[\/-](\d{2,4})/);
+      if (m) {
+        const yr = m[3].length === 2 ? 2000 + (+m[3]) : +m[3];
+        d = new Date(yr, +m[1]-1, +m[2]);
+      }
+    }
+    if (isNaN(d.getTime())) return null;
+    return d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2,"0");
+  }
+  function monthLabelFromKey(k) {
+    if (!k) return "";
+    const [y, m] = k.split("-");
+    return `${MONTH_LBL[+m - 1]} '${y.slice(2)}`;
+  }
+
+  function cleanInc(rows) {
+    /* Mirrors analyze.py clean(filter_po=False) + Document Status == 15. */
+    return rows.reduce((out, r) => {
+      const sup = asStr(r["Supplier"]);
+      if (!sup || sup.startsWith(TRANSPORT_PREFIX)) return out;
+      if (asStr(r["Document Status"]) !== "15") return out;
+      const exId = tryNum(r["Exception ID"]);
+      out.push({
+        sup,
+        name: asStr(r["Name 1"]).toUpperCase(),
+        poType: asStr(r["PO Type"]).toUpperCase(),
+        channel: asStr(r["Channel ID"]),
+        cat: asStr(r["PO category decription"]),
+        docId: asStr(r["Document Id"]),
+        excId: exId,
+        excDesc: asStr(r["Exception description"]),
+        month: monthKeyFromDate(r["Created at"])
+      });
+      return out;
+    }, []);
+  }
+
+  function cleanUniverse(rows) {
+    /* Mirrors universe_df filter: Status Descrip=Posted, PO Type descr=Regular,
+       exclude SI/TF; key fields normalised. */
+    return rows.reduce((out, r) => {
+      const status = asStr(r["Status Descrip"]);
+      const poTd   = asStr(r["PO Type descr"]);
+      if (status !== "Posted" || poTd !== "Regular") return out;
+      const name = asStr(r["Name 1"]).toUpperCase();
+      if (FP_EXCLUDE_VENDORS.has(name)) return out;
+      out.push({
+        docId: asStr(r["Document Id"]),
+        channel: asStr(r["Channel ID"]),
+        cat: asStr(r["PO category decription"]),
+        name,
+        month: monthKeyFromDate(r["Document Create Date"])
+      });
+      return out;
+    }, []);
+  }
+
+  function buildD(uniRaw, incAllRaw, sortedRaw) {
+    /* uniRaw = output of cleanUniverse (Posted+Regular invoice universe).
+       incAllRaw = output of cleanInc on full inc CSV (incl. Exc 0 & 91, all PO types).
+       sortedRaw = output of cleanInc on the sorted CSV (already ~filtered). */
+
+    /* Dedupe universe by Document Id. */
+    const uniMap = new Map();
+    uniRaw.forEach(u => { if (!uniMap.has(u.docId)) uniMap.set(u.docId, u); });
+    const uni = [...uniMap.values()];
+
+    /* For first-pass: any exception event in inc disqualifies, regardless of PO type. */
+    const excDocIds = new Set(incAllRaw.map(r => r.docId));
+    uni.forEach(u => { u.firstPass = !excDocIds.has(u.docId); });
+
+    /* Filtered (NB/ZCP only, exclude Exc 0/91) — used by old "filtered" charts. */
+    const incPostedNBZCP = incAllRaw.filter(r => VALID_PO_TYPES.has(r.poType));
+    const sortedPosted = sortedRaw.filter(r => VALID_PO_TYPES.has(r.poType));
+
+    /* For "filtered FP rate" (toggle ON): an invoice is first-pass if it has no
+       exceptions OTHER than 0 or 91 in inc_posted (NB/ZCP). */
+    const filteredExcDocIds = new Set(
+      incPostedNBZCP.filter(r => !EXC_0_91.has(r.excId) && r.excId != null).map(r => r.docId)
+    );
+
+    /* ── KPIs (strict, headline) ───────────────────────────────────── */
+    const totalInv = uni.length;
+    const fpCount  = uni.filter(u => u.firstPass).length;
+    const fpRate   = totalInv ? +(fpCount / totalInv * 100).toFixed(1) : 0;
+    const kpi = {
+      total_invoices: totalInv,
+      first_pass_count: fpCount,
+      first_pass_rate: fpRate,
+      total_exception_events: sortedPosted.length,
+      unique_vendors_with_exceptions: new Set(sortedPosted.map(r => r.sup)).size
+    };
+
+    /* ── Monthly trends (both views) ───────────────────────────────── */
+    const monthsSet = new Set(uni.map(u => u.month).filter(Boolean));
+    const months = [...monthsSet].sort();
+    const monthly = months.map(mk => {
+      const rows = uni.filter(u => u.month === mk);
+      const total_u = rows.length;
+      const fp_u    = rows.filter(u => u.firstPass).length;
+      const fpr_u   = total_u ? +(fp_u / total_u * 100).toFixed(2) : 0;
+      const filteredFp    = rows.filter(u => !filteredExcDocIds.has(u.docId)).length;
+      const filteredTotal = rows.length;
+      const filteredRate  = filteredTotal ? +(filteredFp / filteredTotal * 100).toFixed(2) : 0;
+      return {
+        m: monthLabelFromKey(mk),
+        total: filteredTotal, exc: filteredTotal - filteredFp, fp: filteredFp, fpr: filteredRate,
+        total_u, exc_u: total_u - fp_u, fp_u, fpr_u
+      };
+    });
+
+    /* Per-month KPI rollup (used by the "Last month" subline). */
+    const incByMonth = new Map();
+    incAllRaw.forEach(r => {
+      if (!r.month) return;
+      let g = incByMonth.get(r.month);
+      if (!g) { g = {events:0, vendors:new Set()}; incByMonth.set(r.month, g); }
+      g.events++; g.vendors.add(r.sup);
+    });
+    const monthly_kpis = monthly.map((mm, idx) => {
+      const mk = months[idx];
+      const g = incByMonth.get(mk) || {events:0, vendors:new Set()};
+      return {
+        m: mm.m, total: mm.total_u, fpr: mm.fpr_u,
+        exc_events: g.events, vendors: g.vendors.size
+      };
+    });
+
+    /* ── Exception frequency (strict; embedded D.exc_freq is strict view) ─ */
+    const efMap = new Map();
+    incAllRaw.forEach(r => {
+      if (r.excId == null) return;
+      const k = r.excId + "|" + r.excDesc;
+      if (!efMap.has(k)) efMap.set(k, {id:r.excId, desc:r.excDesc, count:0});
+      efMap.get(k).count++;
+    });
+    const efTotal = [...efMap.values()].reduce((s,d)=>s+d.count, 0) || 1;
+    const exc_freq = [...efMap.values()].sort((a,b)=>b.count-a.count).slice(0,15)
+      .map(d => ({...d, pct: +(d.count/efTotal*100).toFixed(2)}));
+
+    /* ── Channel FP (strict + filtered) ───────────────────────────── */
+    const channels = ["COUPA","MAIL_IES","VIM_IES"];
+    const channel_fp = channels.map(ch => {
+      const rows = uni.filter(u => u.channel === ch);
+      const total_u = rows.length;
+      const fp_u    = rows.filter(u => u.firstPass).length;
+      const total = rows.length;
+      const fp    = rows.filter(u => !filteredExcDocIds.has(u.docId)).length;
+      return {
+        ch,
+        total, fp,    fpr:   total   ? +(fp/total*100).toFixed(2)     : 0,
+        total_u, fp_u, fpr_u: total_u ? +(fp_u/total_u*100).toFixed(2) : 0
+      };
+    });
+
+    /* ── Channel x PO-cat FP ───────────────────────────────────────── */
+    const cats = ["Standard","Service","Subcontracting","Consignment"];
+    const channel_cat_fp = [];
+    channels.forEach(ch => cats.forEach(cat => {
+      const rows = uni.filter(u => u.channel === ch && u.cat === cat);
+      const total_u = rows.length;
+      const fp_u    = rows.filter(u => u.firstPass).length;
+      const fp      = rows.filter(u => !filteredExcDocIds.has(u.docId)).length;
+      channel_cat_fp.push({
+        ch, cat,
+        total: total_u, fp, fpr: total_u ? +(fp/total_u*100).toFixed(2) : null,
+        total_u, fp_u,  fpr_u: total_u ? +(fp_u/total_u*100).toFixed(2) : null
+      });
+    }));
+
+    /* ── Per-category exception totals (pie) ────────────────────── */
+    const pieFiltered = cats.map(c => sortedPosted.filter(r => r.cat === c).length);
+    const pieStrict   = cats.map(c => incAllRaw.filter(r => r.cat === c).length);
+    const cat_pie = {
+      filtered: {labels: cats, values: pieFiltered, total: pieFiltered.reduce((s,n)=>s+n,0)},
+      strict:   {labels: cats, values: pieStrict,   total: pieStrict.reduce((s,n)=>s+n,0)}
+    };
+
+    /* ── Cat-Exc Top types (top 8 per cat) ─────────────────────── */
+    function topTypesPerCat(rows, n) {
+      const eidTotals = new Map();
+      rows.forEach(r => {
+        if (r.excId == null) return;
+        const k = r.excId + "|" + r.excDesc;
+        eidTotals.set(k, (eidTotals.get(k)||0) + 1);
+      });
+      const topKeys = [...eidTotals.entries()].sort((a,b)=>b[1]-a[1]).slice(0,n).map(([k])=>k);
+      return topKeys.map(k => {
+        const [idStr, desc] = k.split("|");
+        const id = isNaN(+idStr) ? idStr : +idStr;
+        const vals = cats.map(c => rows.filter(r => r.cat === c && (r.excId+"|"+r.excDesc) === k).length);
+        return {id, label: desc, vals};
+      });
+    }
+    const cat_exc        = {cats, types: topTypesPerCat(sortedPosted, 8)};
+    const cat_exc_strict = {cats, types: topTypesPerCat(incAllRaw,    10)};
+
+    /* ── Co-occurrence pairs ──────────────────────────────────── */
+    function pairsFor(rows) {
+      const byInv = new Map();
+      rows.forEach(r => {
+        if (r.excId == null) return;
+        let arr = byInv.get(r.docId);
+        if (!arr) { arr = []; byInv.set(r.docId, arr); }
+        arr.push(r.excId);
+      });
+      const counter = new Map();
+      byInv.forEach(seq => {
+        const seen = new Set(); const dedup = [];
+        seq.forEach(id => { if (!seen.has(id)) { seen.add(id); dedup.push(id); } });
+        for (let i = 0; i < dedup.length - 1; i++) {
+          const k = dedup[i] + "→" + dedup[i+1];
+          counter.set(k, (counter.get(k)||0) + 1);
+        }
+      });
+      return [...counter.entries()].sort((a,b)=>b[1]-a[1]).slice(0,15)
+        .map(([k,cnt]) => ({pair: k.replace("→"," → "), cnt}));
+    }
+    const exc_pairs        = pairsFor(sortedPosted);
+    const exc_pairs_strict = pairsFor(incAllRaw);
+
+    /* ── Vendor aggregations (strict + filtered) ─────────────── */
+    function vendorAgg(rows) {
+      const m = new Map();
+      rows.forEach(r => {
+        let v = m.get(r.sup);
+        if (!v) { v = {sup:r.sup, name:r.name, invs:new Set(), exc:0, types:new Map()}; m.set(r.sup, v); }
+        v.invs.add(r.docId); v.exc++;
+        if (r.excId != null) {
+          const k = r.excId+"|"+r.excDesc;
+          v.types.set(k, (v.types.get(k)||0) + 1);
+        }
+      });
+      return [...m.values()].map(v => ({
+        sup: v.sup, name: v.name,
+        inv: v.invs.size, exc: v.exc,
+        avg: +(v.exc / Math.max(v.invs.size,1)).toFixed(2),
+        excs: [...v.types.entries()].map(([k,cnt]) => {
+          const [idStr,desc] = k.split("|");
+          return {id: isNaN(+idStr)?idStr:+idStr, desc, cnt};
+        }).sort((a,b)=>b.cnt-a.cnt)
+      }));
+    }
+    function topVendors(agg, includeSITF, n) {
+      let arr = agg.slice();
+      if (!includeSITF) arr = arr.filter(v => !FP_EXCLUDE_VENDORS.has(v.name));
+      return arr.sort((a,b)=>b.exc-a.exc).slice(0, n);
+    }
+    const vendorFiltered = vendorAgg(sortedPosted);
+    const vendorStrict   = vendorAgg(incAllRaw);
+
+    const vendor_top30        = topVendors(vendorFiltered, false, 30).map(v => ({id:v.sup, name:v.name, inv:v.inv, exc:v.exc, avg:v.avg}));
+    const vendor_top30_strict = topVendors(vendorStrict,   false, 30).map(v => ({id:v.sup, name:v.name, inv:v.inv, exc:v.exc, avg:v.avg}));
+
+    const workload_conc        = topVendors(vendorFiltered, false, 50).map(v => ({name:v.name, exc:v.exc, inv:v.inv}));
+    const workload_conc_strict = topVendors(vendorStrict,   false, 50).map(v => ({name:v.name, exc:v.exc, inv:v.inv}));
+
+    /* For vendor_exc_detail keep top 20 incl SI/TF for drill-down. */
+    function detailFor(agg) {
+      const top = agg.slice().sort((a,b)=>b.exc-a.exc).slice(0,20);
+      const supIds = new Set(top.map(v => v.sup));
+      ["51003869","51003955"].forEach(sid => supIds.add(sid));
+      return agg.filter(v => supIds.has(v.sup)).sort((a,b)=>a.sup.localeCompare(b.sup));
+    }
+    const vendor_exc_detail        = detailFor(vendorFiltered);
+    const vendor_exc_detail_strict = detailFor(vendorStrict);
+
+    /* ── Per-invoice exception count distribution ────────────── */
+    const perInv = new Map();
+    sortedPosted.forEach(r => perInv.set(r.docId, (perInv.get(r.docId)||0) + 1));
+    const distMap = new Map();
+    perInv.forEach(n => {
+      const k = n >= 11 ? "11+" : n;
+      distMap.set(k, (distMap.get(k)||0) + 1);
+    });
+    const exc_dist = [...distMap.entries()]
+      .sort((a,b) => (a[0]==="11+"?12:+a[0]) - (b[0]==="11+"?12:+b[0]))
+      .map(([n,cnt]) => ({n, cnt}));
+
+    return {
+      kpi, monthly, monthly_kpis,
+      exc_freq,
+      channel_fp, channel_cat_fp,
+      cat_pie, cat_exc, cat_exc_strict,
+      exc_pairs, exc_pairs_strict,
+      vendor_top30, vendor_top30_strict,
+      workload_conc, workload_conc_strict,
+      vendor_exc_detail, vendor_exc_detail_strict,
+      exc_dist,
+      __dataRange: {
+        first: months[0] ? monthLabelFromKey(months[0]) : "",
+        last:  months[months.length-1] ? monthLabelFromKey(months[months.length-1]) : ""
+      }
+    };
+  }
+
+  return { parseFile, cleanInc, cleanUniverse, buildD };
+})();
+
+/* ─── Custom data UI: modal open/close, file selection, run, reset. ── */
+const customFiles = { universe: null, inc: null, sorted: null };
+
+function openCustomModal()  { document.getElementById("custom-modal").classList.add("open"); }
+function closeCustomModal() {
+  document.getElementById("custom-modal").classList.remove("open");
+  /* Don't reset selection — user might just be peeking; only clear when they cancel mid-flow. */
+}
+
+function setCustomStatus(msg, kind) {
+  const el = document.getElementById("custom-status");
+  if (!el) return;
+  el.className = "custom-status" + (kind ? " " + kind : "");
+  el.textContent = msg || "";
+}
+
+function refreshRunButtonState() {
+  const btn = document.getElementById("custom-run");
+  if (!btn) return;
+  btn.disabled = !(customFiles.universe && customFiles.inc && customFiles.sorted);
+}
+
+function bindFilePickers() {
+  document.querySelectorAll('#custom-modal input[type=file]').forEach(inp => {
+    inp.addEventListener("change", e => {
+      const key = inp.dataset.key;
+      const f = e.target.files && e.target.files[0];
+      customFiles[key] = f || null;
+      const dz = inp.closest(".dz");
+      const status = document.querySelector(`[data-status-for="${key}"]`);
+      if (f) {
+        dz.classList.add("has-file");
+        if (status) status.textContent = `✓ ${f.name} (${(f.size/1024/1024).toFixed(1)} MB)`;
+      } else {
+        dz.classList.remove("has-file");
+        if (status) status.textContent = "";
+      }
+      refreshRunButtonState();
+    });
+  });
+}
+
+/* Apply a freshly-computed D snapshot, refresh KPIs, redraw rendered tabs. */
+function applyNewD(newD) {
+  Object.assign(D, newD);
+  /* Update headline KPIs from D.kpi (these are strict, matching analyze.py output). */
+  if (D.kpi) {
+    const valEl = (key) => document.querySelector(`[data-kpi-val="${key}"]`);
+    if (valEl("total"))   valEl("total").textContent   = (D.kpi.total_invoices || 0).toLocaleString();
+    if (valEl("fpr"))     valEl("fpr").textContent     = (D.kpi.first_pass_rate || 0).toFixed(1) + "%";
+    if (valEl("exc"))     valEl("exc").textContent     = (D.kpi.total_exception_events || 0).toLocaleString();
+    if (valEl("vendors")) valEl("vendors").textContent = (D.kpi.unique_vendors_with_exceptions || 0).toLocaleString();
+  }
+  /* Refresh "Last month" sublines. */
+  populateLastMonthKpis();
+  /* Vendor table backing data depends on workload_conc; rebuild. */
+  rebuildVendorMaps();
+  rebuildVendorTableData();
+  /* Re-render every tab that has been opened. Unopened tabs read D fresh on open. */
+  ["overview","vendors","exceptions","trends"].forEach(t => {
+    if (rendered.has(t)) renderTab(t);
+  });
+}
+
+function setCustomDataBadge(active, dataRange) {
+  const meta = document.getElementById("hdr-meta");
+  const btn  = document.getElementById("custom-data-btn");
+  if (active) {
+    if (meta) {
+      meta.classList.add("hdr-meta-custom");
+      const range = dataRange && (dataRange.first || dataRange.last)
+        ? `${dataRange.first || "?"} – ${dataRange.last || "?"}`
+        : "custom";
+      meta.textContent = `Custom data loaded (${range}) — click to reload`;
+      meta.onclick = openCustomModal;
+    }
+    if (btn) { btn.classList.add("active-data"); btn.textContent = "Custom Data Active"; }
+  } else {
+    if (meta) {
+      meta.classList.remove("hdr-meta-custom");
+      meta.textContent = "Data: May 2025 – Jan 2026";
+      meta.onclick = null;
+    }
+    if (btn) { btn.classList.remove("active-data"); btn.textContent = "Load Custom Data"; }
+  }
+}
+
+async function runCustomData() {
+  const t0 = performance.now();
+  setCustomStatus("Reading CSVs in your browser… (this can take 10–30 seconds for 30 MB+ files)", "info");
+  document.getElementById("custom-run").disabled = true;
+  try {
+    const [uniRows, incRows, sortedRows] = await Promise.all([
+      ENGINE.parseFile(customFiles.universe),
+      ENGINE.parseFile(customFiles.inc),
+      ENGINE.parseFile(customFiles.sorted)
+    ]);
+    setCustomStatus(`Parsed ${uniRows.length.toLocaleString()} universe / ${incRows.length.toLocaleString()} inc / ${sortedRows.length.toLocaleString()} sorted rows. Computing aggregations…`, "info");
+    /* Yield a frame so the status text actually paints before the heavy crunching. */
+    await new Promise(r => setTimeout(r, 30));
+    const newD = ENGINE.buildD(
+      ENGINE.cleanUniverse(uniRows),
+      ENGINE.cleanInc(incRows),
+      ENGINE.cleanInc(sortedRows)
+    );
+    applyNewD(newD);
+    setCustomDataBadge(true, newD.__dataRange);
+    const elapsed = ((performance.now() - t0) / 1000).toFixed(1);
+    setCustomStatus(`✓ Loaded: ${newD.kpi.total_invoices.toLocaleString()} invoices · ${newD.kpi.first_pass_rate.toFixed(1)}% FP · ${newD.kpi.total_exception_events.toLocaleString()} exception events (${elapsed}s).`, "ok");
+    setTimeout(closeCustomModal, 1500);
+  } catch (err) {
+    console.error(err);
+    setCustomStatus(`Error: ${err && err.message ? err.message : err}. Check that the files match the expected schema.`, "error");
+    refreshRunButtonState();
+  }
+}
+
+function initCustomData() {
+  bindFilePickers();
+  document.getElementById("custom-data-btn").addEventListener("click", openCustomModal);
+  document.getElementById("custom-cancel").addEventListener("click", closeCustomModal);
+  document.getElementById("custom-reset").addEventListener("click", () => {
+    /* Hard reload restores the embedded default D and clears any custom state. */
+    location.reload();
+  });
+  document.getElementById("custom-run").addEventListener("click", runCustomData);
+  /* Click backdrop to close. */
+  document.getElementById("custom-modal").addEventListener("click", e => {
+    if (e.target.id === "custom-modal") closeCustomModal();
+  });
+  document.addEventListener("keydown", e => {
+    if (e.key === "Escape") closeCustomModal();
+  });
+}
+
 /* ══════════════════════════════ INIT ═══════════════════════════════ */
+populateLastMonthKpis();
+initFilterToggle();
+initCustomData();
 rendered.add("overview");
 renderOverview();
 </script>
