@@ -1,10 +1,15 @@
-# Only updates the public site if Settings → Pages → Source = "GitHub Actions".
-# If Source = "Deploy from a branch" (e.g. gh-pages), use sync-gh-pages.yml instead.
+# Publishes ONLY the final_dashboard/ folder to GitHub Pages.
+# Active when Settings → Pages → Source = "GitHub Actions".
+# The old generated dashboard (output/, build_dashboard*.py, root index.html)
+# is intentionally NOT deployed.
 name: Deploy GitHub Pages
 
 on:
   push:
     branches: [main]
+    paths:
+      - "final_dashboard/**"
+      - ".github/workflows/deploy-pages.yml"
   workflow_dispatch:
 
 permissions:
@@ -26,21 +31,16 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Build dashboard HTML (writes output/index.html + dashboard.html)
-        run: python build_dashboard_v2.py
+      - name: Ensure .nojekyll exists in publish dir
+        run: touch final_dashboard/.nojekyll
 
       - name: Configure Pages
         uses: actions/configure-pages@v4
 
-      - name: Upload Pages artifact
+      - name: Upload Pages artifact (final_dashboard only)
         uses: actions/upload-pages-artifact@v3
         with:
-          path: output
+          path: final_dashboard
 
       - name: Deploy to GitHub Pages
         id: deployment

@@ -1,10 +1,16 @@
-# GitHub Pages "Deploy from a branch" serves ONE branch (e.g. gh-pages).
-# If you commit to main only, the live site stays stale until gh-pages matches.
-name: Sync gh-pages to main
+# Publishes ONLY the final_dashboard/ folder to the root of the gh-pages branch.
+# Active when Settings → Pages → Source = "Deploy from a branch" → "gh-pages / (root)".
+# The old generated dashboard (output/, build_dashboard*.py, root index.html)
+# is intentionally NOT pushed to gh-pages, so it is not reachable via the live URL.
+name: Sync gh-pages with final_dashboard
 
 on:
   push:
     branches: [main]
+    paths:
+      - "final_dashboard/**"
+      - ".github/workflows/sync-gh-pages.yml"
+  workflow_dispatch:
 
 permissions:
   contents: write
@@ -14,8 +20,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
 
-      - name: Point gh-pages at same commit as main
-        run: git push origin HEAD:gh-pages
+      - name: Ensure .nojekyll exists in publish dir
+        run: touch final_dashboard/.nojekyll
+
+      - name: Publish final_dashboard/ to gh-pages branch root
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./final_dashboard
+          publish_branch: gh-pages
+          force_orphan: true
+          enable_jekyll: false
+          commit_message: "deploy: sync final_dashboard to gh-pages"
