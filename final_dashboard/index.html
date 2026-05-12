@@ -529,12 +529,12 @@ function lockUI() {
 
 <!-- ═══ FILTER BAR ════════════════════════════════════════════════════ -->
 <div class="filter-bar">
-  <label class="switch" title="Toggle to exclude Exception IDs 0 (PO Low-value Service Invoice) and 91 (GR Not Done) from the affected charts">
+  <label class="switch" title="Toggle to exclude Exception IDs 0 (PO Low-value Service Invoice) and 91 (GR Not Done) from the affected charts. Transportation vendors (Supplier IDs starting with 52) are always excluded from every chart and KPI.">
     <input type="checkbox" id="excl-toggle">
     <span class="slider"></span>
   </label>
-  <span class="filter-label">Exclude Exception IDs 0 &amp; 91</span>
-  <span class="filter-hint" id="excl-hint">Currently showing all exceptions (matches headline KPIs)</span>
+  <span class="filter-label">Exclude Exception IDs 0 &amp; 91 and Transportation Vendors</span>
+  <span class="filter-hint" id="excl-hint">Showing all exceptions (transportation vendors always excluded)</span>
   <button class="custom-data-btn" id="custom-data-btn" type="button" title="Re-run the dashboard against your own CSVs (processed entirely in your browser)">
     Load Custom Data
   </button>
@@ -1219,8 +1219,8 @@ function updateExclHint() {
   const hint = document.getElementById("excl-hint");
   if (!hint) return;
   hint.textContent = isExclOn()
-    ? "Filter ON — Exc 0 & 91 hidden from charts below (KPIs unchanged)"
-    : "Currently showing all exceptions (matches headline KPIs)";
+    ? "Filter ON — Exc 0 & 91 hidden (transportation vendors always excluded)"
+    : "Showing all exceptions (transportation vendors always excluded)";
 }
 
 function initFilterToggle() {
